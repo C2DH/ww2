@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding : 0
+}
+
+
+.abril {
+    font-family: "Abril Fatface", serif;
+}
+
+.antonio {
+    font-family: "Antonio", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}

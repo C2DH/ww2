@@ -1,0 +1,9 @@
+pipelines:
+  custom:
+    # Deploy the backend
+    deploy-to-staging:
+      - step:
+          name: Deploy to staging
+          deployment: Staging
+          script:
+            - rsync -zrSlh --stats --delete --exclude-from ./.rsyncignore $BITBUCKET_CLONE_DIR/dist/ $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
