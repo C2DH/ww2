@@ -1,7 +1,7 @@
 // COMPONENTS
 import Intro from "../components/Intro/Intro"
 import Menu from "../components/Menu/Menu"
-import Map from "../components/Map/Map"
+import MapDisplay from "../components/Map/Map"
 
 
 
@@ -10,7 +10,7 @@ export default function Home() {
         <>  
             <Menu />
             <Intro />
-            <Map />
+            <MapDisplay />
         </>
 
             
