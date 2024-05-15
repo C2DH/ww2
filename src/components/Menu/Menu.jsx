@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faVolume } from '@fortawesome/pro-light-svg-icons'
 
-import './menu.scss'
+import './Menu.scss'
 import bg from '../../assets/images/common/BG.jpg'
 import logo from '../../assets/images/common/logo.png'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
