@@ -1,22 +1,34 @@
+// ASSETS
+import './Menu.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faVolume } from '@fortawesome/pro-light-svg-icons'
-
-import './Menu.scss'
 import bg from '../../assets/images/common/BG.jpg'
 import logo from '../../assets/images/common/logo.png'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
 import { Link } from 'react-router-dom'
 
+// FRAMER
+import { motion } from "framer-motion"
+
+
 
 export default function Menu() {
 
     return (
-        <header className='h-[100vh] fixed inset-0' style={{ background: `url(${bg}) lightgray 50% / cover no-repeat`, backgroundBlendMode: ''}}>
+        <motion.header 
+            initial={{ opacity: 0}}
+            animate={{ opacity: 1}}
+            transition={{ delay: 4, ease: "easeInOut" }}
+            className='h-[100vh] absolute inset-0' style={{ background: `url(${bg}) lightgray 50% / cover no-repeat`, backgroundBlendMode: ''}}>
             <div className="flex justify-between px-[90px] pt-[20px]">
                 <div>
                     <span className="text-[20px]">SOUND ON</span>
-                    <FontAwesomeIcon icon={ faVolume } style={{ fontSize: '26px', marginLeft: '10px', cursor: 'pointer' }}/>
+                    <FontAwesomeIcon 
+                        icon={ faVolume } 
+                        style={{ fontSize: '26px', marginLeft: '10px', cursor: 'pointer' }}
+                        onClick={() => console.log('click')}    
+                    />
                 </div>
 
                 <div>   
@@ -85,6 +97,6 @@ export default function Menu() {
                     <li><Link to='/contact'> Contact</Link></li>
                 </ul>
             </div>
-        </header>
+        </motion.header>
     )
 }
