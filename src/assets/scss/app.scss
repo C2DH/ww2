@@ -27,5 +27,14 @@
     font-weight: 400;
     line-height: normal;
     letter-spacing: 0.4px;
-    text-transform: uppercase;
+}
+
+
+.blue {
+    color: #6EDFFB;
+}
+
+.mask {
+    -webkit-mask: url('../images/common/mask.svg') no-repeat;
+    mask: url('../images/common/mask.svg') no-repeat;
 }

@@ -13,13 +13,13 @@ import { motion } from "framer-motion"
 
 
 
-export default function Menu() {
+export default function Menu({delay = 0}) {
 
     return (
         <motion.header 
             initial={{ opacity: 0}}
             animate={{ opacity: 1}}
-            transition={{ delay: 4, ease: "easeInOut" }}
+            transition={{ delay: delay, ease: "easeInOut" }}
             className='h-[100vh] absolute inset-0' style={{ background: `url(${bg}) lightgray 50% / cover no-repeat`, backgroundBlendMode: ''}}>
             <div className="flex justify-between px-[90px] pt-[20px]">
                 <div>

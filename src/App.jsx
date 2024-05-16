@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Terms from "./pages/Terms";
 import Contact from "./pages/Contact";
 import Credits from "./pages/Credits";
+import Notice from "./pages/Notice";
 
 export default function App() {
 
@@ -47,6 +48,10 @@ export default function App() {
         {
             path: "/credits",
             element: <Credits />,
+        },
+        {
+            path: '/notice/:noticeId',
+            element: <Notice />,
         }
     ])
 

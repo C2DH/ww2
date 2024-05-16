@@ -8,7 +8,7 @@ import MapDisplay from "../components/Map/Map"
 export default function Home() {
     return (
         <>  
-            <Menu />
+            <Menu delay={4}/>
             <Intro />
             <MapDisplay />
         </>
