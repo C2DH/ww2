@@ -9,6 +9,14 @@
     padding : 0
 }
 
+body {
+    font-size: 16px;
+    font-family: "Sofia Sans Extra Condensed", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.4px;
+}
 
 .abril {
     font-family: "Abril Fatface", serif;
@@ -35,6 +43,11 @@
 }
 
 .mask {
-    -webkit-mask: url('../images/common/mask.svg') no-repeat;
-    mask: url('../images/common/mask.svg') no-repeat;
+    width: 100%;
+    -webkit-mask-image: url('../../assets/images/common/mask.svg');
+    mask-image: url('../../assets/images/common/mask.svg');
+    -webkit-mask-size: cover;
+    mask-size: cover;
 }
+
+

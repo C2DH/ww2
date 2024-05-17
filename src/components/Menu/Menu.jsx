@@ -12,15 +12,28 @@ import { Link } from 'react-router-dom'
 import { motion } from "framer-motion"
 
 
+import { useState } from 'react'
+
+import classNames from 'classnames'
+
+
 
 export default function Menu({delay = 0}) {
+
+    const [openMenu, setOpenMenu] = useState(false)
 
     return (
         <motion.header 
             initial={{ opacity: 0}}
             animate={{ opacity: 1}}
             transition={{ delay: delay, ease: "easeInOut" }}
-            className='h-[100vh] absolute inset-0' style={{ background: `url(${bg}) lightgray 50% / cover no-repeat`, backgroundBlendMode: ''}}>
+            className={classNames('absolute inset-0 transition-all duration-[2000ms]', {
+                'h-[100vh]': openMenu,
+                'h-[120px] overflow-hidden': !openMenu
+            })} 
+            style={{ background: `url(${bg}) 50% / cover no-repeat`}}
+            onClick={() => setOpenMenu(!openMenu) }
+            >
             <div className="flex justify-between px-[90px] pt-[20px]">
                 <div>
                     <span className="text-[20px]">SOUND ON</span>
@@ -37,14 +50,18 @@ export default function Menu({delay = 0}) {
             </div>
 
             <div className='absolute top-[3px] left-[50%] -translate-x-[50%]'>
-                <Link to="/">
+                <div>
                     <span className='block text-center'>- MENU -</span>
-                    <img src={ logo } alt="Logo Menu" className='w-[210px]'/>
-                </Link>
+                    {/* <img src={ logo } alt="Logo Menu" className='w-[210px]'/> */}
+                    <img src={ logo } alt="Logo Menu" className='w-[180px]'/>
+                </div>
             </div>
 
-            <div className='flex justify-center mt-[130px]'>
-                <ul className='w-1/3 text-center'>
+            <div className='flex justify-center mt-[90px]'>
+                <ul className={classNames('w-1/3 text-center transition-all duration-[2000ms]', {
+                    'opacity-1': openMenu,
+                    'opacity-0': !openMenu 
+                })}>
                     <li>
                         <Link to="/path">
                             <h3>Parcours</h3>
@@ -69,7 +86,7 @@ export default function Menu({delay = 0}) {
                             <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit.</p>
                         </Link>
                     </li>
-                    <li className='mt-[70px]'>
+                    <li className=''>
                         <Link to="/credits">
                             <h3>Générique</h3>
                         </Link>
@@ -77,7 +94,7 @@ export default function Menu({delay = 0}) {
                 </ul>
             </div>
 
-            <div className='flex justify-center items-center mt-[45px]'>
+            <div className='flex justify-center items-center mt-[30px]'>
                 <div className='me-[80px]'>
                     <Link to='https://www.c2dh.uni.lu/' target='_blank'>
                         <img src={ logoUni } alt="Logo Université" />

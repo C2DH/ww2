@@ -1,5 +1,4 @@
 // ASSETS
-import './Map.scss'
 import pinMarker from '../../assets/images/common/marker.svg'
 import { useEffect, useRef, useState } from "react";
 
@@ -16,7 +15,7 @@ export default function MapDisplay() {
 
     const [lng, setLng] = useState(6.131514);
     const [lat, setLat] = useState(49.815764);
-    const [zoom, setZoom] = useState(9);
+    const [zoom, setZoom] = useState(8);
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
 
 
@@ -140,9 +139,9 @@ export default function MapDisplay() {
     
     return (
         <motion.div     
-            className="w-full h-[calc(100vh-120px)] map"
+            className="w-full h-[calc(100vh-80px)] mask"
             initial={{ y: "95vh" }}
-            animate={{ y: "120px" }}
+            animate={{ y: "80px" }}
             transition={{ duration: 2, ease: "easeInOut", delay: 4 }}
         >    
               

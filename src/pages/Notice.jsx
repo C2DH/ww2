@@ -19,7 +19,7 @@ export default function Notice() {
         <>
             <Menu />
 
-            <div className='relative inset-0 top-[120px] h-[calc(100vh-120px)] mask'>
+            <div className='relative inset-0 top-[80px] h-[calc(100vh-80px)] mask'>
                 <div className='h-full' style={{ background: `url(${state.data.properties.image}) 50% / cover no-repeat` }}>
 
                     <div className="container mx-auto relative">
@@ -45,11 +45,11 @@ export default function Notice() {
                                 })}
                             </div>
 
-                            <div className="col-span-8">
+                            <div className="col-span-6 col-start-4">
                                 <Player url={ `/src/assets/videos/${state.data.properties.media }`}/>
                             </div>
 
-                            <div className="col-span-2 pt-[20px]">
+                            <div className="col-span-2 col-start-11 pt-[20px]">
                                 <Link to={'/historian-workshop'} className='block uppercase abril text-[22px] text-white'>sources</Link>
                                 <Link to={'/historian-workshop'} className='block uppercase abril text-[22px] text-white pt-[22px]'>index historique</Link>
                             </div>
