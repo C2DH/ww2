@@ -2,12 +2,12 @@
 import {useParams, useLocation, Link} from 'react-router-dom';
 
 // COMPONENTS
-import Player from '../components/Player/Player'
-import Menu from '../components/Menu/Menu'
+import Player from '../Player/Player'
+import Menu from '../Menu/Menu'
 
 // ASSETS 
-import '../assets/scss/app.scss'
-import mapBack from '../assets/images/notices/map-back.png'
+import '../../assets/scss/app.scss'
+import mapBack from '../../assets/images/notices/map-back.png'
 
 
 export default function Notice() {
@@ -17,9 +17,7 @@ export default function Notice() {
 
     return (
         <>
-            <Menu />
-
-            <div className='relative inset-0 top-[80px] h-[calc(100vh-80px)] mask'>
+            <div className='relative inset-0 -top-[50px] h-[calc(100vh-80px)] mask'>
                 <div className='h-full' style={{ background: `url(${state.data.properties.image}) 50% / cover no-repeat` }}>
 
                     <div className="container mx-auto relative">
@@ -39,7 +37,7 @@ export default function Notice() {
                                     return (
                                         <Link to={'/'} className='block mb-[30px]'>
                                             <h3 className='abril text-[22px] text-white'>{ note.title }</h3>
-                                            <p className='sofia text-white text-[24px] pt-[5px]'>{ note.description }</p>
+                                            {/* <p className='sofia text-white text-[24px] pt-[5px]'>{ note.description }</p> */}
                                         </Link>
                                     )
                                 })}
