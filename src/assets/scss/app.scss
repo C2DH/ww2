@@ -97,3 +97,18 @@ progress {
 .accordion-content-inner.open {
     padding: 35px 10px 30px;
 }
+
+
+
+// NOTICE (Capsule)
+.iconMapBack svg {
+    transition: stroke 2s ease-in-out;
+}
+
+video {
+    border-radius: 6px;
+}
+
+.notice-filter {
+    background: linear-gradient(180deg, rgba(0, 194, 255, 0.2) 0%, rgba(0, 163, 255, 0) 14.5%), linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+}

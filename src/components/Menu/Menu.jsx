@@ -1,7 +1,5 @@
 // ASSETS
 import './Menu.scss'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faVolume } from '@fortawesome/pro-light-svg-icons'
 import bg from '../../assets/images/common/BG.jpg'
 import logo from '../../assets/images/common/logo.png'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
@@ -10,15 +8,19 @@ import logoUni from '../../assets/images/menu/logo-uni.svg'
 // FRAMER
 import { motion } from "framer-motion"
 
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { useState } from 'react'
 import classNames from 'classnames'
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher'
+import Sound from '../Sound/Sound'
+
+
 
 
 export default function Menu({delay = 0}) {
 
     const [isOpenMenu, setIsOpenMenu] = useState(false)
-    const location = useLocation();
+    const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
     return (
         <>
@@ -26,74 +28,47 @@ export default function Menu({delay = 0}) {
                 initial={{ opacity: 0}}
                 animate={{ opacity: 1}}
                 transition={{ delay: delay, ease: "easeInOut" }}
+                style={{ background: `url(${bg}) 50% / cover no-repeat`}}
                 className={classNames('transition-all duration-[2000ms]', {
-                    'h-[100vh]': isOpenMenu,
+                    'h-[100vh] overflow-hidden': isOpenMenu,
                     'h-[120px]': !isOpenMenu
                 })} 
-                style={{ background: `url(${bg}) 50% / cover no-repeat`}}
             >
+
+                {/** HEADER */}
                 <div className="flex justify-between px-[90px] pt-[20px]">
-                    <div>
-                        <span className="text-[20px]">SOUND ON</span>
-                        <FontAwesomeIcon 
-                            icon={ faVolume } 
-                            style={{ fontSize: '26px', marginLeft: '10px', cursor: 'pointer' }}
-                            onClick={() => console.log('click')}    
-                        />
-                    </div>
-
-                    <div>   
-                        <span className='text-[20px] cursor-pointer'>EN DE FR</span>
-                    </div>
+                    <Sound />
+                    <MenuLogo isOpenMenu={isOpenMenu} setIsOpenMenu={setIsOpenMenu} />
+                    <LanguageSwitcher />
                 </div>
 
-                <div className='absolute top-[3px] left-[50%] -translate-x-[50%]'>
-                    <div>
-                        <span className='block text-center cursor-pointer' onClick={() => setIsOpenMenu(!isOpenMenu) }>{isOpenMenu ? "- FERMER -" : "- MENU -"  }</span>
-                        {/* <img src={ logo } alt="Logo Menu" className='w-[210px]'/> */}
-                        <Link to="/">
-                            <img src={ logo } alt="Logo Menu" className='w-[180px]'/>
-                        </Link>
-                    </div>
-                </div>
 
+                {/** NAVBAR */}
                 <div className='flex justify-center mt-[90px]'>
-                    <ul className={classNames('w-1/3 text-center transition-all duration-[2000ms]', {
+                    <ul className={classNames('w-1/3 text-center transition-all duration-[750ms]', {
                         'opacity-1': isOpenMenu,
                         'opacity-0': !isOpenMenu 
                     })}>
                         <li>
-                            <Link to="/path">
-                                <h3>Parcours</h3>
-                                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit.</p>
-                            </Link>
+                            <MenuItem path={'/path'} title={"Parcours"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
                         </li>
                         <li>
-                            <Link to='/catalogue'>
-                                <h3>Catalogue</h3>
-                                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris.</p>
-                            </Link>
+                            <MenuItem path={'/catalogue'} title={"Catalogue"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} handleMenuItemClick={() => setIsOpenMenu(false) } />
                         </li>
                         <li>
-                            <Link to="/historian-workshop">
-                                <h3>Atelier de l'historien</h3>
-                                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris.</p>
-                            </Link>
+                            <MenuItem path={'/historian-workshop'} title={"Atelier de l'historien"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
                         </li>
                         <li>
-                            <Link to="/spacetime-map">
-                                <h3>Carte spatio-temporelle</h3>
-                                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit.</p>
-                            </Link>
+                            <MenuItem path={'/spacetime-map'} title={"Carte spatio-temporelle"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
                         </li>
-                        <li className=''>
-                            <Link to="/credits">
-                                <h3>Générique</h3>
-                            </Link>
+                        <li>
+                            <MenuItem path={'/credits'} title={"Générique"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
                         </li>
                     </ul>
                 </div>
 
+
+                {/** PARTNERS LOGOS */}
                 <div className='flex justify-center items-center mt-[30px]'>
                     <div className='me-[80px]'>
                         <Link to='https://www.c2dh.uni.lu/' target='_blank'>
@@ -107,6 +82,8 @@ export default function Menu({delay = 0}) {
                     </div>
                 </div>
 
+
+                {/** NAVBAR SUITE */}
                 <div className='flex justify-center items-center mt-[20px]'>
                     <ul className='flex text-[20px]'>
                         <li className='tiret'><Link to='/about'>A propos</Link></li>
@@ -116,10 +93,44 @@ export default function Menu({delay = 0}) {
                 </div>
             </motion.header>
             
-            <div className={classNames({ 'h-[70px] overflow-hidden': isOpenMenu })}>
+            <motion.div     
+                initial={{ y: '90%' }}
+                animate={isOpenMenu ? { y: "-90px" } : { y: '-50px'}}
+                onAnimationComplete={() => setIsAnimationComplete(isOpenMenu ? true : false) }
+                transition={{ duration: 2, ease: "easeInOut", delay: 1 }} // Delai = durée de la vidéo et si deja visité pas de délai
+                style={{ position: 'absolute' }}
+                className={classNames('w-full',{
+                    "h-[calc(100vh-90px)]": !isOpenMenu,
+                    "h-[90px] overflow-hidden": (isOpenMenu && isAnimationComplete)
+                })}
+            >    
                 <Outlet />
-            </div>
+            </motion.div>
         </>
     )
 }
 
+
+
+function MenuItem({path, title, text = "", handleMenuItemClick}) {
+    return (
+        <Link to={path} onClick={handleMenuItemClick}>
+            <h3>{title}</h3>
+            <p>{text}</p>
+        </Link>
+    )
+}
+
+function MenuLogo({ isOpenMenu, setIsOpenMenu }) {
+    return (
+        <div className='absolute top-[3px] left-[50%] -translate-x-[50%]'>
+            <div>
+                <span className='block text-center cursor-pointer' onClick={() => setIsOpenMenu(!isOpenMenu) }
+                >{isOpenMenu ? "- FERMER -" : "- MENU -"  }</span>
+                <Link to={'/'}>
+                    <img src={ logo } alt="Logo Menu" className='w-[180px]' onClick={() => setIsOpenMenu(false)}/>
+                </Link>
+            </div>
+        </div>
+    )
+}

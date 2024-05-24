@@ -18,7 +18,7 @@ export default function MapDisplay({ isAnimate }) {
 
     const [lng, setLng] = useState(6.131514);
     const [lat, setLat] = useState(49.815764);
-    const [zoom, setZoom] = useState(8);
+    const [zoom, setZoom] = useState(9);
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
 
 
@@ -167,14 +167,8 @@ export default function MapDisplay({ isAnimate }) {
     };
 
     
-    return (
-        <motion.div     
-            className="w-full h-[calc(100vh-70px)] mask"
-            initial={ isAnimate ? { y: "80vh" } : { y: "-50px"}}
-            animate={{ y: "-50px" }}
-            transition={{ duration: 2, ease: "easeInOut", delay: 4 }}
-        >    
-              
+    return (    
+        <div className='mask h-[calc(100vh-70px)] overflow-hidden'>
             <Map
                 style={{ width: '100%', height: '100%' }}
                 mapboxAccessToken="pk.eyJ1IjoiYmxhY2ttYWdpazg4IiwiYSI6ImNsZ3VrcjFvdjIzaDUzY210MHF1ZW5jb3MifQ.oFMw45FSzF-cJVUbu7f7fg"
@@ -186,18 +180,17 @@ export default function MapDisplay({ isAnimate }) {
                     pitch: 30 // Inclinaison en degrés
                 }}
                 minZoom={8} // Ne peut pas dézoomer en dessous de x8
-
-                dragRotate={false} // 3D Relief : désactiver 
+                dragRotate={true} // 3D Relief : désactiver 
                 scrollZoom={true} // Désactiver Zoom scroll
             >
                 { geojson.features.map((marker, index) => {
                     return (
-                   
+                    
                         <Marker 
                             key={ index } 
                             longitude={ marker.geometry.coordinates[1] } 
                             latitude={ marker.geometry.coordinates[0] } 
-                            anchor="bottom"   
+                            anchor={ marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom" }   
                         >
                             <div className='relative'> 
                                 <img src={ marker.properties.place === 'Grande-Bretagne' ? arrowMarker : pinMarker } alt="marker" className="cursor-pointer" onMouseOver={() => setSelectedMarker({ id: index, data: marker }) }/>
@@ -236,6 +229,6 @@ export default function MapDisplay({ isAnimate }) {
                     )
                 })}
             </Map>
-        </motion.div>
+        </div>    
     )
 }
