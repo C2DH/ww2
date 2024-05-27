@@ -15,8 +15,6 @@ import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher'
 import Sound from '../Sound/Sound'
 
 
-
-
 export default function Menu({delay = 0}) {
 
     const [isOpenMenu, setIsOpenMenu] = useState(false)

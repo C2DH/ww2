@@ -2,6 +2,9 @@
 import pinMarker from '../../assets/images/common/marker.svg'
 import arrowMarker from '../../assets/images/common/arrow-mapbox.png'
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
+import cloud from '../../assets/images/common/cloud.png?w=500;700;900;1200;1900&format=webp&as=srcset'
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
@@ -16,6 +19,8 @@ export default function MapDisplay({ isAnimate }) {
 
     console.log('isAnimate', isAnimate)
 
+    const navigate = useNavigate()
+    const [displayClouds, setDisplayClouds] = useState(false)
     const [lng, setLng] = useState(6.131514);
     const [lat, setLat] = useState(49.815764);
     const [zoom, setZoom] = useState(9);
@@ -166,69 +171,124 @@ export default function MapDisplay({ isAnimate }) {
         ]
     };
 
-    
-    return (    
-        <div className='mask h-[calc(100vh-70px)] overflow-hidden'>
-            <Map
-                style={{ width: '100%', height: '100%' }}
-                mapboxAccessToken="pk.eyJ1IjoiYmxhY2ttYWdpazg4IiwiYSI6ImNsZ3VrcjFvdjIzaDUzY210MHF1ZW5jb3MifQ.oFMw45FSzF-cJVUbu7f7fg"
-                mapStyle="mapbox://styles/blackmagik88/clgqlrxnk00kb01pk2gz2fzhh"                
-                initialViewState={{
-                    longitude: lng,
-                    latitude: lat,
-                    zoom: zoom,
-                    pitch: 30 // Inclinaison en degrés
-                }}
-                minZoom={8} // Ne peut pas dézoomer en dessous de x8
-                dragRotate={true} // 3D Relief : désactiver 
-                scrollZoom={true} // Désactiver Zoom scroll
-            >
-                { geojson.features.map((marker, index) => {
-                    return (
-                    
-                        <Marker 
-                            key={ index } 
-                            longitude={ marker.geometry.coordinates[1] } 
-                            latitude={ marker.geometry.coordinates[0] } 
-                            anchor={ marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom" }   
-                        >
-                            <div className='relative'> 
-                                <img src={ marker.properties.place === 'Grande-Bretagne' ? arrowMarker : pinMarker } alt="marker" className="cursor-pointer" onMouseOver={() => setSelectedMarker({ id: index, data: marker }) }/>
 
-                                { marker.properties.place !== 'Grande-Bretagne' ?
-                                    <AnimatePresence>
-                                        { selectedMarker && selectedMarker.id == index &&
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.8 }}
-                                                transition={{ duration: 0.4, ease: 'easeInOut'}}
-                                                className='w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center rounded-[6px] cursor-pointer p-[6px]' 
-                                                style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
-                                                onMouseLeave={() => setSelectedMarker({ id: null, data: null }) }
-                                            >
-                                                <Link to={`/notice/${selectedMarker.data.id}`} state={{ data: selectedMarker.data }} className='border border-black rounded-[6px] h-full'>
-                                                    <div className='flex py-[12px]'>
-                                                        <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                                                        <div>
-                                                            <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
-                                                            <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
+
+
+    function handleClick(id) {
+        
+        setDisplayClouds(true)
+        setZoom(2)
+
+        setTimeout(() => {
+            // navigate(`notice/${id}`)
+        }, 750)
+    }
+
+    
+    return (   
+        
+        <>
+
+            <AnimatePresence >
+                { displayClouds &&
+                    <>
+                        <motion.div className='fixed left-0 -top-[70px] z-[3] ' initial={{ x: '-100%'}} animate={{ x: 0 }} transition={{ duration: 0.75 }}>
+                            <img src={ cloud } alt="" />
+                        </motion.div>
+
+                        <motion.div className='fixed left-0 -bottom-[20px] z-[3]' initial={{ x: '-100%', rotateX: 180}} animate={{ x: 0, rotateX: 180 }} transition={{ duration: 0.75 }}>
+                            <img src={ cloud } alt="" />
+                        </motion.div>
+
+                        <motion.div className='fixed right-0 -top-[70px] z-[3]' initial={{ x: '100%', rotateY: -180}} animate={{ x: 0, rotateY: -180 }} transition={{ duration: 0.75 }}>
+                            <img src={ cloud } alt="" />
+                        </motion.div>
+
+                        <motion.div className='fixed right-0 -bottom-[20px] z-[3]' initial={{ x: '100%', rotateY: -180, rotateX: 180}} animate={{ x: 0, rotateY: -180, rotateX: 180 }} transition={{ duration: 0.75 }}>
+                            <img src={ cloud } alt="" />
+                        </motion.div>
+                    </>
+                }
+            </AnimatePresence>
+
+                
+
+        
+
+            <div className='mask h-[calc(100vh-70px)] overflow-hidden'>
+                <Map
+                    style={{ width: '100%', height: '100%' }}
+                    mapboxAccessToken="pk.eyJ1IjoiYmxhY2ttYWdpazg4IiwiYSI6ImNsZ3VrcjFvdjIzaDUzY210MHF1ZW5jb3MifQ.oFMw45FSzF-cJVUbu7f7fg"
+                    mapStyle="mapbox://styles/blackmagik88/clgqlrxnk00kb01pk2gz2fzhh"                
+                    initialViewState={{
+                        longitude: lng,
+                        latitude: lat,
+                        zoom: zoom,
+                        pitch: 30 // Inclinaison en degrés
+                    }}
+                    minZoom={8} // Ne peut pas dézoomer en dessous de x8
+                    dragRotate={true} // 3D Relief : désactiver 
+                    scrollZoom={true} // Désactiver Zoom scroll
+                >
+                    { geojson.features.map((marker, index) => {
+                        return (
+                        
+                            <Marker 
+                                key={ index } 
+                                longitude={ marker.geometry.coordinates[1] } 
+                                latitude={ marker.geometry.coordinates[0] } 
+                                anchor={ marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom" }   
+                            >
+                                <div className='relative'> 
+                                    <img src={ marker.properties.place === 'Grande-Bretagne' ? arrowMarker : pinMarker } alt="marker" className="cursor-pointer" onMouseOver={() => setSelectedMarker({ id: index, data: marker }) }/>
+
+                                    { marker.properties.place !== 'Grande-Bretagne' ?
+                                        <AnimatePresence>
+                                            { selectedMarker && selectedMarker.id == index &&
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0.8 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 0.8 }}
+                                                    transition={{ duration: 0.4, ease: 'easeInOut'}}
+                                                    className='w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center rounded-[6px] cursor-pointer p-[6px]' 
+                                                    style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
+                                                    onMouseLeave={() => setSelectedMarker({ id: null, data: null }) }
+                                                >
+                                                    {/* <Link to={`/notice/${selectedMarker.data.id}`} state={{ data: selectedMarker.data }} className='border border-black rounded-[6px] h-full'>
+                                                        <div className='flex py-[12px]'>
+                                                            <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
+                                                            <div>
+                                                                <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
+                                                                <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
+                                                            </div>
+                                                        </div>
+                                                    </Link> */}
+                                                    <div className='border border-black rounded-[6px] h-full' onClick={() => handleClick(marker.id)}>
+                                                        <div className='flex py-[12px]'>
+                                                            <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
+                                                            <div>
+                                                                <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
+                                                                <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </Link>
-                                            </motion.div>
-                                        }
-                                    </AnimatePresence>
-                                    :
-                                    <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-0 -translate-y-[50%] right-[100%] flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
-                                }
+                                                </motion.div>
+                                            }
+                                        </AnimatePresence>
+                                        :
+                                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-0 -translate-y-[50%] right-[100%] flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
+                                    }
+                                </div>
+                            </Marker>
+                        )
+                    })}
+                </Map>
+            </div>    
 
-
-                            </div>
-                        </Marker>
-                    )
-                })}
-            </Map>
-        </div>    
+        </>
     )
 }
+
+
+
+
