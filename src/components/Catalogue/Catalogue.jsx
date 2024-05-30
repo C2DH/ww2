@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import bgPaper from '../../assets/images/common/paper.png'
-import Menu from '../Menu/Menu'
+import { motion } from 'framer-motion'
 import Accordion from '../Accordion/Accordion'
 
 export default function Catalogue() {
@@ -22,19 +22,23 @@ export default function Catalogue() {
             count: 21,
             notes: [
                 {
-                    'id': 'N01',
+                    'id': 1,
+                    'code': 'N01',
                     'title': 'L\'entrée en guerre'
                 },
                 {
-                    'id': 'N02',
+                    'id': 2,
+                    'code': 'N02',
                     'title': 'L\'invasion du Luxembourg'
                 },
                 {
-                    'id': 'N03',
+                    'id': 3,
+                    'code': 'N03',
                     'title': 'Occupation ou annexion ?'
                 },
                 {
-                    'id': 'N04',
+                    'id': 4,
+                    'code': 'N04',
                     'title': 'Survivre sous l\'annexion'
                 },
             ]
@@ -45,19 +49,23 @@ export default function Catalogue() {
             count: 7,
             notes: [
                 {
-                    'id': 'N25',
+                    'id': 25,
+                    'code': 'N25',
                     'title': 'La commission administrative'
                 },
                 {
-                    'id': 'N26',
+                    'id': 26,
+                    'code': 'N26',
                     'title': 'Les bourgmestres face à l\'annexion'
                 },
                 {
-                    'id': 'N27',
+                    'id': 27,
+                    'code': 'N27',
                     'title': 'L\'administration locale'
                 },
                 {
-                    'id': 'N28',
+                    'id': 28,
+                    'code': 'N28',
                     'title': 'La collaboration'
                 },
             ]
@@ -68,15 +76,18 @@ export default function Catalogue() {
             count: 11,
             notes: [
                 {
-                    'id': 'N30',
+                    'id': 30,
+                    'code': 'N30',
                     'title': 'La persécution anti-juive'
                 },
                 {
-                    'id': 'N31',
+                    'id': 31,
+                    'code': 'N31',
                     'title': 'Les victimes oubliées'
                 },
                 {
-                    'id': 'N32',
+                    'id': 32,
+                    'code': 'N32',
                     'title': 'Les origines grand-ducales de la politique nazie au Luxembourg'
                 },
             ]
@@ -87,11 +98,13 @@ export default function Catalogue() {
             count: 9,
             notes: [
                 {
-                    'id': 'N41',
+                    'id': 41,
+                    'code': 'N41',
                     'title': 'La bataille des Ardennes'
                 },
                 {
-                    'id': 'N41',
+                    'id': 42,
+                    'code': 'N42',
                     'title': 'La sortie de guerre'
                 },
             ]
@@ -100,8 +113,8 @@ export default function Catalogue() {
 
 
     return (
-        <>
-            <div style={{ background: `url(${ bgPaper }) 50% / cover no-repeat`}} className='h-full absolute top-[120px] inset-0'>
+        <motion.div initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}}>
+            <div style={{ background: `url(${ bgPaper }) 50% / cover no-repeat`}} className=''>
                 <div className='container mx-auto'>
                     <div className='grid grid-cols-12 pt-[20px]'>
                         <div className="col-span-8 pt-[15px]">
@@ -132,11 +145,11 @@ export default function Catalogue() {
                     </div>
 
                     
-                    <Accordion items={items}/>
+                    <Accordion items={ items }/>
 
                 </div>
             </div>
-        </>
+        </motion.div>
         
     )
 }

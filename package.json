@@ -15,13 +15,16 @@
     "@fortawesome/pro-light-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "classnames": "^2.5.1",
+    "flowbite": "^2.3.0",
+    "flowbite-react": "^0.9.0",
     "framer-motion": "^11.2.0",
     "mapbox-gl": "^3.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.7",
     "react-player": "^2.16.0",
-    "react-router-dom": "^6.23.0"
+    "react-router-dom": "^6.23.0",
+    "react-tracked": "^2.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

@@ -1,8 +1,9 @@
 // ASSETS
 import pinMarker from '../../assets/images/common/marker.svg'
 import arrowMarker from '../../assets/images/common/arrow-mapbox.png'
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import CustomLink from '../CustomLink.jsx/CustomLink';
 
 import cloud from '../../assets/images/common/cloud.png?w=500;700;900;1200;1900&format=webp&as=srcset'
 
@@ -11,16 +12,14 @@ import { AnimatePresence, motion } from "framer-motion"
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
-import Map, { Marker, Popup } from 'react-map-gl';
-import { Link } from 'react-router-dom';
+import Map, { Marker } from 'react-map-gl';
+import { MenuItem } from '../Menu/Menu';
 
 
 export default function MapDisplay({ isAnimate }) {
 
-    console.log('isAnimate', isAnimate)
-
+    const mapRef = useRef(null)
     const navigate = useNavigate()
-    const [displayClouds, setDisplayClouds] = useState(false)
     const [lng, setLng] = useState(6.131514);
     const [lat, setLat] = useState(49.815764);
     const [zoom, setZoom] = useState(9);
@@ -28,6 +27,14 @@ export default function MapDisplay({ isAnimate }) {
 
 
     useEffect(() => {
+
+        // if (showClouds) {
+        //     const body = document.querySelector('body')
+        //     body.style.height = '100vh'
+        //     body.style.overflow = 'hidden'
+        // }
+
+        console.log(selectedMarker)
 
     },[selectedMarker])
 
@@ -173,50 +180,22 @@ export default function MapDisplay({ isAnimate }) {
 
 
 
+    // function handleClick(id) {
+    //     mapRef.current?.flyTo({ zoom: 1, duration: 2000 })
+    //     setShowClouds(true)
 
-    function handleClick(id) {
-        
-        setDisplayClouds(true)
-        setZoom(2)
-
-        setTimeout(() => {
-            // navigate(`notice/${id}`)
-        }, 750)
-    }
+    //     setTimeout(() => {
+    //         navigate(`notice/${id}`)
+    //     }, 2000)
+    // }
 
     
     return (   
-        
+    
         <>
-
-            <AnimatePresence >
-                { displayClouds &&
-                    <>
-                        <motion.div className='fixed left-0 -top-[70px] z-[3] ' initial={{ x: '-100%'}} animate={{ x: 0 }} transition={{ duration: 0.75 }}>
-                            <img src={ cloud } alt="" />
-                        </motion.div>
-
-                        <motion.div className='fixed left-0 -bottom-[20px] z-[3]' initial={{ x: '-100%', rotateX: 180}} animate={{ x: 0, rotateX: 180 }} transition={{ duration: 0.75 }}>
-                            <img src={ cloud } alt="" />
-                        </motion.div>
-
-                        <motion.div className='fixed right-0 -top-[70px] z-[3]' initial={{ x: '100%', rotateY: -180}} animate={{ x: 0, rotateY: -180 }} transition={{ duration: 0.75 }}>
-                            <img src={ cloud } alt="" />
-                        </motion.div>
-
-                        <motion.div className='fixed right-0 -bottom-[20px] z-[3]' initial={{ x: '100%', rotateY: -180, rotateX: 180}} animate={{ x: 0, rotateY: -180, rotateX: 180 }} transition={{ duration: 0.75 }}>
-                            <img src={ cloud } alt="" />
-                        </motion.div>
-                    </>
-                }
-            </AnimatePresence>
-
-                
-
-        
-
             <div className='mask h-[calc(100vh-70px)] overflow-hidden'>
                 <Map
+                    ref={mapRef}
                     style={{ width: '100%', height: '100%' }}
                     mapboxAccessToken="pk.eyJ1IjoiYmxhY2ttYWdpazg4IiwiYSI6ImNsZ3VrcjFvdjIzaDUzY210MHF1ZW5jb3MifQ.oFMw45FSzF-cJVUbu7f7fg"
                     mapStyle="mapbox://styles/blackmagik88/clgqlrxnk00kb01pk2gz2fzhh"                
@@ -250,27 +229,22 @@ export default function MapDisplay({ isAnimate }) {
                                                     animate={{ opacity: 1, scale: 1 }}
                                                     exit={{ opacity: 0, scale: 0.8 }}
                                                     transition={{ duration: 0.4, ease: 'easeInOut'}}
-                                                    className='w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center rounded-[6px] cursor-pointer p-[6px]' 
+                                                    className='w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
                                                     style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
-                                                    onMouseLeave={() => setSelectedMarker({ id: null, data: null }) }
+                                                    // onMouseLeave={() => setSelectedMarker({ id: null, data: null }) }
                                                 >
-                                                    {/* <Link to={`/notice/${selectedMarker.data.id}`} state={{ data: selectedMarker.data }} className='border border-black rounded-[6px] h-full'>
-                                                        <div className='flex py-[12px]'>
-                                                            <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                                                            <div>
-                                                                <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
-                                                                <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
+                                                {/* { selectedMarker.data.properties.location} */}
+                                                    <div className='border border-black rounded-[6px] h-full w-full'>
+                                                        <Link to={`/notice/${selectedMarker.data.id}`}>
+
+                                                            <div className='flex py-[12px]'>
+                                                                <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
+                                                                <div>                                                
+                                                                    <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
+                                                                    <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </Link> */}
-                                                    <div className='border border-black rounded-[6px] h-full' onClick={() => handleClick(marker.id)}>
-                                                        <div className='flex py-[12px]'>
-                                                            <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                                                            <div>
-                                                                <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
-                                                                <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
-                                                            </div>
-                                                        </div>
+                                                        </Link>
                                                     </div>
                                                 </motion.div>
                                             }

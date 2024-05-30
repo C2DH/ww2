@@ -4,25 +4,37 @@ import bg from '../../assets/images/common/BG.jpg'
 import logo from '../../assets/images/common/logo.png'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
+import cloud from '../../assets/images/common/cloud.png'
+
+import { useSharedState } from "../../contexts/SharedStateProvider";
+
 
 // FRAMER
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 
+// REACT
 import { Link, Outlet } from "react-router-dom";
-import { useState } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import classNames from 'classnames'
+
+// COMPONENTS
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher'
 import Sound from '../Sound/Sound'
+import CustomLink from '../CustomLink.jsx/CustomLink'
 
 
 export default function Menu({delay = 0}) {
-
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+    const [sharedState, setSharedState] = useSharedState();
+
+    useEffect(() => {
+        setSharedState({ ...sharedState, showClouds: false, showCurtains: false });
+      }, []);
 
     return (
         <>
-            <motion.header 
+            <header 
                 initial={{ opacity: 0}}
                 animate={{ opacity: 1}}
                 transition={{ delay: delay, ease: "easeInOut" }}
@@ -48,7 +60,7 @@ export default function Menu({delay = 0}) {
                         'opacity-0': !isOpenMenu 
                     })}>
                         <li>
-                            <MenuItem path={'/path'} title={"Parcours"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
+                            <MenuItem path={'/map'} title={"Map"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
                         </li>
                         <li>
                             <MenuItem path={'/catalogue'} title={"Catalogue"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} handleMenuItemClick={() => setIsOpenMenu(false) } />
@@ -89,37 +101,60 @@ export default function Menu({delay = 0}) {
                         <li><Link to='/contact'> Contact</Link></li>
                     </ul>
                 </div>
-            </motion.header>
+            </header>
+
+            <Outlet />
             
-            <motion.div     
-                initial={{ y: '90%' }}
-                animate={isOpenMenu ? { y: "-90px" } : { y: '-50px'}}
+            
+            {/* <motion.div     
+                initial={{ y: '90%'} }
+                animate={ isOpenMenu ? { y: "-90px" } : { y: '-50px'}}
                 onAnimationComplete={() => setIsAnimationComplete(isOpenMenu ? true : false) }
                 transition={{ duration: 2, ease: "easeInOut", delay: 1 }} // Delai = durée de la vidéo et si deja visité pas de délai
-                style={{ position: 'absolute' }}
+                style={{ position: '' }}
                 className={classNames('w-full',{
-                    "h-[calc(100vh-90px)]": !isOpenMenu,
+                    "h-[calc(100vh-120px)]": !isOpenMenu,
                     "h-[90px] overflow-hidden": (isOpenMenu && isAnimationComplete)
+                    // "h-[90px] overflow-hidden": isOpenMenu
                 })}
-            >    
-                <Outlet />
-            </motion.div>
+            >     */}
+                {/* <AnimatePresence >
+                        <>
+                            <motion.div className='fixed left-0 -top-[70px] z-[3]' initial={{ x: '-100%' }} animate={{ x: 0, scale: 3 }} exit={{ x: '-100%' }} transition={{ duration: 0.75 }}>
+                                <img src={ cloud } alt="" />
+                            </motion.div>
+
+                            <motion.div className='fixed left-0 -bottom-[20px] z-[3]' initial={{ x: '-100%', rotateX: 180}} animate={{ x: 0, rotateX: 180, scale: 2 }} exit={{ x: '-100%' }} transition={{ duration: 0.75 }}>
+                                <img src={ cloud } alt="" />
+                            </motion.div>
+
+                            <motion.div className='fixed right-0 -top-[70px] z-[3]' initial={{ x: '100%', rotateY: -180}} animate={{ x: 0, rotateY: -180, scale: 2 }} exit={{ x: '100%'}} transition={{ duration: 0.75 }}>
+                                <img src={ cloud } alt="" />
+                            </motion.div>
+
+                            <motion.div className='fixed right-0 -bottom-[20px] z-[3]' initial={{ x: '100%', rotateY: -180, rotateX: 180 }} animate={{ x: 0, rotateY: -180, rotateX: 180, scale: 3 }} exit={{ x: '100%'}} transition={{ duration: 0.75 }}>
+                                <img src={ cloud } alt="" />
+                            </motion.div>
+                        </>
+                </AnimatePresence> */}
+                
+            {/* </motion.div> */}
         </>
     )
 }
 
 
 
-function MenuItem({path, title, text = "", handleMenuItemClick}) {
+export function MenuItem({path, title = "", text = "", handleMenuItemClick}) {
     return (
-        <Link to={path} onClick={handleMenuItemClick}>
+        <CustomLink to={path} onClick={handleMenuItemClick}>
             <h3>{title}</h3>
             <p>{text}</p>
-        </Link>
+        </CustomLink>
     )
 }
 
-function MenuLogo({ isOpenMenu, setIsOpenMenu }) {
+export function MenuLogo({ isOpenMenu, setIsOpenMenu }) {
     return (
         <div className='absolute top-[3px] left-[50%] -translate-x-[50%]'>
             <div>

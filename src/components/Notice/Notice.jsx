@@ -1,5 +1,6 @@
-// REACT-ROUTER-DOM
-import {useLocation, Link, useParams} from 'react-router-dom';
+// REACT 
+import { Link, useParams} from 'react-router-dom';
+import { useContext, useEffect } from 'react';
 
 // COMPONENTS
 import Player from '../Player/Player'
@@ -10,14 +11,16 @@ import { motion } from "framer-motion"
 
 // ASSETS 
 import '../../assets/scss/app.scss'
-import cloud from '../../assets/images/common/cloud.png'
-
+import next from '../../assets/images/notices/next.png'
+import prev from '../../assets/images/notices/prev.png'
 
 
 export default function Notice() {
 
     const { id } = useParams()
     console.log(id)
+
+
 
     const geojson = {
         features: [
@@ -160,47 +163,25 @@ export default function Notice() {
     };
 
     const data = geojson.features[id - 1]
-    console.log('data', data)
 
     return (
         <>
-        
-            {/** HAUT GAUCHE */}
-            <motion.div
-                className='fixed left-0 -top-[70px] z-[2]'
-                // initial={{ x: }}
-            >
-                <img src={ cloud } alt="" />
-            </motion.div>
-
-            {/** BAS DROITE */}
-            <motion.div
-                className='fixed right-0 -bottom-[20px] z-[2] rotate-180'
-                // initial={{ x: }}
-            >
-                <img src={ cloud } alt="" />
-            </motion.div>
-        
-
-            {/** BAS DROITE */}
-                        <motion.div
-                className='fixed right-0 -bottom-[20px] z-[2] rotate-180'
-                // initial={{ x: }}
-            >
-                <img src={ cloud } alt="" />
-            </motion.div>
-           
-
-
-            <div className='relative inset-0 h-[calc(100vh-70px)] mask overflow-hidden'>
+            <motion.div className='mask h-full overflow-hidden' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}}>
                 <div className='h-full relative' style={{ background: `url(${data.properties.image}) 50% / cover no-repeat` }}>
                     <div className='notice-filter absolute inset-0'></div>
 
                     <div className="container mx-auto relative">
-                        
                         <div className='pt-[55px] flex flex-col items-center'>
                             <span className='text-[20px] abril blue underline underline-offset-4 block'>{ data.properties.city }</span>
-                            <h1 className='text-[48px] blue abril pt-[12px]'>{ data.properties.location }</h1>
+                            <div className='relative'>
+                                <h1 className='text-[48px] blue abril pt-[12px]'>{ data.properties.location }</h1>
+                                <Link to={ `/notice/${parseInt(id) + 1}`} className='absolute top-[50%] -translate-[50%] -right-[100px]'>
+                                    <img src={ next } alt="next" />
+                                </Link>
+                                <Link to={ `/notice/${parseInt(id) - 1}`} className='absolute top-[50%] -translate-[50%] -left-[100px]'>
+                                    <img src={ prev } alt="previous" /> 
+                                </Link>
+                            </div>
                             <p className='text-[24px] sofia uppercase text-white border border-white p-2 mt-[10px]'>{ data.properties.description }</p>
                         </div>
 
@@ -230,7 +211,7 @@ export default function Notice() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </>
     )
 }
