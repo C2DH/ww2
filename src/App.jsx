@@ -7,7 +7,6 @@ import About from "./components/About/About";
 import Contact from "./components/Contact/Contact";
 import Credits from "./components/Credits/Credits";
 import Notice from "./components/Notice/Notice";
-import Popup from "./components/Popup/Popup";
 import Menu from "./components/Menu/Menu";
 import Terms from "./components/Terms/Terms";
 import { AnimatePresence } from 'framer-motion'
@@ -15,6 +14,8 @@ import { useEffect, useState } from 'react'
 import { useSharedState } from './contexts/SharedStateProvider'
 import Clouds from './components/Clouds/Clouds'
 import Curtains from './components/Curtains/Curtains'
+import Note from "./components/Note/Note";
+import Source from "./components/Source/Source";
 
 export default function App() {
 
@@ -46,7 +47,8 @@ export default function App() {
                         <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
                         <Route path='/spacetime-map' element={ <SpaceTimeMap /> }/>
                         <Route path='/notice/:id' element={ <Notice /> }/>
-                        <Route path='/note/:id' element={ <Popup /> }/>
+                        <Route path='/note/:id' element={ <Note /> }/>
+                        <Route path='/source/:id' element={ <Source /> }/>
                         <Route path='/credits' element={ <Credits /> }/>
                         <Route path='/about' element={ <About /> }/>
                         <Route path='/terms' element={ <Terms /> }/>

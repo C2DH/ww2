@@ -34,13 +34,16 @@ export default function Menu({delay = 0}) {
 
     return (
         <>
+        <div className='h-screen overflow-hidden'>
+
+        
             <header 
                 initial={{ opacity: 0}}
                 animate={{ opacity: 1}}
                 transition={{ delay: delay, ease: "easeInOut" }}
                 style={{ background: `url(${bg}) 50% / cover no-repeat`}}
-                className={classNames('transition-all duration-[2000ms]', {
-                    'h-[100vh] overflow-hidden': isOpenMenu,
+                className={classNames('transition-all duration-[2000ms] overflow-hidden', {
+                    'h-[100vh]': isOpenMenu,
                     'h-[120px]': !isOpenMenu
                 })} 
             >
@@ -139,6 +142,7 @@ export default function Menu({delay = 0}) {
                 </AnimatePresence> */}
                 
             {/* </motion.div> */}
+            </div>
         </>
     )
 }

@@ -113,43 +113,42 @@ export default function Catalogue() {
 
 
     return (
-        <motion.div initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}}>
-            <div style={{ background: `url(${ bgPaper }) 50% / cover no-repeat`}} className=''>
-                <div className='container mx-auto'>
-                    <div className='grid grid-cols-12 pt-[20px]'>
-                        <div className="col-span-8 pt-[15px]">
-                            <h1 className='abril text-[70px]'>Catalogue</h1>
-                            <p className='pt-[15px] text-[28px] mb-[20px]'>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.</p>                    
+                <div style={{ background: `url(${ bgPaper }) 50% / cover no-repeat`}} className='min-h-[calc(100vh-120px)]'>
+                    <div className='container mx-auto'>
+                        <div className='grid grid-cols-12 pt-[20px]'>
+                            <div className="col-span-8 pt-[15px]">
+                                <h1 className='abril text-[70px]'>Catalogue</h1>
+                                <p className='pt-[15px] text-[28px] mb-[20px]'>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.</p>                    
+                            </div>
+
+                            <div className="col-span-4 border-l border-black mt-[70px] mb-[45px] pl-[20px] flex flex-col justify-between">
+                                <div className='flex items-center'>
+                                    <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 1</span>   
+                                    <progress value={readTheme1} />
+                                </div>
+
+                                <div className='flex items-center'>
+                                    <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 2</span>   
+                                    <progress value={readTheme2} />
+                                </div>
+
+                                <div className='flex items-center'> 
+                                    <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 3</span>   
+                                    <progress value={readTheme3} />
+                                </div>
+                                <div className='flex items-center'>
+                                    <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 4</span>   
+                                    <progress value={readTheme4} />
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="col-span-4 border-l border-black mt-[70px] mb-[45px] pl-[20px] flex flex-col justify-between">
-                            <div className='flex items-center'>
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 1</span>   
-                                <progress value={readTheme1} />
-                            </div>
+                        
+                        <Accordion items={ items }/>
 
-                            <div className='flex items-center'>
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 2</span>   
-                                <progress value={readTheme2} />
-                            </div>
-
-                            <div className='flex items-center'> 
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 3</span>   
-                                <progress value={readTheme3} />
-                            </div>
-                            <div className='flex items-center'>
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 4</span>   
-                                <progress value={readTheme4} />
-                            </div>
-                        </div>
                     </div>
-
-                    
-                    <Accordion items={ items }/>
-
                 </div>
-            </div>
-        </motion.div>
+       
         
     )
 }
