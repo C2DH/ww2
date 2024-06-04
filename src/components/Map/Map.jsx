@@ -34,7 +34,6 @@ export default function MapDisplay({ isAnimate }) {
         //     body.style.overflow = 'hidden'
         // }
 
-        console.log(selectedMarker)
 
     },[selectedMarker])
 

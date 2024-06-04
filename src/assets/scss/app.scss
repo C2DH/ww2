@@ -117,3 +117,17 @@ video {
     background: linear-gradient(180deg, rgba(0, 194, 255, 0.2) 0%, rgba(0, 163, 255, 0) 14.5%), linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
 }
 
+
+
+
+
+// IMAGE ZOOM 
+.react-transform-component {
+    width: unset !important;
+    height: unset !important;
+}
+
+.react-transform-wrapper {
+    width: unset !important;
+    height: unset !important;
+}

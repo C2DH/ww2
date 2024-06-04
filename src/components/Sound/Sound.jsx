@@ -8,7 +8,6 @@ export default function Sound() {
             <FontAwesomeIcon 
                 icon={ faVolume } 
                 style={{ fontSize: '26px', marginLeft: '10px', cursor: 'pointer' }}
-                onClick={() => console.log('click')}    
             />
         </div>
     )

@@ -21,7 +21,6 @@ export default function App() {
 
     const location = useLocation();
     const [sharedState, setSharedState] = useSharedState();
-    console.log(sharedState)
     const [firstLaunch, setFirstLaunch] = useState(true);
 
     useEffect(() => {

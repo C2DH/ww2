@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlassMinus , faMagnifyingGlassPlus, faArrowLeftLongToLine } from '@fortawesome/pro-regular-svg-icons'
 import { Link } from 'react-router-dom'
 
+import ImageZoom from '../ImageZoom/ImageZoom'
+
 
 export default function Source() {
     return (
@@ -18,22 +20,7 @@ export default function Source() {
                     <div className="col-span-9 pt-[80px] border-t">
                         <div className="grid grid-cols-9">
                             <div className="col-span-8 pb-[70px]">
-                                <img src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-7.jpg" alt="" className='w-full max-h-[750px] object-cover' style={{ width: '100%'}}/>
-
-                                <div className='flex justify-center pt-[20px]'>
-                                    <div className="flex cursor-pointer">
-                                        <div className='border border-w' style={{ borderTopLeftRadius: '6px', borderBottomLeftRadius: '6px'}}>
-                                            <FontAwesomeIcon icon={faMagnifyingGlassMinus} className='text-[18px] text-white px-[15px] py-[12px]'/>
-                                        </div>
-                                        <div className='uppercase text-[20px] text-white flex items-center border-t border-b border-white px-[12px]'>
-                                            Reset
-                                        </div>
-                                        <div className='border border-w' style={{ borderTopRightRadius: '6px', borderBottomRightRadius: '6px'}}>
-                                            <FontAwesomeIcon icon={faMagnifyingGlassPlus} className='text-[18px] text-white px-[15px] py-[12px]' />
-                                        </div>
-                                    </div>
-                                </div>
-
+                                <ImageZoom image={'https://images.unsplash.com/photo-1535262412227-85541e910204?q=80&w=4169&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}/>
                             </div>
                         </div>
                     </div>

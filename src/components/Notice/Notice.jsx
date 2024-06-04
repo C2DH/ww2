@@ -18,9 +18,6 @@ import prev from '../../assets/images/notices/prev.png'
 export default function Notice() {
 
     const { id } = useParams()
-    console.log(id)
-
-
 
     const geojson = {
         features: [

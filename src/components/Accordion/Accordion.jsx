@@ -17,13 +17,11 @@ export default function Accordion({ items }) {
 
     // Calculer la taille du bloc
     const getContentHeight = (index) => {
-        console.log(contentRefs)
         return contentRefs.current[index] ? contentRefs.current[index].scrollHeight : '0px'
     }
 
 
     const handlePopup = (id) => {
-        console.log('id',id)
         navigate(`/note/${id}`)
     } 
 
