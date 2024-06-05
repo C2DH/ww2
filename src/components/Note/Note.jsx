@@ -1,4 +1,4 @@
-import bgNote from '../../assets/images/common/bg-note.png'
+import bgPaper from '../../assets/images/common/bg-paper.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLongToLine } from '@fortawesome/pro-regular-svg-icons'
 import { Link } from 'react-router-dom'
@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 
 export default function Note() {
     return (
-        <div style={{ backgroundImage: `url(${bgNote})`, backgroundSize: 'cover'}}>
+        <div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}}>
             <div className="container mx-auto pt-[50px] relative">
 
                 <Link to={'/catalogue'} className='absolute top-[65px] -left-[80px] text-[30px]'>

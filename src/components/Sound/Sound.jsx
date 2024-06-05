@@ -3,7 +3,7 @@ import { faVolume } from '@fortawesome/pro-light-svg-icons'
 
 export default function Sound() {
     return (
-        <div>
+        <div className='hidden md:block'>
             <span className="text-[20px]">SOUND ON</span>
             <FontAwesomeIcon 
                 icon={ faVolume } 

@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import bgPaper from '../../assets/images/common/paper.png'
-import { motion } from 'framer-motion'
+import bgPaper from '../../assets/images/common/bg-paper.png'
 import Accordion from '../Accordion/Accordion'
 
 export default function Catalogue() {

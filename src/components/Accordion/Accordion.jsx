@@ -29,7 +29,7 @@ export default function Accordion({ items }) {
         <div className="themes">
             {items.map((item, index) => (
                 <div key={ index }>
-                    <div className={classNames("flex justify-between border-t border-black w-full hover:bg-[#6EDFFB]/[0.1] transition-all duration-[750ms] cursor-pointer", {
+                    <div className={classNames("flex justify-between border-t border-black w-full hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] cursor-pointer", {
                         'border-b': index === currentTheme
                     })} onClick={() => toggleAccordion(index)} >
                         <div className="pt-[10px]">

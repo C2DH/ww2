@@ -10,7 +10,7 @@ export default function Source() {
     return (
         <div className='flex h-[calc(100vh-120px)]'>
 
-        <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover'}} className='w-full'>
+        <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='w-full'>
             <div className="container mx-auto relative">
                 <Link to={'/catalogue'} className='absolute top-[65px] -left-[80px] text-[30px] text-white'>
                     <FontAwesomeIcon icon={faArrowLeftLongToLine}  />

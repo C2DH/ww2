@@ -1,6 +1,6 @@
 // ASSETS
 import './Menu.scss'
-import bg from '../../assets/images/common/BG.jpg'
+import bgBlack from '../../assets/images/common/bg-black.jpg'
 import logo from '../../assets/images/common/logo.png'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
@@ -34,14 +34,14 @@ export default function Menu({delay = 0}) {
 
     return (
         <>
-        <div className='h-screen overflow-hidden'>
+        {/* <div className='h-screen overflow-hidden'> */}
 
         
             <header 
                 initial={{ opacity: 0}}
                 animate={{ opacity: 1}}
                 transition={{ delay: delay, ease: "easeInOut" }}
-                style={{ background: `url(${bg}) 50% / cover no-repeat`}}
+                style={{ background: `url(${bgBlack}) 50% / cover no-repeat`}}
                 className={classNames('transition-all duration-[2000ms] overflow-hidden', {
                     'h-[100vh]': isOpenMenu,
                     'h-[120px]': !isOpenMenu
@@ -106,7 +106,7 @@ export default function Menu({delay = 0}) {
                 </div>
             </header>
 
-            <Outlet />
+            {/* <Outlet /> */}
             
             
             {/* <motion.div     
@@ -142,7 +142,7 @@ export default function Menu({delay = 0}) {
                 </AnimatePresence> */}
                 
             {/* </motion.div> */}
-            </div>
+            {/* </div> */}
         </>
     )
 }

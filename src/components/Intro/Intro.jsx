@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 // ASSETS
-import BG from '../../assets/images/common/BG.jpg'
+import bgBlack from '../../assets/images/common/bg-black.jpg'
 import logo from '../../assets/images/common/logo.png'
 
 // FRAMER
@@ -32,7 +32,7 @@ export default function Intro({}) {
                     animate={{ opacity: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 1, delay: 3, ease: 'easeInOut' }}
-                    style={{ background: `url(${BG}) 50% / cover no-repeat` }} className='h-[100vh] absolute inset-0'>
+                    style={{ background: `url(${bgBlack}) 50% / cover no-repeat` }} className='h-[100vh] absolute inset-0'>
                     <div className='flex flex-col items-center pt-[40px]'>
                         <motion.img initial={{ opacity: 1}} animate={{ opacity: 0 }} transition={{ duration: 1, delay: 4 }} src={ logo } alt="Logo World War 2" className='w-[45%]' />
                         <div className='text-center text-white uppercase antonio w-[50%]'>
