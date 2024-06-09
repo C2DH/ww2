@@ -8,7 +8,7 @@ export default function Dropdown({ items, text }) {
     const [isOpen, setIsOpen] = useState(false)
 
     return (
-        <div onClick={() => setIsOpen(!isOpen) } className={classNames("absolute py-[5px] px-[10px] border border-black cursor-pointer w-full rounded-[4px] bg-[#EFEFED] transition-all duration-[750ms]", {
+        <div onClick={() => setIsOpen(!isOpen) } className={classNames("absolute z-[6] overflow-hidden py-[5px] px-[10px] border border-black cursor-pointer w-full rounded-[4px] bg-[#EFEFED] transition-all duration-[750ms]", {
             'max-h-[40px]': !isOpen,
             'max-h-[50vh]': isOpen
             })}

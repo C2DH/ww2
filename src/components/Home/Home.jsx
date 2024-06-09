@@ -1,8 +1,12 @@
 // COMPONENTS
 import { useLocation } from "react-router-dom"
 import Intro from "../Intro/Intro"
-import MapDisplay from "../Map/Map"
 import { useEffect, useState } from "react"
+import MapBox from "../MapBox/MapBox";
+
+const apiKeyMapbox = import.meta.env.VITE_API_KEY_MAPBOX
+const apiStyleMapbox = import.meta.env.VITE_API_STYLE_MAPBOX
+
 
 export default function Home() {
     
@@ -29,7 +33,7 @@ export default function Home() {
     return isLoaded && (
         <>      
             { showIntro && <Intro /> }
-            <MapDisplay isAnimate={ showIntro } />
+            <MapBox token={ apiKeyMapbox } style={ apiStyleMapbox }/>
         </>
     )
 }

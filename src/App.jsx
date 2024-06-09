@@ -48,7 +48,6 @@ export default function App() {
             <Routes location={location} key={location.pathname}>
                 <Route path='/' element={ <Layout/>} >
                     <Route index element={ <Home /> }/>
-                    <Route path='/map' element={ <Map /> }/>
                     <Route path='/catalogue' element={ <Catalogue /> }/>
                     <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
                     <Route path='/historical-index' element={ <HistoricalIndex /> }/>

@@ -27,8 +27,8 @@ export default function Bibliography() {
 
 
             {/** Content */}
-            <div className="lg:flex flex-grow lg:overflow-scroll lg:my-[40px] pb-[30px] lg:pb-0">
-                <div className="grid grid-cols-12 gap-[20px]">
+            <div className="lg:flex flex-grow lg:overflow-scroll lg:mb-[40px] pb-[30px] lg:pb-0">
+                <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
                     <CardLink />
                     <CardLink />
                     <CardLink />

@@ -31,8 +31,8 @@ export default function HistoricalIndex() {
                 </div>
                 
                 {/** Content */}
-                <div className="lg:flex flex-grow lg:overflow-scroll lg:my-[40px] pb-[30px] lg:pb-0">
-                    <div className="grid grid-cols-12 gap-[20px]">
+                <div className="lg:flex flex-grow lg:overflow-scroll lg:mb-[40px] pb-[30px] lg:pb-0">
+                    <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
                         <CardImageText 
                             img={'https://source.unsplash.com/random'} 
                             tag={'aliquam ispsips'}

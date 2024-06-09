@@ -7,6 +7,8 @@ import CustomLink from '../CustomLink.jsx/CustomLink';
 
 import cloud from '../../assets/images/common/cloud.png?w=500;700;900;1200;1900&format=webp&as=srcset'
 
+
+
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
 
@@ -16,7 +18,7 @@ import Map, { Marker } from 'react-map-gl';
 import { MenuItem } from '../Menu/Menu';
 
 
-export default function MapDisplay({ isAnimate }) {
+export default function MapBox({ token, style }) {
 
     const mapRef = useRef(null)
     const navigate = useNavigate()
@@ -196,8 +198,8 @@ export default function MapDisplay({ isAnimate }) {
                 <Map
                     ref={mapRef}
                     style={{ width: '100%', height: '100%' }}
-                    mapboxAccessToken="pk.eyJ1IjoiYmxhY2ttYWdpazg4IiwiYSI6ImNsZ3VrcjFvdjIzaDUzY210MHF1ZW5jb3MifQ.oFMw45FSzF-cJVUbu7f7fg"
-                    mapStyle="mapbox://styles/blackmagik88/clgqlrxnk00kb01pk2gz2fzhh"                
+                    mapboxAccessToken={token}
+                    mapStyle={style}              
                     initialViewState={{
                         longitude: lng,
                         latitude: lat,
