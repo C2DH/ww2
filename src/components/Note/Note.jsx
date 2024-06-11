@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 
 export default function Note() {
     return (
-        <div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}}>
+        <div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} >
             <div className="container mx-auto pt-[50px] relative">
 
                 <Link to={'/catalogue'} className='absolute top-[65px] -left-[80px] text-[30px]'>

@@ -163,7 +163,7 @@ export default function Notice() {
 
     return (
         <>
-            <motion.div className='mask h-full overflow-hidden' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}}>
+            <motion.div className='mask h-[calc(100vh-70px)] overflow-hidden absolute top-[70px]' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}} >
                 <div className='h-full relative' style={{ background: `url(${data.properties.image}) 50% / cover no-repeat` }}>
                     <div className='notice-filter absolute inset-0'></div>
 

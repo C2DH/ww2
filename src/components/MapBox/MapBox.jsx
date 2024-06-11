@@ -1,24 +1,18 @@
 // ASSETS
-import pinMarker from '../../assets/images/common/marker.svg'
-import arrowMarker from '../../assets/images/common/arrow-mapbox.png'
-import { useContext, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
-import CustomLink from '../CustomLink.jsx/CustomLink';
 
+import { useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import cloud from '../../assets/images/common/cloud.png?w=500;700;900;1200;1900&format=webp&as=srcset'
-
-
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
-import Map, { Marker } from 'react-map-gl';
-import { MenuItem } from '../Menu/Menu';
+import Map, { Marker, Source, Layer } from 'react-map-gl';
 
 
-export default function MapBox({ token, style }) {
+export default function MapBox({ token, style, items }) {
 
     const mapRef = useRef(null)
     const navigate = useNavigate()
@@ -27,159 +21,7 @@ export default function MapBox({ token, style }) {
     const [zoom, setZoom] = useState(9);
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
 
-
-    useEffect(() => {
-
-        // if (showClouds) {
-        //     const body = document.querySelector('body')
-        //     body.style.height = '100vh'
-        //     body.style.overflow = 'hidden'
-        // }
-
-
-    },[selectedMarker])
-
-    const geojson = {
-        features: [
-            {
-                id: 1,
-                geometry: {
-                    coordinates: [49.48056, 6.0875]
-                },
-                properties: {
-                    place: 'Dudelange',
-                    location: 'Clinique Saint Joseph',
-                    description: 'Lieu de ravitaillement des réfugiés de Dudelange',
-                    image: 'https://images.unsplash.com/photo-1590337318473-f1e81866c60c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: "video-1.mp4",
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            },
-            {
-                id: 2,
-                geometry: {
-                    coordinates: [49.6112768, 6.129799]
-                },
-                properties: {
-                    place: 'Luxembourg',
-                    location: 'Clinique Saint Antoine',
-                    description: 'Lieu de ravitaillement des réfugiés de Luxembourg',
-                    image: 'https://images.unsplash.com/photo-1588336899284-950764f07147?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: "video-2.mp4"
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            },
-            {
-                id: 3,
-                geometry: {
-                    coordinates: [49.4959628, 5.9850306]
-                },
-                properties: {
-                    place: 'Esch-sur-Alzette',
-                    location: 'Salle des sports',
-                    description: 'Lieu de ravitaillement des réfugiés de Esch-sur-Alzette',
-                    image: 'https://images.unsplash.com/photo-1590337318156-73e24cd1e36b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: 'video-1.mp4'
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            },
-            {
-                id: 4,
-                geometry: {
-                    coordinates: [49.9666628, 5.9333296]
-                },
-                properties: {
-                    place: 'Wiltz',
-                    location: 'Hopital Lorem',
-                    description: 'Lieu de ravitaillement des réfugiés de Wiltz',
-                    image: 'https://images.unsplash.com/photo-1593131540982-57778192fc21?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: 'video-2.mp4'
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            },
-            {
-                id: 5,
-                geometry: {
-                    coordinates: [50.2994, 5.5119]
-                },
-                properties: {
-                    place: 'Grande-Bretagne',
-                    location: 'Hopital Lorem',
-                    description: 'Lieu de ravitaillement des réfugiés de Wiltz',
-                    image: 'https://images.unsplash.com/photo-1593131540982-57778192fc21?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: 'video-2.mp4'
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            }
-        ]
-    };
-
-
+    const { pathname } = useLocation()
 
     // function handleClick(id) {
     //     mapRef.current?.flyTo({ zoom: 1, duration: 2000 })
@@ -190,7 +32,8 @@ export default function MapBox({ token, style }) {
     //     }, 2000)
     // }
 
-    
+    console.log(pathname === '/')
+
     return (   
     
         <>
@@ -210,9 +53,18 @@ export default function MapBox({ token, style }) {
                     dragRotate={true} // 3D Relief : désactiver 
                     scrollZoom={true} // Désactiver Zoom scroll
                 >
-                    { geojson.features.map((marker, index) => {
+
+                    {/** Carte Spatio-temporelle geoportail */}
+                    { pathname === "/spacetime-map" &&
+                        <Source id="geo" type="raster-dem" url='https://wms.geoportail.lu/public_map_layers/service/220?service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=220&bbox={bbox-epsg-3857}&format=image/png&styles'>
+                            <Layer type="hillshade" id="layer_id" source="geo" />
+                        </Source>
+                    }
+        
+
+                    { items.map((marker, index) => {
                         return (
-                        
+
                             <Marker 
                                 key={ index } 
                                 longitude={ marker.geometry.coordinates[1] } 
@@ -222,6 +74,7 @@ export default function MapBox({ token, style }) {
                                 <div className='relative'> 
                                     <img src={ marker.properties.place === 'Grande-Bretagne' ? arrowMarker : pinMarker } alt="marker" className="cursor-pointer" onMouseOver={() => setSelectedMarker({ id: index, data: marker }) }/>
 
+                                    {/** Popup Home */}
                                     { marker.properties.place !== 'Grande-Bretagne' ?
                                         <AnimatePresence>
                                             { selectedMarker && selectedMarker.id == index &&
@@ -232,9 +85,8 @@ export default function MapBox({ token, style }) {
                                                     transition={{ duration: 0.4, ease: 'easeInOut'}}
                                                     className='w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
                                                     style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
-                                                    // onMouseLeave={() => setSelectedMarker({ id: null, data: null }) }
+                                                    onMouseLeave={() => setSelectedMarker({ id: null, data: null }) }
                                                 >
-                                                {/* { selectedMarker.data.properties.location} */}
                                                     <div className='border border-black rounded-[6px] h-full w-full'>
                                                         <Link to={`/notice/${selectedMarker.data.id}`}>
 
