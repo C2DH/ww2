@@ -290,12 +290,12 @@ const MapBox = ({items, state}) => {
                                         style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
                                         onMouseLeave={() => setSelectedMarker({ id: null, data: null }) }
                                     >
-                                        <div className='border border-black rounded-[6px] h-full w-full'>
+                                        <div className='border border-black rounded-[6px] h-full w-full overflow-scroll'>
                                             <Link to={`/notice/${selectedMarker.data.id}`}>
 
                                                 <div className='flex py-[12px]'>
                                                     <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                                                    <div>                                                
+                                                    <div className='pr-3'>                                                
                                                         <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
                                                         <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
                                                     </div>
@@ -316,32 +316,96 @@ const MapBox = ({items, state}) => {
 }
 
 
+// const MultiRangeSelector = () => {
+//     const dates = ["1939", "1940", "1941", "1942", "1943", "1944", "1945", "1946"];
+//     const months = ["01", "04", "07", "10"];
+//     const [minValue, setMinValue] = useState(0);
+//     const [maxValue, setMaxValue] = useState(dates.length - 1);
+//     const [minCaption, setMinCaption] = useState(dates[0]);
+//     const [maxCaption, setMaxCaption] = useState(dates[dates.length - 1]);
+
+//     const handleInput = (e) => {
+//         setMinValue(e.minValue);
+//         setMaxValue(e.maxValue);
+//         setMinCaption(dates[e.minValue]);
+//         setMaxCaption(dates[e.maxValue]);
+//     };
+
+
+//     const begin = new Date(`${dates[0]}-${months[0]}-01`)
+//     const end = new Date(`${dates.length - 1}-${months[0]}-01`)
+
+//     console.log('begin',begin)
+
+
+//     return (
+//         <div>
+//             <MultiRangeSlider
+//                 labels={dates}
+//                 min={begin}
+//                 max={end}
+//                 minValue={begin}
+//                 maxValue={end}
+//                 step={1}
+//                 onInput={handleInput}
+//             />
+//         </div>
+//     );
+// };
+
+
+
 const MultiRangeSelector = () => {
-    const dates = ["1939", "1940", "1941", "1942", "1943", "1944", "1945", "1946"];
-    const [minValue, setMinValue] = useState(0);
-    const [maxValue, setMaxValue] = useState(dates.length - 1);
-    const [minCaption, setMinCaption] = useState(dates[0]);
-    const [maxCaption, setMaxCaption] = useState(dates[dates.length - 1]);
 
-    const handleInput = (e) => {
-        setMinValue(e.minValue);
-        setMaxValue(e.maxValue);
-        setMinCaption(dates[e.minValue]);
-        setMaxCaption(dates[e.maxValue]);
+    const monthNames = ["Jan", "Apr", "Jul", "Oct"]
+    const labels = ["1939", "", "", "", "1940", "", "", "", "1941", "", "", "", "1942", "", "", "", "1943", "", "", "", "1944", "", "", "", "1945", "", "", "", "1946"]
+    
+    const generateDateLabels = (startYear, endYear) => {
+        let dates = [];
+        
+        for (let year = startYear; year <= endYear; year++) {
+            for (let month = 0; month < 4; month++) {
+                if (year === endYear && month > 0) break;
+                const monthName = monthNames[month];
+                dates.push(`${monthName}-${year}`)
+            }
+        }
+        return dates;
+    }
+    
+    
+    const dateGenerated = generateDateLabels(1939, 1946)
+    
+    const [minValue, setMinValue] = useState(0)
+    const [maxValue, setMaxValue] = useState(dateGenerated.length - 1)
+
+    const [minDateCaption, setMinDateCaption] = useState(dateGenerated[0])
+    const [maxDateCaption, setMaxDateCaption] = useState( dateGenerated[dateGenerated.length - 1])
+    
+    const handleDateChange = (e) => {
+        setMinDateCaption(dateGenerated[e.minValue])
+        setMaxDateCaption(dateGenerated[e.maxValue])
+    
+        setMinValue(e.minValue)
+        setMaxValue(e.maxValue)
     };
-
+    
     return (
-        <div>
-            <MultiRangeSlider
-                labels={dates}
-                min={0}
-                max={dates.length - 1}
-                minValue={minValue}
-                maxValue={maxValue}
-                step={1}
-                onInput={handleInput}
-            />
-        </div>
-    );
-};
+    
+        <MultiRangeSlider
+            labels={labels}
+            min={0}
+            max={dateGenerated.length - 1}
+            minValue={0}
+            maxValue={dateGenerated.length - 1}
+            step={1}
+            minCaption={minDateCaption}
+            maxCaption={maxDateCaption}
+            onInput={handleDateChange}
+        />
+    )
+}
+
+
+
 
