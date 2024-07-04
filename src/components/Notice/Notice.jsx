@@ -202,8 +202,8 @@ export default function Notice() {
                             </div>
 
                             <div className="col-span-2 col-start-11 pt-[20px]">
-                                <Link to={'/historian-workshop'} className='block uppercase abril text-[22px] text-white'>sources</Link>
-                                <Link to={'/historian-workshop'} className='block uppercase abril text-[22px] text-white pt-[22px]'>index historique</Link>
+                                <Link to={'/sources'} className='block uppercase abril text-[22px] text-white'>sources</Link>
+                                <Link to={'/historical-index'} className='block uppercase abril text-[22px] text-white pt-[22px]'>index historique</Link>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { truncateText } from "../../lib/truncate";
 
-export default function CardImageText({ img, tag = "", title = "", text, truncate = 80 }) {
+export default function CardImageText({ img, tag = "", title = "", text, type = "", truncate = 80 }) {
     return (
         <Link className="col-span-12 md:col-span-6 xl:col-span-4 border border-black rounded-[5px] p-[10px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow">
             <div className="grid grid-cols-4 gap-x-[20px]">
@@ -12,6 +12,8 @@ export default function CardImageText({ img, tag = "", title = "", text, truncat
                     { tag &&
                         <span className='block text-[20px] pt-[20px] lg:pt-0 font-light'># { tag }</span>
                     }
+
+                    {type}
 
                     { title &&
                         <h2 className='uppercase py-[5px] abril text-[18px]'>{ title }</h2>

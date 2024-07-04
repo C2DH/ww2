@@ -297,7 +297,6 @@ video {
     .caption {
         display: none!important;
     }
-
 }
 
 
@@ -306,4 +305,37 @@ video {
     width: 100%;
     background: rgb(71,93,169);
     background: linear-gradient(0deg, rgba(71,93,169,1) 0%, rgba(71,93,169,0) 100%);
+}
+
+.icon-arrow {
+    width: 25px;
+    height: 1.5px;
+    background: black;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+
+.icon-arrow::before,
+.icon-arrow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15px;
+    height: 1.5px;
+    background: black;
+}
+
+.icon-arrow::before {
+    transform: rotate(45deg);
+    transform-origin: right bottom;
+}
+
+.icon-arrow::after {
+    transform: rotate(-45deg);
+    transform-origin: right top;
+}
+
+.button-arrow:hover .icon-arrow {
+    width: 50px;
 }

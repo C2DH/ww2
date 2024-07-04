@@ -21,7 +21,7 @@ export default function HistorianWorkshop() {
                 <div className="container mx-auto">
                     <div className="grid grid-cols-12"> 
                         <div className="col-span-12">
-                            {/* <motion.div className='absolute' initial={{ y: '150%'}} animate={{ y: 0 }} transition={{ duration: 0.75, delay: 1 }}>
+                            <motion.div className='absolute' initial={{ y: '150%'}} animate={{ y: 0 }} transition={{ duration: 0.75, delay: 1 }}>
                                 <img src={img1} alt="" />
                             </motion.div>
 
@@ -47,9 +47,9 @@ export default function HistorianWorkshop() {
 
                             <motion.div className="absolute" initial={{ x: '-150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 7 }}>
                                 <img src={img7} alt="" />
-                            </motion.div> */}
+                            </motion.div>
 
-                            <motion.div className="absolute" initial={{ x: '150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 1 }}>
+                            <motion.div className="absolute" initial={{ x: '150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 8 }}>
                                 <div className='relative'>
                                     <img src={img8} alt="" />
                                     <div className='absolute inset-0'>
