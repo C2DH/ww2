@@ -32,7 +32,6 @@ export default function MapBox({ token, style, items }) {
     //     }, 2000)
     // }
 
-    console.log(pathname === '/')
 
     return (   
     
@@ -55,11 +54,11 @@ export default function MapBox({ token, style, items }) {
                 >
 
                     {/** Carte Spatio-temporelle geoportail */}
-                    { pathname === "/spacetime-map" &&
+                    {/* { pathname === "/spacetime-map" &&
                         <Source id="geo" type="raster-dem" url='https://wms.geoportail.lu/public_map_layers/service/220?service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=220&bbox={bbox-epsg-3857}&format=image/png&styles'>
                             <Layer type="hillshade" id="layer_id" source="geo" />
                         </Source>
-                    }
+                    } */}
         
 
                     { items.map((marker, index) => {

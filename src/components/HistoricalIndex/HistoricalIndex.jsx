@@ -8,7 +8,24 @@ import { useEffect, useState } from 'react';
 export default function HistoricalIndex() {
 
     const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus', 'Test', 'Bunker', 'ww2']
-    const types = ['Évènements', 'Personnes', 'Lieux', 'Bâtiments']
+    const types = [
+        {
+            category: "Évènements",
+            number: 7
+        },
+        {
+            category: "Personnes",
+            number: 25
+        },
+        {
+            category: "Lieux",
+            number: 14
+        },
+        {
+            category: "Bâtiments",
+            number: 6
+        }
+    ]
 
     const [ filters, setFilters ] = useState({
         types: [], tags: []
@@ -24,14 +41,16 @@ export default function HistoricalIndex() {
                 tag: tags[Math.floor(Math.random() * tags.length)],
                 title: 'Lorem ipsum dolor sit amet',
                 text: 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien.',
-                type: types[Math.floor(Math.random() * types.length)]
+                type: types[Math.floor(Math.random() * types.length)].category
             })
         }
         return arrayContent
     }
 
-
+    
+    
     const items = generateContent()
+    console.log(items)
 
     const filteredItems = items.filter(item => {
             if (filters.types.length === 0) {
@@ -56,11 +75,13 @@ export default function HistoricalIndex() {
         }
     }
 
+    console.log(filters)
+
     return (
             
         <LayoutHistorianWorkshop pageTitle={'Index historique'}>
 
-            <HeaderHistorianWorkshop />
+            <HeaderHistorianWorkshop filters={types} />
 
             {/** Filters */}
             <div className="hidden lg:block mt-[40px]">

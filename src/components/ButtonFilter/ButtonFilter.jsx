@@ -4,7 +4,7 @@ export default function ButtonFilter({ title, number, type, handleClick, selecte
     return (
         <button 
             className={classNames('btn-filter uppercase pl-[10px] pr-[20px] py-[5px] border border-black text-[24px] rounded-[4px] relative mr-[35px]', {
-                'bg-black text-white': selected.includes(title)
+                // 'bg-black text-white': selected.includes(title)
             })} 
             onClick={() => handleClick() }>
             {title}

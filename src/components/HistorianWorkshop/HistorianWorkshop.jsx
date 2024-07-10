@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import bgBlack from '../../assets/images/common/bg-black.jpg'
+import bgHistorian from '../../assets/images/historianWorkshop/bg-historian.png'
 
 // Assets
 import img1 from '../../assets/images/historianWorkshop/img-1.png'
@@ -10,14 +11,13 @@ import img5 from '../../assets/images/historianWorkshop/img-5.png'
 import img6 from '../../assets/images/historianWorkshop/img-6.png'
 import img7 from '../../assets/images/historianWorkshop/img-7.png'
 import img8 from '../../assets/images/historianWorkshop/img-8.png'
-import elements from '../../assets/images/historianWorkshop/elements.png'
 import { Link } from 'react-router-dom'
 
 export default function HistorianWorkshop() {
     return (
-
         // <motion.div initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}}>
-            <div style={{ backgroundImage: `url(${bgBlack})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='w-full h-[calc(100vh-120px)] overflow-hidden'>
+        <>
+            <div style={{ backgroundImage: `url(${bgBlack})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='hidden lg:block w-full h-[calc(100vh-120px)] overflow-hidden'>
                 <div className="container mx-auto">
                     <div className="grid grid-cols-12"> 
                         <div className="col-span-12">
@@ -26,32 +26,32 @@ export default function HistorianWorkshop() {
                             </motion.div>
 
                             <motion.div className="absolute" initial={{ y: '150%'}} animate={{ y: 0 }} transition={{ duration: 0.75, delay: 2 }}>
-                                <img src={img2} alt="" />
+                                <img src={img2} alt=""  />
                             </motion.div>
 
                             <motion.div className="absolute" initial={{ x: '150%' }} animate={{ x: 0 }} transition={{ duration: 0.75, delay: 3 }}>
-                                <img src={img3} alt="" />
+                                <img src={img3} alt=""  />
                             </motion.div>
 
                             <motion.div className="absolute" initial={{ x: '-150%' }} animate={{ x: 0 }} transition={{ duration: 0.75, delay: 4 }}>
-                                <img src={img4} alt="" />
+                                <img src={img4} alt=""  />
                             </motion.div>
 
                             <motion.div className="absolute" initial={{ x: '-150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 5 }}>
-                                <img src={img5} alt="" />
+                                <img src={img5} alt=""  />
                             </motion.div>
 
                             <motion.div className="absolute" initial={{ x: '150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 6 }}>
-                                <img src={img6} alt="" />
+                                <img src={img6} alt=""  />
                             </motion.div>
 
                             <motion.div className="absolute" initial={{ x: '-150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 7 }}>
-                                <img src={img7} alt="" />
+                                <img src={img7} alt=""  />
                             </motion.div>
 
                             <motion.div className="absolute" initial={{ x: '150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 8 }}>
                                 <div className='relative'>
-                                    <img src={img8} alt="" />
+                                    <img src={img8} alt=""  />
                                     <div className='absolute inset-0'>
                                         <svg width="1432" height="946" viewBox="0 0 1432 946" fill="none" xmlns="http://www.w3.org/2000/svg">
 
@@ -106,6 +106,21 @@ export default function HistorianWorkshop() {
                     </div>
                 </div>
             </div>
+
+            <div style={{ backgroundImage: `url(${bgHistorian})`, backgroundSize: 'cover', backgroundRepeat: 'repeat'}} className='lg:hidden h-[calc(100vh-120px)] px-[20px] sm:px-0'>
+                <div className="container mx-auto">
+                    <h1 className='text-[40px] abril blue pt-[40px] w-[80%] leading-none'>Atelier de l'historien</h1>
+                    <p className='text-white text-[24px] pt-[15px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
+                    <div className='pt-[50px] text-white text-[38px]'>
+                        <Link to={'/historical-index'} className='uppercase block pt-[10px]'>Index historique</Link>
+                        <Link to={'/sources'} className='uppercase block pt-[10px]'>Sources</Link>
+                        <Link to={'/research-institutions'} className='uppercase block pt-[10px]'>Institutions de recherche</Link>
+                        <Link to={'/glossary'} className='uppercase block pt-[10px]'>Glossaire</Link>
+                        <Link to={'/bibliography'} className='uppercase block pt-[10px]'>Bibliographie</Link>
+                    </div>
+                </div>
+            </div>
+        </>
         // </motion.div>
     )
 }

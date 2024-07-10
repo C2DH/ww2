@@ -21,11 +21,13 @@ export default function Accordion({ items }) {
     }
 
 
-    const handlePopup = (id) => {
+    const handlePopup = ({id, theme}) => {
+        localStorage.setItem()
         navigate(`/note/${id}`)
     } 
 
     return (
+        <div className='lg:flex flex-grow lg:overflow-scroll'>
         <div className="themes">
             {items.map((item, index) => (
                 <div key={ index }>
@@ -33,10 +35,14 @@ export default function Accordion({ items }) {
                         'border-b': index === currentTheme
                     })} onClick={() => toggleAccordion(index)} >
                         <div className="pt-[10px]">
-                            <span className="text-[24px] uppercase">Thème {index + 1}</span>
-                            <h2 className="abril text-[60px] uppercase pb-[35px]">{item.title}</h2> 
+                            <div>
+                                <span className="text-[24px] uppercase theme pr-[15px]">Thème {index + 1}</span>
+                                <span className="pl-[80px] abril text-[24px] leading-none">{item.count}</span>
+                                <span className="pl-[10px] text-[24px] uppercase">Notes</span>
+                            </div>
+                            <h2 className="abril text-[40px] lg:text-[60px] uppercase pb-[35px]">{item.title}</h2> 
                         </div>
-                        <div className="flex flex-col justify-center items-center pr-[50px]">
+                        <div className="hidden lg:flex flex-col justify-center items-center pr-[50px]">
                             <span className="abril text-[60px] leading-none block">{item.count}</span>
                             <span className="text-[24px] uppercase">Notes</span>
                         </div>
@@ -52,7 +58,7 @@ export default function Accordion({ items }) {
                     >
                         <div className={`accordion-content-inner ${currentTheme === index ? 'open' : ''} mb-[50px]`}>
                             {item.notes.map((note, index) => (        
-                                <h4 key={ index } className="text-[40px] abril uppercase pb-[20px] cursor-pointer" onClick={() => handlePopup(note.id)}>
+                                <h4 key={ index } className="text-[24px] lg:text-[40px] abril uppercase pb-[20px] cursor-pointer" onClick={() => handlePopup({id: note.id, theme: currentTheme})}>
                                     { note.code } { note.title }
                                 </h4>      
                             ))}
@@ -60,6 +66,7 @@ export default function Accordion({ items }) {
                     </div>
                 </div>
             ))}
+        </div>
         </div>
     )
 }

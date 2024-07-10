@@ -3,27 +3,28 @@ import map2 from '../../assets/images/spaceTimeMap/map-2.png'
 import map3 from '../../assets/images/spaceTimeMap/map-3.png'
 import pinMarker from '../../assets/images/spaceTimeMap/marker-red.svg'
 
-import {useRef, useState } from 'react'
+import {useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/sharp-thin-svg-icons'
 import { faArrowRight, faArrowRightLong } from '@fortawesome/pro-light-svg-icons'
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
-import Map, { Marker, Source, Layer } from 'react-map-gl';
+import {Map, Marker, Source, Layer, useMap } from 'react-map-gl';
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
 
 import MultiRangeSlider, { ChangeResult } from "multi-range-slider-react";
 import { Link } from 'react-router-dom'
+import classNames from 'classnames'
 
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const styleBlueprint = import.meta.env.VITE_API_STYLE_MAPBOX_BLUEPRINT
 const styleMSF = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
+const styleGeo = import.meta.env.VITE_API_STYLE_MAPBOX_GEO
 
-const styleGeoportail = "style geo"
-const tokenGeoportail = "geo"
 
 const geojson = {
     features: [
@@ -167,20 +168,33 @@ const geojson = {
 
 export default function SpaceTimeMap() {
 
-    const [ map, setMap ] = useState({
-        name: 'blueprint',
+    const mapRef = useRef(null);
+
+    const [openFilter, setOpenFilter] = useState(false)
+    
+    const [ viewState, setViewState ] = useState({
+        longitude: 6.1243943,
+        latitude: 49.6099615,
         token: tokenMapbox,
-        style: styleBlueprint
+        style: styleBlueprint,  
+        zoom: 15,
     })
 
-    const handleMap = (map) => {
-        console.log(map)
-        if (map === 'msf') {
-            setMap({...map, name: 'msf', style: styleMSF, token: tokenMapbox})
-        } else if (map === 'blueprint') {
-            setMap({...map, name: 'blueprint', style: styleBlueprint, token: tokenMapbox})
-        } else {
-            setMap({...map, name:'geoportail', style: styleGeoportail, token: tokenGeoportail})
+    useEffect(() => {
+        console.log(viewState)
+    }, [viewState])
+
+
+    const handleMap = (element) => {
+        if (element.style) {
+            setViewState((prevState) => ({ ...prevState, style: element.style }));
+        }
+
+        if (element.zoom && element.zoom >= 8) {
+            console.log(element)
+            setViewState((prevState) => ({ ...prevState, zoom: element.zoom }))
+            const map = mapRef.current.getMap()
+            map.flyTo({center: [viewState.longitude, viewState.latitude], zoom: element.zoom})
         }
     }
 
@@ -190,17 +204,17 @@ export default function SpaceTimeMap() {
         //     <h1 className="text-center text-[60px] mt-[100px]">Carte Spatio-temporelle</h1>
         // </motion.div>
 
-        <div className='absolute top-[70px] inset-0'>
+        <>
 
-            <div className='mask h-[calc(100vh-70px)] overflow-hidden'>
-                <MapBox items={geojson.features} state={map}/>
+            <div className='mask h-[calc(100vh-80px)] overflow-hidden'>
+                <MapBox items={geojson.features} state={viewState} mapRef={mapRef}/>
             </div>
 
-            {/** Filtre Bottom */}
-            <div className="bottom-gradient absolute bottom-0"></div>
+            {/** Gradient Bottom */}
+            <div className="hidden sm:block bottom-gradient absolute bottom-0"></div>
         
-            {/** Filtre chronologique */}
-            <div className="container mx-auto fixed bottom-[20px] left-0 right-0">
+            {/** Filter period Desktop */}
+            <div className="hidden sm:block container mx-auto fixed bottom-[20px] left-0 right-0">
                 <div className="grid grid-cols-12">
                     <div className="col-span-12">
                         <MultiRangeSelector/>
@@ -208,43 +222,83 @@ export default function SpaceTimeMap() {
                 </div>
             </div>
 
-            {/** Changement Map style */}
-            <div className='absolute top-[40px] right-[80px]'>
+            {/** Filter period Mobile Tablet */}
+            <div className='sm:hidden bg-[#475DA9] h-[70px] fixed z-[100] bottom-0 left-0 right-0 flex justify-center items-center border-t border-white' onClick={() => setOpenFilter(!openFilter)}>
+                <span className='uppercase text-white text-[24px]'>Filtrer par période</span>
+            </div>
+
+            <div className={classNames('sm:hidden bg-[#475DA9] h-[150px] fixed bottom-[70px] left-0 right-0 flex justify-center items-center border-t border-white transition-all duration-[750ms]', {
+                "translate-y-full": !openFilter,
+                "translate-y-0": openFilter
+            })}>
+            </div>
+            
+
+            {/** Map style */}
+            <div className='absolute top-[40px] right-[20px]'>
                 <div className='flex gap-5'>
 
-                    { map.name !== 'geoportail' &&     
-                        <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap('geoportail')}>
+                    { viewState.style !== styleGeo &&     
+                        <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleGeo}) }>
                             <img src={map1} alt="map" className='rounded-[4px]' />
                         </div>
                     }
 
-                    {map.name !== 'msf' &&                    
-                        <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap('msf') }>
+                    { viewState.style !== styleMSF &&                    
+                        <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleMSF}) }>
                             <img src={map2} alt="map" className='rounded-[4px]'/>
                         </div>
                     }
 
-                    {map.name !== 'blueprint' &&
-                        <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap('blueprint') }>
+                    { viewState.style !== styleBlueprint &&
+                        <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleBlueprint}) }>
                             <img src={map3} alt="map" className='rounded-[4px]'/>
                         </div>
                     }
+
+                    <div>
+                        {viewState.zoom <= 21 &&   
+                            <>
+                            <div className='h-[40px] w-[40px] bg-white rounded-t-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) + 1}) }>
+                                <FontAwesomeIcon icon={faPlus} className='cursor-pointer' />
+                            </div>
+                            <hr />
+                            </>
+                        }
+                        {viewState.zoom >= 9 &&                        
+                            <div className='h-[40px] w-[40px] bg-white rounded-b-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) - 1}) }>
+                                <FontAwesomeIcon icon={faMinus} className='cursor-pointer' />
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-
-        </div>
+        </>
     )
 }
 
 
-const MapBox = ({items, state}) => {
-    const mapRef = useRef(null)
-    const [lng, setLng] = useState(6.1243943);
-    const [lat, setLat] = useState(49.6099615);
-    const [zoom, setZoom] = useState(15);
+const MapBox = ({items, state, mapRef}) => {
+
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
     const [ openLocation, setOpenLocation ] = useState(false)
     const [ btnHover, setBtnHover ] = useState(false)
+
+    console.log(state)
+
+    const sourceStyle = {
+        id: 'geoportail',
+        type: 'raster',
+        tileSize: 256,     
+        tiles: ['https://wms.geoportail.lu/public_map_layers/service/220?service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=220&bbox={bbox-epsg-3857}&format=image/png&styles']
+     };
+
+
+    const layerStyle = {
+        id: "geoportail-layer", 
+        type: "raster", 
+        source: "geoportail"
+    }
 
     return (
         <>
@@ -254,9 +308,9 @@ const MapBox = ({items, state}) => {
                 mapboxAccessToken={state.token}
                 mapStyle={state.style}              
                 initialViewState={{
-                    longitude: lng,
-                    latitude: lat,
-                    zoom: zoom,
+                    longitude: state.longitude,
+                    latitude: state.latitude,
+                    zoom: state.zoom,
                     pitch: 30 // Inclinaison en degrés
                 }}
                 minZoom={8} // Ne peut pas dézoomer en dessous de x8
@@ -264,17 +318,13 @@ const MapBox = ({items, state}) => {
                 scrollZoom={true} // Désactiver Zoom scroll
             >
 
-                {state.name === 'geoportail' && (
-                    <Source
-                        id="geoportail"
-                        type="raster"
-                        tiles={['https://wms.geoportail.lu/public_map_layers/service/220?service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=220&bbox={bbox-epsg-3857}&format=image/png&styles']}
-                        tileSize={256}
-                    >
-                        <Layer id="geoportail-layer" type="raster" source="geoportail" />
+                {state.style === 'geoportail' && (
+                    <Source {...sourceStyle } >
+                        <Layer {...layerStyle} />
                     </Source>
                 )}
             
+
                 { items.map((marker, index) => {
                     return (
                         <>
@@ -296,7 +346,7 @@ const MapBox = ({items, state}) => {
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 exit={{ opacity: 0, scale: 0.8 }}
                                                 transition={{ duration: 0.4, ease: 'easeInOut'}}
-                                                className='w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
+                                                className='w-[300px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
                                                 style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
                                                 onMouseLeave={() => openLocation ? "" : setSelectedMarker({ id: null, data: null }) }
                                                 onClick={() =>{
@@ -404,5 +454,7 @@ const MultiRangeSelector = () => {
         />
     )
 }
+
+
 
 

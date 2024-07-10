@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import Accordion from '../Accordion/Accordion'
+import { motion } from 'framer-motion'
 
 export default function Catalogue() {
 
     const [lastRead, setLastRead] = useState('')
 
     const [readTheme1, setReadTheme1] = useState(60/100)
-    const [readTheme2, setReadTheme2] = useState(30/100)
+    const [readTheme2, setReadTheme2] = useState(20/100)
     const [readTheme3, setReadTheme3] = useState(50/100)
     const [readTheme4, setReadTheme4] = useState(85/100)
 
@@ -110,44 +111,53 @@ export default function Catalogue() {
         },
     ];
 
-
     return (
-                <div style={{ background: `url(${ bgPaper }) 50% / cover no-repeat`}} className='min-h-[calc(100vh-120px)]'>
-                    <div className='container mx-auto'>
-                        <div className='grid grid-cols-12 pt-[20px]'>
-                            <div className="col-span-8 pt-[15px]">
-                                <h1 className='abril text-[70px]'>Catalogue</h1>
-                                <p className='pt-[15px] text-[28px] mb-[20px]'>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.</p>                    
-                            </div>
+        <div style={{ background: `url(${ bgPaper }) 50% / cover no-repeat`}} className="px-[20px] sm:px-0 h-full lg:h-[calc(100vh-120px)]">
+            <div className='container mx-auto lg:h-[calc(100vh-120px)] flex flex-col'>
+                <div className='grid grid-cols-12 pt-[20px]'>
+                    <div className="col-span-12 lg:col-span-8 pt-[15px]">
+                        <h1 className='abril text-[40px] sm:text-[70px]'>Catalogue</h1>
+                        <p className='pt-[15px] pr-[15px] text-[28px] mb-[20px]'>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.</p>                    
+                    </div>
 
-                            <div className="col-span-4 border-l border-black mt-[70px] mb-[45px] pl-[20px] flex flex-col justify-between">
-                                <div className='flex items-center'>
-                                    <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 1</span>   
-                                    <progress value={readTheme1} />
-                                </div>
-
-                                <div className='flex items-center'>
-                                    <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 2</span>   
-                                    <progress value={readTheme2} />
-                                </div>
-
-                                <div className='flex items-center'> 
-                                    <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 3</span>   
-                                    <progress value={readTheme3} />
-                                </div>
-                                <div className='flex items-center'>
-                                    <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 4</span>   
-                                    <progress value={readTheme4} />
-                                </div>
-                            </div>
+                    <div className="hidden lg:flex col-span-4 border-l border-black mt-[70px] mb-[45px] pl-[20px] flex-col justify-between">
+                        <div className='flex items-center'>
+                            <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 1</span>  
+                            <ProgressBar progress={readTheme1}/>
                         </div>
 
-                        
-                        <Accordion items={ items }/>
+                        <div className='flex items-center'>
+                            <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 2</span>   
+                            <ProgressBar progress={readTheme2} />
+                        </div>
 
+                        <div className='flex items-center'> 
+                            <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 3</span>   
+                            <ProgressBar progress={readTheme3} />   
+                        </div>
+                        <div className='flex items-center'>
+                            <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 4</span>   
+                            <ProgressBar progress={readTheme4} />
+                        </div>
                     </div>
                 </div>
-       
-        
+                <Accordion items={ items }/>
+            </div>
+        </div>
     )
 }
+
+
+
+
+const ProgressBar = ({ progress }) => {
+    console.log('bar',progress * 100)
+    console.log('value',progress * 100 * 2)
+    return (
+      <div className="progress-container">
+        <motion.div className='progress-bar' initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 1, delay: 1 }}>
+            <motion.div className="progress-value" initial={{ width: 0 }} animate={{ width: `${progress * 2 * 100}%` }} transition={{ duration: 1 }}></motion.div>
+        </motion.div>
+      </div>
+    );
+  };

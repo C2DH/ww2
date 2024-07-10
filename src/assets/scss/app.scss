@@ -43,6 +43,12 @@ p {
     letter-spacing: 0.4px;
 }
 
+.bg-paper {
+    background-image: url('../images/common/bg-paper.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
 
 // COLORS
 .blue {
@@ -66,26 +72,25 @@ p {
 
 
 // CATALOGUE
-progress::-moz-progress-bar { 
-    background: black; 
-}
-
-
-progress::-webkit-progress-value { 
-    background: #6EDFFB; 
-}
-
-
-progress::-webkit-progress-bar {
-    background-color: rgba(0, 0, 0, 0.15); 
-}
-
-progress { 
-    width: 100%;
+.progress-container {
     height: 20px;
-    padding: 4px 0;
-    color: #6EDFFB; 
-}
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.15);
+  }
+
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  
+  .progress-value {
+    height: 10px;
+    background-color: #6EDFFB;
+  }
+
+
 
 .accordion-content {
     overflow: hidden;
@@ -338,4 +343,24 @@ video {
 
 .button-arrow:hover .icon-arrow {
     width: 50px;
+}
+
+
+
+// CATALOGUE
+.themes {
+    .theme {
+        position: relative;
+    }
+
+    .theme::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 100%;
+        transform: translateY(-50%);
+        background: black;
+        width: 65px;
+        height: 1px;
+    }
 }

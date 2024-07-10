@@ -6,27 +6,36 @@ import logoGouv from '../../assets/images/menu/logo-gouv.svg'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
 import cloud from '../../assets/images/common/cloud.png'
 
+// CONTEXT
 import { useSharedState } from "../../contexts/SharedStateProvider";
+import { useMenuContext } from '../../contexts/MenuProvider'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faVolume } from '@fortawesome/pro-light-svg-icons'
 
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
 
 // REACT
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { useState, useContext, useEffect } from 'react'
 import classNames from 'classnames'
 
 // COMPONENTS
-import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher'
-import Sound from '../Sound/Sound'
 import CustomLink from '../CustomLink.jsx/CustomLink'
 
 
-export default function Menu({delay = 0}) {
-    const [isOpenMenu, setIsOpenMenu] = useState(false)
+export default function Menu() {
+    // const [isOpenMenu, setIsOpenMenu] = useState(false)
+    const { openMenu, setOpenMenu } = useMenuContext()
     const [isAnimationComplete, setIsAnimationComplete] = useState(false);
     const [sharedState, setSharedState] = useSharedState();
+
+    const { pathname } = useLocation()
+    const locations = ['/catalogue', '/historian-workshop', '/historical-index', '/research-institutions', '/bibliography', '/glossary','/sources']
+
+    console.log('includes',locations.includes(pathname))
 
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false });
@@ -34,33 +43,31 @@ export default function Menu({delay = 0}) {
 
     return (
         <>
-        {/* <div className='h-screen overflow-hidden'> */}
-
-        
             <header 
                 initial={{ opacity: 0}}
                 animate={{ opacity: 1}}
-                transition={{ delay: delay, ease: "easeInOut" }}
+                transition={{ duration: 1500 }}
                 style={{ background: `url(${bgBlack}) 50% / cover no-repeat`}}
-                className={classNames('transition-all duration-[2000ms] overflow-hidden', {
-                    'h-[100vh]': isOpenMenu,
-                    'h-[120px]': !isOpenMenu
+                className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[50px]', {
+                    'max-h-[120vh] h-[100vh]': openMenu,
+                    'max-h-[120px] h-[120px]': !openMenu && locations.includes(pathname),
+                    'max-h-[140px] h-[140px]': !openMenu && !locations.includes(pathname)
                 })} 
             >
 
                 {/** HEADER */}
-                <div className="flex justify-between px-[90px] pt-[20px]">
+                <div className="flex justify-between px-[30px] sm:px-[90px] pt-[140px] md:pt-[20px]">
                     <Sound />
-                    <MenuLogo isOpenMenu={isOpenMenu} setIsOpenMenu={setIsOpenMenu} />
+                    <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} />
                     <LanguageSwitcher />
                 </div>
 
 
-                {/** NAVBAR */}
-                <div className='flex justify-center mt-[90px]'>
-                    <ul className={classNames('w-1/3 text-center transition-all duration-[750ms]', {
-                        'opacity-1': isOpenMenu,
-                        'opacity-0': !isOpenMenu 
+                {/** ITEMS */}
+                <div className='flex justify-center mt-[60px] sm:mt-[90px]'>
+                    <ul className={classNames('sm:w-1/3 text-center transition-all duration-[750ms]', {
+                        'opacity-1': openMenu,
+                        'opacity-0': !openMenu 
                     })}>
                         <li>
                             <MenuItem path={'/'} title={"Map"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
@@ -82,8 +89,8 @@ export default function Menu({delay = 0}) {
 
 
                 {/** PARTNERS LOGOS */}
-                <div className='flex justify-center items-center mt-[30px]'>
-                    <div className='me-[80px]'>
+                <div className='flex justify-center items-center mt-[30px] mx-[30px]'>
+                    <div className=''>
                         <Link to='https://www.c2dh.uni.lu/' target='_blank'>
                             <img src={ logoUni } alt="Logo Université" />
                         </Link>
@@ -96,7 +103,7 @@ export default function Menu({delay = 0}) {
                 </div>
 
 
-                {/** NAVBAR SUITE */}
+                {/** ITEMS SUITE */}
                 <div className='flex justify-center items-center mt-[20px]'>
                     <ul className='flex text-[20px]'>
                         <li className='tiret'><Link to='/about'>A propos</Link></li>
@@ -104,45 +111,10 @@ export default function Menu({delay = 0}) {
                         <li><Link to='/contact'> Contact</Link></li>
                     </ul>
                 </div>
+                
             </header>
 
-            {/* <Outlet /> */}
-            
-            
-            {/* <motion.div     
-                initial={{ y: '90%'} }
-                animate={ isOpenMenu ? { y: "-90px" } : { y: '-50px'}}
-                onAnimationComplete={() => setIsAnimationComplete(isOpenMenu ? true : false) }
-                transition={{ duration: 2, ease: "easeInOut", delay: 1 }} // Delai = durée de la vidéo et si deja visité pas de délai
-                style={{ position: '' }}
-                className={classNames('w-full',{
-                    "h-[calc(100vh-120px)]": !isOpenMenu,
-                    "h-[90px] overflow-hidden": (isOpenMenu && isAnimationComplete)
-                    // "h-[90px] overflow-hidden": isOpenMenu
-                })}
-            >     */}
-                {/* <AnimatePresence >
-                        <>
-                            <motion.div className='fixed left-0 -top-[70px] z-[3]' initial={{ x: '-100%' }} animate={{ x: 0, scale: 3 }} exit={{ x: '-100%' }} transition={{ duration: 0.75 }}>
-                                <img src={ cloud } alt="" />
-                            </motion.div>
-
-                            <motion.div className='fixed left-0 -bottom-[20px] z-[3]' initial={{ x: '-100%', rotateX: 180}} animate={{ x: 0, rotateX: 180, scale: 2 }} exit={{ x: '-100%' }} transition={{ duration: 0.75 }}>
-                                <img src={ cloud } alt="" />
-                            </motion.div>
-
-                            <motion.div className='fixed right-0 -top-[70px] z-[3]' initial={{ x: '100%', rotateY: -180}} animate={{ x: 0, rotateY: -180, scale: 2 }} exit={{ x: '100%'}} transition={{ duration: 0.75 }}>
-                                <img src={ cloud } alt="" />
-                            </motion.div>
-
-                            <motion.div className='fixed right-0 -bottom-[20px] z-[3]' initial={{ x: '100%', rotateY: -180, rotateX: 180 }} animate={{ x: 0, rotateY: -180, rotateX: 180, scale: 3 }} exit={{ x: '100%'}} transition={{ duration: 0.75 }}>
-                                <img src={ cloud } alt="" />
-                            </motion.div>
-                        </>
-                </AnimatePresence> */}
-                
-            {/* </motion.div> */}
-            {/* </div> */}
+    
         </>
     )
 }
@@ -152,15 +124,15 @@ export default function Menu({delay = 0}) {
 export function MenuItem({path, title = "", text = "", handleMenuItemClick}) {
     return (
         <CustomLink to={path} onClick={handleMenuItemClick}>
-            <h3>{title}</h3>
-            <p>{text}</p>
+            <h3 className='mb-[40px] sm:mb-0'>{title}</h3>
+            <p className="hidden sm:block">{text}</p>
         </CustomLink>
     )
 }
 
 export function MenuLogo({ isOpenMenu, setIsOpenMenu }) {
     return (
-        <div className='absolute top-[3px] left-[50%] -translate-x-[50%]'>
+        <div className='absolute top-[20px] sm:top-[3px] left-[50%] -translate-x-[50%]'>
             <div>
                 <span className='block text-center cursor-pointer' onClick={() => setIsOpenMenu(!isOpenMenu) }
                 >{isOpenMenu ? "- FERMER -" : "- MENU -"  }</span>
@@ -168,6 +140,26 @@ export function MenuLogo({ isOpenMenu, setIsOpenMenu }) {
                     <img src={ logo } alt="Logo Menu" className='w-[180px]' onClick={() => setIsOpenMenu(false)}/>
                 </Link>
             </div>
+        </div>
+    )
+}
+
+const LanguageSwitcher = () => {
+    return (
+        <div>   
+            <span className='text-[20px] cursor-pointer'>EN DE FR</span>
+        </div>
+    )
+}
+
+const Sound = () => {
+    return (
+        <div>
+            <span className="text-[20px]">SOUND ON</span>
+            <FontAwesomeIcon 
+                icon={ faVolume } 
+                style={{ fontSize: '26px', marginLeft: '10px', cursor: 'pointer' }}
+            />
         </div>
     )
 }
