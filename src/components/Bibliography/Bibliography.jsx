@@ -25,15 +25,16 @@ export default function Bibliography() {
                 </div>
             </div>
 
-
             {/** Content */}
             <div className="lg:flex flex-grow lg:overflow-scroll lg:mb-[40px] pb-[30px] lg:pb-0">
-                <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
-                    {[...Array(50)].map((item, index) => {
-                        return (
-                            <CardLink key={index}/>
-                        )
-                    })}
+                <div>
+                    <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
+                        {[...Array(50)].map((item, index) => {
+                            return (
+                                <CardLink key={index} link={ 'https://www.zotero.org/' }/>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
 

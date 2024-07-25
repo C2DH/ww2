@@ -1,9 +1,14 @@
 // COMPONENTS
 import Intro from "../Intro/Intro"
+
 import { useEffect, useRef, useState } from "react"
+import { useMediaQuery } from 'react-responsive'
 
 import pinMarker from '../../assets/images/common/marker.svg'
-import arrowMarker from '../../assets/images/common/arrow-mapbox.png'
+import longLeftArrow from '../../assets/images/common/longLeftArrow.png'
+import longRightArrow from '../../assets/images/common/longRightArrow.png'
+import smallLeftArrow from '../../assets/images/common/smallLeftArrow.png'
+import smallRightArrow from '../../assets/images/common/smallRightArrow.png'
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -18,6 +23,12 @@ const apiStyleMapbox = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
 
 
 export default function Home() {
+
+    const isMobile = useMediaQuery({
+        query: '(max-width: 640px)'
+    })
+
+    const [arrowMarker, setArrowMarker] = useState(longLeftArrow)
     
     const [showIntro, setShowIntro] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false); 
@@ -163,6 +174,12 @@ export default function Home() {
 
     useEffect(() => {
 
+        if (isMobile) {
+            setArrowMarker(smallLeftArrow)
+        } else {
+            setArrowMarker(longLeftArrow)
+        }
+
         const lastVisited = localStorage.getItem('lastVisited')
         const datetime = new Date().getTime()
 
@@ -175,20 +192,20 @@ export default function Home() {
         }
 
         setIsLoaded(true)
-    }, [])
+    }, [isMobile])
 
 
     return isLoaded && (
         <>      
             {/* <Intro /> */}
-                <MapBox items={geojson.features}/>
+            <MapBox items={geojson.features} arrow={arrowMarker}/>
         </>
     )
 }
 
 
 
-const MapBox = ({items}) => {
+const MapBox = ({items, arrow}) => {
     const mapRef = useRef(null)
     const [lng, setLng] = useState(6.131514);
     const [lat, setLat] = useState(49.815764);
@@ -224,9 +241,8 @@ const MapBox = ({items}) => {
                             anchor={ marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom" }   
                         >
                             <div className='relative'> 
-                                <img src={ marker.properties.place === 'Grande-Bretagne' ? arrowMarker : pinMarker } alt="marker" className="cursor-pointer" onMouseOver={() => setSelectedMarker({ id: index, data: marker }) }/>
+                                <img src={ marker.properties.place === 'Grande-Bretagne' ? arrow : pinMarker } alt="marker" className="cursor-pointer" onMouseOver={() => setSelectedMarker({ id: index, data: marker }) }/>
 
-                            
                                 { marker.properties.place !== 'Grande-Bretagne' ?
                                     <AnimatePresence>
                                         { selectedMarker && selectedMarker.id == index &&
@@ -255,7 +271,7 @@ const MapBox = ({items}) => {
                                         }
                                     </AnimatePresence>
                                     :
-                                    <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-0 -translate-y-[50%] right-[100%] flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
+                                    <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] sm:top-0 -translate-y-[50%] left-[100%] sm:right-[100%] sm:left-auto mx-[10px] sm:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
                                 }
                             </div>
                         </Marker>
@@ -265,7 +281,6 @@ const MapBox = ({items}) => {
         </div>    
     )
 }
-
 
 
 

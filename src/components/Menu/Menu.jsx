@@ -51,7 +51,7 @@ export default function Menu() {
                 className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[50px]', {
                     'max-h-[120vh] h-[100vh]': openMenu,
                     'max-h-[120px] h-[120px]': !openMenu && locations.includes(pathname),
-                    'max-h-[140px] h-[140px]': !openMenu && !locations.includes(pathname)
+                    'max-h-[140px] h-[120px]': !openMenu && !locations.includes(pathname)
                 })} 
             >
 
@@ -65,12 +65,12 @@ export default function Menu() {
 
                 {/** ITEMS */}
                 <div className='flex justify-center mt-[60px] sm:mt-[90px]'>
-                    <ul className={classNames('sm:w-1/3 text-center transition-all duration-[750ms]', {
+                    <ul className={classNames('w-2/3 lg:w-1/3 text-center transition-all duration-[750ms]', {
                         'opacity-1': openMenu,
                         'opacity-0': !openMenu 
                     })}>
                         <li>
-                            <MenuItem path={'/'} title={"Map"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
+                            <MenuItem path={'/'} title={"Parcours"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
                         </li>
                         <li>
                             <MenuItem path={'/catalogue'} title={"Catalogue"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} handleMenuItemClick={() => setIsOpenMenu(false) } />
@@ -111,10 +111,7 @@ export default function Menu() {
                         <li><Link to='/contact'> Contact</Link></li>
                     </ul>
                 </div>
-                
             </header>
-
-    
         </>
     )
 }

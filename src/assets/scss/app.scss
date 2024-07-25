@@ -16,6 +16,7 @@ body {
     font-weight: 400;
     line-height: normal;
     letter-spacing: 0.4px;
+    background-image: url('../images/common/bg-black.jpg');
 }
 
 p {
@@ -76,20 +77,24 @@ p {
     height: 20px;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.15);
-  }
+}
 
-  .progress-bar {
-    display: flex;
-    align-items: center;
+.progress-bar {
     height: 20px;
     background-color: rgba(0, 0, 0, 0.3);
-  }
-  
-  .progress-value {
-    height: 10px;
-    background-color: #6EDFFB;
-  }
+    width: 100%;
+    position: relative;
 
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 10px;
+        width: 100%;
+        background-color: #6EDFFB;
+    }
+}
 
 
 .accordion-content {
@@ -110,6 +115,18 @@ p {
 .accordion-content-inner.open {
     padding: 35px 10px 30px;
 }
+
+.resume-reading {
+    width: 2px;
+    height: 40px;
+    background-color: black;
+    position: relative;
+}
+
+.resume
+
+
+
 
 
 

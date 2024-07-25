@@ -146,10 +146,12 @@ export default function Glossary() {
             </div>
 
             <div className="lg:flex flex-grow lg:overflow-scroll mb-[40px]">
-                <div className="grid grid-cols-12 gap-y-[30px] pt-[40px]">
-                    { filteredTerms.map((term, index) => {
-                        return <CardText key={index} title={term.title} text={term.text} />
-                    })}
+                <div>
+                    <div className="grid grid-cols-12 gap-y-[30px] pt-[40px]">
+                        { filteredTerms.map((term, index) => {
+                            return <CardText key={index} title={term.title} text={term.text} />
+                        })}
+                    </div>
                 </div>
             </div>
         </LayoutHistorianWorkshop>

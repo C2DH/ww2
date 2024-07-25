@@ -7,7 +7,7 @@ import LayoutHistorianWorkshop from '../LayoutHistorianWorkshop/LayoutHistorianW
 import { useEffect, useState } from 'react';
 
 
-export default function Source() {
+export default function Sources() {
 
     const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
     const types = ['Audio', 'Video', 'Photo', 'Livre', 'Document manuscrit']
@@ -20,7 +20,7 @@ export default function Source() {
     // CONTENT (API)
     const generateContent = () => {
         const arrayContent = []
-        for(let i = 0; i < 50; i++) {
+        for(let i = 0; i < 70; i++) {
             arrayContent.push({
                 img: 'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?q=80&w=1839&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 tag: tags[Math.floor(Math.random() * tags.length)],
@@ -85,24 +85,27 @@ export default function Source() {
                     </div>
                 </div>
             </div>
-            
-            {/** Content */}
-            <div className="lg:flex flex-grow lg:overflow-scroll lg:mb-[40px] pb-[30px] lg:pb-0">
-                <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
-                     { filteredItems.map((item, index) => {
-                        return (
-                            <CardImageText 
-                                key={index}
-                                img={item.img} 
-                                tag={item.tag}
-                                title={item.title}
-                                text={item.text}
-                                type={item.type}
-                            />
-                        )
-                    })}
+                
+            {/** Content */}   
+            <div className='lg:flex flex-grow flex-col lg:overflow-scroll'>
+                <div className="lg:mb-[40px] pb-[30px] lg:pb-0">
+                    <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
+                        { filteredItems.map((item, index) => {
+                            return (
+                                <CardImageText 
+                                    key={index}
+                                    img={item.img} 
+                                    tag={item.tag}
+                                    title={item.title}
+                                    text={item.text}
+                                    type={item.type}
+                                />
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
+
         </LayoutHistorianWorkshop>       
     )
 }

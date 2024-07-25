@@ -4,17 +4,12 @@ import classNames from "classnames";
 
 export default function Layout() {
 
-    // const [ openMenu, setOpenMenu ] = useMenuContext()
-    // console.log(openMenu)
-
     const { pathname } = useLocation()
-
     const { openMenu, setOpenMenu } = useMenuContext()
-    console.log(openMenu)
 
-    if (pathname === '/' || pathname === '/spacetime-map' || pathname.includes('/notice/')) {
+    if (pathname === '/' || pathname === '/spacetime-map' || pathname.includes('/notice/')) {
         return (
-            <div className={classNames('absolute top-[80px] inset-0 transition-all duration-[2000ms]', {
+            <div className={classNames('absolute top-[100px] sm:top-[80px] inset-0 transition-all duration-[2000ms] flex', {
               'translate-y-0': !openMenu,
               'translate-y-full': openMenu
             })}>
@@ -23,9 +18,7 @@ export default function Layout() {
         )
     } else {
         return (
-            <div>
-                <Outlet/>
-            </div>
+            <Outlet/>
         ) 
     }
 }

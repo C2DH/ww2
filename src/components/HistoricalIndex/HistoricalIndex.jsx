@@ -82,7 +82,7 @@ export default function HistoricalIndex() {
         <LayoutHistorianWorkshop pageTitle={'Index historique'}>
 
             <HeaderHistorianWorkshop filters={types} />
-
+            
             {/** Filters */}
             <div className="hidden lg:block mt-[40px]">
                 <div className="grid grid-cols-12 gap-5 border-b border-black">
@@ -98,22 +98,24 @@ export default function HistoricalIndex() {
                     </div>
                 </div>
             </div>
-            
+                
             {/** Content */}
-            <div className="lg:flex flex-grow lg:overflow-scroll lg:mb-[40px] pb-[30px] lg:pb-0">
-                <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
-                    { filteredItems.map((item, index) => {
-                        return (
-                            <CardImageText 
-                                key={index}
-                                img={item.img} 
-                                tag={item.tag}
-                                title={item.title}
-                                text={item.text}
-                                type={item.type}
-                            />
-                        )
-                    })}
+            <div className='lg:flex flex-grow flex-col lg:overflow-scroll'>
+                <div className="lg:mb-[40px] pb-[30px] lg:pb-0">
+                    <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
+                        { filteredItems.map((item, index) => {
+                            return (
+                                <CardImageText 
+                                    key={index}
+                                    img={item.img} 
+                                    tag={item.tag}
+                                    title={item.title}
+                                    text={item.text}
+                                    type={item.type}
+                                />
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
 

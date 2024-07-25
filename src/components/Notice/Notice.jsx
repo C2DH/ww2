@@ -163,45 +163,48 @@ export default function Notice() {
 
     return (
         <>
-            <motion.div className='mask h-[calc(100vh-80px)] overflow-hidden' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}} >
+            <motion.div className='mask overflow-hidden' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}} >
                 <div className='h-full relative' style={{ background: `url(${data.properties.image}) 50% / cover no-repeat` }}>
                     <div className='notice-filter absolute inset-0'></div>
 
-                    <div className="container mx-auto relative">
-                        <div className='pt-[55px] flex flex-col items-center'>
-                            <span className='text-[20px] abril blue underline underline-offset-4 block'>{ data.properties.city }</span>
-                            <div className='relative'>
-                                <h1 className='text-[48px] blue abril pt-[12px]'>{ data.properties.location }</h1>
-                                <Link to={ `/notice/${parseInt(id) + 1}`} className='absolute top-[50%] -translate-[50%] -right-[100px]'>
-                                    <img src={ next } alt="next" />
+                    <div className="container mx-auto relative px-[30px] lg:px-0">
+                        <div className='pt-[30px] lg:pt-[55px] flex flex-col items-center'>
+                            <Link to={'/'} className='lg:hidden block text-[24px] text-white uppercase mb-[15px]'>
+                                Retour Carte
+                            </Link>
+                            <span className='text-[27px] abril blue underline underline-offset-[8px] decoration-1 block'>{ data.properties.place }</span>
+                            <div className='relative text-center'>
+                                <h1 className='text-[40px] lg:text-[48px] blue abril pt-[12px] leading-none'>{ data.properties.location }</h1>
+                                <Link to={ `/notice/${parseInt(id) + 1}`} className='hidden lg:block absolute top-[50%] -translate-[50%] -left-[100px]'>
+                                    <img src={ prev } alt="previous" />
                                 </Link>
-                                <Link to={ `/notice/${parseInt(id) - 1}`} className='absolute top-[50%] -translate-[50%] -left-[100px]'>
-                                    <img src={ prev } alt="previous" /> 
+                                <Link to={ `/notice/${parseInt(id) - 1}`} className='hidden lg:block absolute top-[50%] -translate-[50%] -right-[100px]'>
+                                    <img src={ next } alt="next" /> 
                                 </Link>
                             </div>
-                            <p className='text-[24px] sofia uppercase text-white border border-white p-2 mt-[10px]'>{ data.properties.description }</p>
+                            <p className='text-[20px] lg:text-[24px] text-center sofia uppercase text-white border border-white p-2 mt-[30px] sm:mt-[10px]'>{ data.properties.description }</p>
                         </div>
 
-                        <Link to={'/'} className='absolute top-[70px] left-0'>
+                        <Link to={'/'} className='hidden lg:block absolute top-[70px] left-0'>
                             <IconMapBack text={'Retour Carte'}/>
                         </Link>
 
-                        <div className="grid grid-cols-12 mt-[70px] gap-x-[40px]">
-                            <div className="col-span-2 pt-[20px]">
+                        <div className="grid grid-cols-12 mt-[70px] lg:gap-x-[40px]">
+                            <div className="col-span-12 lg:col-span-2 pt-[20px] order-3 lg:order-1">
                                 { data.notes_related.map((note, index) => {
                                     return (
-                                        <Link key={ index } to={'/'} className='block mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] hover:border-white hover:bg-[#000000]/[0.2]'>
+                                        <Link key={ index } to={'/'} className='block mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white lg:border-transparent lg:hover:border-white hover:bg-[#000000]/[0.2]'>
                                             <h3 className='abril text-[22px] text-white uppercase'>{ note.title }</h3>
                                         </Link>
                                     )
                                 })}
                             </div>
 
-                            <div className="col-span-6 col-start-4">
+                            <div className="col-span-12 lg:col-span-6 lg:col-start-4 order-1 lg:order-2">
                                 <Player url={ `/src/assets/videos/${data.properties.media }`}/>
                             </div>
 
-                            <div className="col-span-2 col-start-11 pt-[20px]">
+                            <div className="col-span-12 lg:col-span-2 lg:col-start-11 pt-[30px] lg:pt-[20px] order-2 lg:order-3">
                                 <Link to={'/sources'} className='block uppercase abril text-[22px] text-white'>sources</Link>
                                 <Link to={'/historical-index'} className='block uppercase abril text-[22px] text-white pt-[22px]'>index historique</Link>
                             </div>

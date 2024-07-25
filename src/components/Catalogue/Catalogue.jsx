@@ -12,6 +12,11 @@ export default function Catalogue() {
     const [readTheme3, setReadTheme3] = useState(50/100)
     const [readTheme4, setReadTheme4] = useState(85/100)
 
+
+
+    const storedParams = localStorage.getItem('params')
+    console.log(storedParams)
+
     // Stocker un json dans le local storage pour gérer les progress bar
     // Quand j'ouvre la popup de la note je sette le localstorage
 
@@ -19,7 +24,7 @@ export default function Catalogue() {
         {
             title: 'Vivre sous l\'annexion',
             content: 'Contenu du premier panneau.',
-            count: 21,
+            count: 4,
             notes: [
                 {
                     'id': 1,
@@ -46,7 +51,7 @@ export default function Catalogue() {
         {
             title: 'Réagir à l\'annexion',
             content: 'Contenu du deuxième panneau.',
-            count: 7,
+            count: 4,
             notes: [
                 {
                     'id': 25,
@@ -73,7 +78,7 @@ export default function Catalogue() {
         {
             title: 'Subir l\'annexion',
             content: 'Contenu du troisième panneau.',
-            count: 11,
+            count: 3,
             notes: [
                 {
                     'id': 30,
@@ -95,7 +100,7 @@ export default function Catalogue() {
         {
             title: 'Au-delà de l\'annexion',
             content: 'Contenu du troisième panneau.',
-            count: 9,
+            count: 2,
             notes: [
                 {
                     'id': 41,
@@ -111,9 +116,29 @@ export default function Catalogue() {
         },
     ];
 
+    const [theme1, setTheme1] = useState({
+        total: items[0].notes.length
+    })
+
+    const [theme2, setTheme2] = useState({
+        total: items[1].notes.length
+    })
+
+    const [theme3, setTheme3] = useState({
+        total: items[2].notes.length
+    })
+
+    const [theme4, setTheme4] = useState({
+        total: items[3].notes.length
+    })
+
+    
+
     return (
-        <div style={{ background: `url(${ bgPaper }) 50% / cover no-repeat`}} className="px-[20px] sm:px-0 h-full lg:h-[calc(100vh-120px)]">
-            <div className='container mx-auto lg:h-[calc(100vh-120px)] flex flex-col'>
+        <div style={{ background: `url(${ bgPaper }) center / cover no-repeat`}} className="px-[20px] sm:px-0">
+            <div className='container mx-auto h-[calc(100vh-120px)] flex flex-col'>
+
+                 {/** Headers */}
                 <div className='grid grid-cols-12 pt-[20px]'>
                     <div className="col-span-12 lg:col-span-8 pt-[15px]">
                         <h1 className='abril text-[40px] sm:text-[70px]'>Catalogue</h1>
@@ -124,6 +149,11 @@ export default function Catalogue() {
                         <div className='flex items-center'>
                             <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 1</span>  
                             <ProgressBar progress={readTheme1}/>
+
+                            {/* <div className='resume-reading'>
+
+                            </div> */}
+
                         </div>
 
                         <div className='flex items-center'>
@@ -141,7 +171,10 @@ export default function Catalogue() {
                         </div>
                     </div>
                 </div>
-                <Accordion items={ items }/>
+                
+                <div className='lg:flex flex-grow flex-col lg:overflow-scroll'>
+                    <Accordion items={ items } />
+                </div>
             </div>
         </div>
     )
@@ -151,13 +184,9 @@ export default function Catalogue() {
 
 
 const ProgressBar = ({ progress }) => {
-    console.log('bar',progress * 100)
-    console.log('value',progress * 100 * 2)
     return (
-      <div className="progress-container">
-        <motion.div className='progress-bar' initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 1, delay: 1 }}>
-            <motion.div className="progress-value" initial={{ width: 0 }} animate={{ width: `${progress * 2 * 100}%` }} transition={{ duration: 1 }}></motion.div>
-        </motion.div>
-      </div>
-    );
-  };
+        <div className="progress-container">
+            <motion.div className='progress-bar' initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 1, delay: 1 }}></motion.div>
+        </div>
+    )
+}
