@@ -48,7 +48,7 @@ export default function Note() {
                         </div>
                     </div>
 
-                    <div className="flex flex-grow overflow-scroll" id="text">
+                    <div className="flex overflow-scroll" id="text">
                         <div className="w-1/2 py-[40px] font-light border-r border-black pr-[60px] overflow-y-auto flex-grow">   
                             <div className='text-[28px]'>
                                 <p>With the outbreak of the Second World War, Luxembourg found itself in a precarious political position. Although the Grand Duchy’s Government was quick to reiterate its traditional policy of strict “disarmed neutrality”, it harboured no illusions about the latter’s viability. Diplomatically isolated and landlocked between Nazi Germany and France, the country risked being overrun by the war-waging powers in the first hours of the conflict – just like in 1914.</p>
@@ -122,9 +122,10 @@ export default function Note() {
             <AnimatePresence>
                 { sourcePopup.open && 
                     <motion.div 
-                        initial={{ y: 0}}
-                        animate={{ y: '-100%' }}
-                        exit={{ y: 0}}
+                        className='absolute w-full top-0'
+                        initial={{ top: '100%' }}
+                        animate={{ top: '120px' }}
+                        exit={{ top: '100%'}}
                         transition={{ duration: 0.8, ease: 'easeInOut'}}
                     >
                         <Source src={ sourcePopup.src } handleSourcePopup={ handleSourcePopup }/>

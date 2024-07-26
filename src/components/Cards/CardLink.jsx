@@ -10,9 +10,9 @@ export default function CardLink({ link }) {
                 </div>
 
                 <div className="col-span-6 lg:col-span-4">
-                    <h2 className='text-[24px] md:text-[30px] pt-[10px] md:pt-0'>www.loremipsum.com</h2>
+                    <h2 className='text-[24px] lg:text-[30px] pt-[10px] md:pt-0'>www.loremipsum.com</h2>
                     <hr className="border-black"/>
-                    <p className='text-[20px] pt-[10px] sm:text-[24px] pb-0'>{ truncateText('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. sit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscing Pellentesque sit amet sapien.', 80) }</p>
+                    <p className='text-[20px] pt-[10px] md:text-[24px] pb-0'>{ truncateText('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. sit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscing Pellentesque sit amet sapien.', 80) }</p>
                 </div>
             </div>
         </Link>

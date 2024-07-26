@@ -14,7 +14,7 @@ export default function Bibliography() {
             <HeaderHistorianWorkshop />
 
             {/** Filters */}
-            <div className="hidden lg:block mt-[40px]">
+            <div className="hidden lg:block mt-[30px] xl:mt-[40px]">
                 <div className="grid grid-cols-12 gap-5 border-b border-black pb-[80px]">
                     <div className="col-span-5 relative">
                         <Dropdown items={authors} text={'Auteur'} />
@@ -26,15 +26,13 @@ export default function Bibliography() {
             </div>
 
             {/** Content */}
-            <div className="lg:flex flex-grow lg:overflow-scroll lg:mb-[40px] pb-[30px] lg:pb-0">
-                <div>
-                    <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
-                        {[...Array(50)].map((item, index) => {
-                            return (
-                                <CardLink key={index} link={ 'https://www.zotero.org/' }/>
-                            )
-                        })}
-                    </div>
+            <div className="lg:overflow-scroll">
+                <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
+                    {[...Array(50)].map((item, index) => {
+                        return (
+                            <CardLink key={index} link={ 'https://www.zotero.org/' }/>
+                        )
+                    })}
                 </div>
             </div>
 

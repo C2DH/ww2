@@ -136,7 +136,7 @@ export default function Catalogue() {
 
     return (
         <div style={{ background: `url(${ bgPaper }) center / cover no-repeat`}} className="px-[20px] sm:px-0">
-            <div className='container mx-auto h-[calc(100vh-120px)] flex flex-col'>
+            <div className='container mx-auto h-[calc(100vh-120px)] flex flex-col overflow-scroll'>
 
                  {/** Headers */}
                 <div className='grid grid-cols-12 pt-[20px]'>

@@ -100,22 +100,20 @@ export default function HistoricalIndex() {
             </div>
                 
             {/** Content */}
-            <div className='lg:flex flex-grow flex-col lg:overflow-scroll'>
-                <div className="lg:mb-[40px] pb-[30px] lg:pb-0">
-                    <div className="grid grid-cols-12 gap-[20px] pt-[40px]">
-                        { filteredItems.map((item, index) => {
-                            return (
-                                <CardImageText 
-                                    key={index}
-                                    img={item.img} 
-                                    tag={item.tag}
-                                    title={item.title}
-                                    text={item.text}
-                                    type={item.type}
-                                />
-                            )
-                        })}
-                    </div>
+            <div className='lg:overflow-scroll'>
+                <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
+                    { filteredItems.map((item, index) => {
+                        return (
+                            <CardImageText 
+                                key={index}
+                                img={item.img} 
+                                tag={item.tag}
+                                title={item.title}
+                                text={item.text}
+                                type={item.type}
+                            />
+                        )
+                    })}
                 </div>
             </div>
 

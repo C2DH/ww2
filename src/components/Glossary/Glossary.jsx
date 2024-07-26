@@ -15,7 +15,7 @@ export default function Glossary() {
     const terms = [
         {
             title : 'Aorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
+            text : 'Lorem ipsum dolor sit amets'
         },
         {
             title : 'Borem ipsum dolor sit amet consectetur',
@@ -27,11 +27,11 @@ export default function Glossary() {
         },
         {
             title : 'Dorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
+            text : 'Lorem ipsum dolor '
         },
         {
             title : 'Eorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
+            text : ''
         },
         {
             title : 'Forem ipsum dolor sit amet consectetur',
@@ -132,28 +132,29 @@ export default function Glossary() {
 
     return (
         <LayoutHistorianWorkshop pageTitle={'Glossaire'}>
+
             <HeaderHistorianWorkshop/>
 
+            {/** Filters */}
             <div className="hidden lg:block mt-[40px]">
-                <div className="border-b border-black pb-[40px] w-full flex flex-wrap">
-                    <div className="w-[40%] relative h-[40px] me-5 mb-5">
+                <div className="border-b border-black pb-[40px] w-full flex flex-wrap gap-y-[20px]">
+                    <div className="w-[40%] relative h-[40px] me-5">
                         <Dropdown items={tags} text={'Lister des termes'} />
                     </div>
 
                     <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} />
-                  
+                </div>
+            </div>
+            
+            {/** Content */}
+            <div className="overflow-scroll">
+                <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
+                    { filteredTerms.map((term, index) => {
+                        return <CardText key={index} title={term.title} text={term.text} />
+                    })}
                 </div>
             </div>
 
-            <div className="lg:flex flex-grow lg:overflow-scroll mb-[40px]">
-                <div>
-                    <div className="grid grid-cols-12 gap-y-[30px] pt-[40px]">
-                        { filteredTerms.map((term, index) => {
-                            return <CardText key={index} title={term.title} text={term.text} />
-                        })}
-                    </div>
-                </div>
-            </div>
         </LayoutHistorianWorkshop>
     )
 }

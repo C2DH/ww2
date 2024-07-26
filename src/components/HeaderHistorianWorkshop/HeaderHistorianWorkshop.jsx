@@ -52,12 +52,12 @@ export default function HeaderHistorianWorkshop({filters}) {
 
     return (
         <>
-            <div className="hidden lg:grid grid-cols-12 lg:pt-[50px]">
+            <div className="hidden lg:grid grid-cols-12 lg:pt-[20px] xl:pt-[50px]">
                 <div className="col-span-12 xl:col-span-9">
-                    <h1 className='text-[70px] abril leading-none pb-[20px] xl:pb-[50px]'>L'atelier de l'historien</h1>
+                    <h1 className='text-[50px] xl:text-[70px] abril leading-none pb-[20px] xl:pb-[50px]'>L'atelier de l'historien</h1>
                 </div>
 
-                <div className="col-span-12 xl:col-span-3 text-[20px] pt-[20px]">
+                <div className="col-span-12 xl:col-span-3 text-[20px] xl:pt-[20px]">
                     <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris.</p>
                 </div>
             </div>
@@ -69,7 +69,7 @@ export default function HeaderHistorianWorkshop({filters}) {
             </nav>
 
             {/* MOBILE: NAVBAR - FILTERS */}
-            <div className='sm:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full bg-red-200 flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full bg-red-200 flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
                 <div 
                     onClick={() => handleMenu('menu')}
                     className={classNames("flex items-center justify-center", {
@@ -87,7 +87,7 @@ export default function HeaderHistorianWorkshop({filters}) {
                 }
             </div>
 
-            <div className={classNames('sm:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {
+            <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {
                 "translate-y-[100%]": !isOpenMenu
             })}>
                 <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>

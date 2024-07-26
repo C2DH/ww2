@@ -46,7 +46,7 @@ export default function Accordion({ items }) {
                                     <span className="lg:hidden pl-[80px] abril text-[24px] leading-none">{item.count}</span>
                                     <span className="lg:hidden pl-[10px] text-[24px] uppercase">Notes</span>
                                 </div>
-                                <h2 className="abril text-[30px] lg:text-[60px] uppercase pb-[35px]">{item.title}</h2> 
+                                <h2 className="abril text-[30px] leading-none lg:text-[60px] uppercase pb-[35px] pt-[10px]">{item.title}</h2> 
                             </div>
                             <div className="hidden lg:flex flex-col justify-center items-center pr-[50px]">
                                 <span className="abril text-[60px] leading-none block">{item.count}</span>

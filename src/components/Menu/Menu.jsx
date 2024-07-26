@@ -22,8 +22,6 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { useState, useContext, useEffect } from 'react'
 import classNames from 'classnames'
 
-// COMPONENTS
-import CustomLink from '../CustomLink.jsx/CustomLink'
 
 
 export default function Menu() {
@@ -116,6 +114,12 @@ export default function Menu() {
     )
 }
 
+
+export function CustomLink(props) {
+    const location = useLocation();
+
+    return <Link {...props} state={{ from: location.pathname }} className="block"/>
+}
 
 
 export function MenuItem({path, title = "", text = "", handleMenuItemClick}) {

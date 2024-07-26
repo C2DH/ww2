@@ -11,7 +11,7 @@ import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
-import {Map, Marker, Source, Layer, useMap } from 'react-map-gl';
+import { Map, Marker, Source, Layer } from 'react-map-gl';
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
@@ -178,6 +178,8 @@ export default function SpaceTimeMap() {
         token: tokenMapbox,
         style: styleBlueprint,  
         zoom: 15,
+        maxZoom: 18,
+        minZoom: 8
     })
 
     useEffect(() => {
@@ -190,7 +192,8 @@ export default function SpaceTimeMap() {
             setViewState((prevState) => ({ ...prevState, style: element.style }));
         }
 
-        if (element.zoom && element.zoom >= 8) {
+        // if (element.zoom && element.zoom >= 8) {
+        if (element.zoom && element.zoom >= 8 && element.zoom <= 18) {
             console.log(element)
             setViewState((prevState) => ({ ...prevState, zoom: element.zoom }))
             const map = mapRef.current.getMap()
@@ -257,19 +260,20 @@ export default function SpaceTimeMap() {
                     }
 
                     <div>
-                        {viewState.zoom <= 21 &&   
-                            <>
+                        <>
                             <div className='h-[40px] w-[40px] bg-white rounded-t-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) + 1}) }>
-                                <FontAwesomeIcon icon={faPlus} className='cursor-pointer' />
+                                <FontAwesomeIcon icon={faPlus} className={classNames('cursor-pointer', {
+                                    'pointer-events-none text-gray-300': viewState.zoom >= 18
+                                })} />
                             </div>
                             <hr />
-                            </>
-                        }
-                        {viewState.zoom >= 9 &&                        
-                            <div className='h-[40px] w-[40px] bg-white rounded-b-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) - 1}) }>
-                                <FontAwesomeIcon icon={faMinus} className='cursor-pointer' />
-                            </div>
-                        }
+                        </>
+
+                        <div className='h-[40px] w-[40px] bg-white rounded-b-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) - 1}) }>
+                            <FontAwesomeIcon icon={faMinus} className={classNames('cursor-pointer', {
+                                'pointer-events-none text-gray-300': viewState.zoom <= 8
+                            })} />
+                        </div>
                     </div>
                 </div>
             </div>

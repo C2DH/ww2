@@ -16,7 +16,7 @@ body {
     font-weight: 400;
     line-height: normal;
     letter-spacing: 0.4px;
-    background-image: url('../images/common/bg-black.jpg');
+    // background-image: url('../images/common/bg-black.jpg');
 }
 
 p {
@@ -365,12 +365,10 @@ video {
 
 
 // CATALOGUE
-.themes {
-    .theme {
-        position: relative;
-    }
-
-    .theme::after {
+.theme {
+    position: relative;
+    
+    &::after {
         content: '';
         position: absolute;
         top: 50%;
@@ -379,5 +377,11 @@ video {
         background: black;
         width: 65px;
         height: 1px;
+
+        @media screen and (min-width: 1024px) {
+            display: none;
+        }
     }
 }
+
+
