@@ -40,7 +40,8 @@ export default function App() {
         }
         setFirstLaunch(false);
       }, [location.pathname]);
-  
+
+
 
     return (
       <>
@@ -49,22 +50,22 @@ export default function App() {
           <AnimatePresence mode="wait">
               <Routes location={location} key={location.pathname}>
                   <Route path='/' element={ <Layout/>} >
-                      <Route index element={ <Home /> }/>
-                      <Route path='/catalogue' element={ <Catalogue /> }/>
-                      <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
-                      <Route path='/historical-index' element={ <HistoricalIndex /> }/>
-                      <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
-                      <Route path='/bibliography' element={ <Bibliography /> }/>
-                      <Route path='/glossary' element={ <Glossary /> }/>
-                      <Route path='/spacetime-map' element={ <SpaceTimeMap /> }/>
-                      <Route path='/notice/:id' element={ <Notice /> }/>
-                      <Route path='/note/:id' element={ <Note /> }/>
-                      <Route path='/sources' element={ <Sources /> }/>
-                      <Route path='/source/:id' element={ <Source /> }/>
-                      <Route path='/credits' element={ <Credits /> }/>
-                      <Route path='/about' element={ <About /> }/>
-                      <Route path='/terms' element={ <Terms /> }/>
-                      <Route path='/contact' element={ <Contact /> }/>
+                        <Route index element={ <Home /> }/>
+                        <Route path='/catalogue' element={ <Catalogue /> }/>
+                        <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
+                        <Route path='/historical-index' element={ <HistoricalIndex /> }/>
+                        <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
+                        <Route path='/bibliography' element={ <Bibliography /> }/>
+                        <Route path='/glossary' element={ <Glossary /> }/>
+                        <Route path='/spacetime-map' element={ <SpaceTimeMap /> }/>
+                        <Route path='/notice/:slug' element={ <Notice /> }/>
+                        <Route path='/note/:slug' element={ <Note /> }/>
+                        <Route path='/sources' element={ <Sources /> }/>
+                        <Route path='/source/:id' element={ <Source /> }/>
+                        <Route path='/credits' element={ <Credits /> }/>
+                        <Route path='/about' element={ <About /> }/>
+                        <Route path='/terms' element={ <Terms /> }/>
+                        <Route path='/contact' element={ <Contact /> }/>
                   </Route>
               </Routes>
           </AnimatePresence>

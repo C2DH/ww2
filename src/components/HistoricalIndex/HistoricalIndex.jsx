@@ -50,7 +50,6 @@ export default function HistoricalIndex() {
     
     
     const items = generateContent()
-    console.log(items)
 
     const filteredItems = items.filter(item => {
             if (filters.types.length === 0) {

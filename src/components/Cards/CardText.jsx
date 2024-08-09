@@ -9,8 +9,7 @@ export default function CardText({title, text}) {
     const isMedium= useMediaQuery({ query: '(min-width: 768px)'})
 
     useEffect(() => {
-        console.log('isMobile',isMobile)
-        console.log('isMedium',isMedium)
+
         if (isMobile) {
             setSizeText(120)
         } 

@@ -7,7 +7,7 @@ import { useMediaQuery } from 'react-responsive'
 import classNames from 'classnames'
 
 
-export default function Player({ url, className })  {
+export default function Player({ url, className, controls })  {
 
     const isMobile = useMediaQuery({
         query: '(max-width: 640px)'
@@ -17,16 +17,16 @@ export default function Player({ url, className })  {
     const playerRef = useRef(null);
 
     const handleEnded = () => {
-        setIsPlaying(false);
         playerRef.current.seekTo(0); // Redémarre la vidéo
     }
 
-    useEffect(() => {
-    }, [isMobile])
+    const handleVideo = () => {
+        setIsPlaying(playerRef.current.player.isPlaying)
+    }
 
     return (
         <div className="relative">
-            <ReactPlayer url={ url } width={ '100%' } height={ '100%' } controls={true} className={ className } playing={isPlaying} onPlay={() => setIsPlaying(true)} onEnded={ handleEnded }/>
+            <ReactPlayer url={ url } width={ '100%' } height={ '100%' } controls={controls} className={ className } playing={isPlaying} onPause={ handleVideo } onPlay={ handleVideo } onEnded={ handleEnded } ref={playerRef}/>
             
             { !isPlaying &&
                 <div className={classNames('absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] border border-[#6EDFFB]  rounded-full flex justify-center items-center', {

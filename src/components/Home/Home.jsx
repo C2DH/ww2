@@ -1,4 +1,3 @@
-// COMPONENTS
 import Intro from "../Intro/Intro"
 
 import { useEffect, useRef, useState } from "react"
@@ -9,6 +8,8 @@ import longLeftArrow from '../../assets/images/common/longLeftArrow.png'
 import longRightArrow from '../../assets/images/common/longRightArrow.png'
 import smallLeftArrow from '../../assets/images/common/smallLeftArrow.png'
 import smallRightArrow from '../../assets/images/common/smallRightArrow.png'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faXmark } from "@fortawesome/free-solid-svg-icons"
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -18,8 +19,13 @@ import Map, { Marker, Source, Layer } from 'react-map-gl';
 import { AnimatePresence, motion } from "framer-motion"
 import { Link } from "react-router-dom";
 
+import * as maptilerClient from "@maptiler/client"
+
+
 const apiKeyMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const apiStyleMapbox = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
+maptilerClient.config.apiKey = import.meta.env.VITE_API_MAPTILER
+
 
 
 export default function Home() {
@@ -29,151 +35,11 @@ export default function Home() {
     })
 
     const [arrowMarker, setArrowMarker] = useState(longLeftArrow)
-    
     const [showIntro, setShowIntro] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false); 
-    const geojson = {
-        features: [
-            {
-                id: 1,
-                geometry: {
-                    coordinates: [49.48056, 6.0875]
-                },
-                properties: {
-                    place: 'Dudelange',
-                    location: 'Clinique Saint Joseph',
-                    description: 'Lieu de ravitaillement des réfugiés de Dudelange',
-                    image: 'https://images.unsplash.com/photo-1590337318473-f1e81866c60c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: "video-1.mp4",
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            },
-            {
-                id: 2,
-                geometry: {
-                    coordinates: [49.6112768, 6.129799]
-                },
-                properties: {
-                    place: 'Luxembourg',
-                    location: 'Clinique Saint Antoine',
-                    description: 'Lieu de ravitaillement des réfugiés de Luxembourg',
-                    image: 'https://images.unsplash.com/photo-1588336899284-950764f07147?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: "video-2.mp4"
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            },
-            {
-                id: 3,
-                geometry: {
-                    coordinates: [49.4959628, 5.9850306]
-                },
-                properties: {
-                    place: 'Esch-sur-Alzette',
-                    location: 'Salle des sports',
-                    description: 'Lieu de ravitaillement des réfugiés de Esch-sur-Alzette',
-                    image: 'https://images.unsplash.com/photo-1590337318156-73e24cd1e36b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: 'video-1.mp4'
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            },
-            {
-                id: 4,
-                geometry: {
-                    coordinates: [49.9666628, 5.9333296]
-                },
-                properties: {
-                    place: 'Wiltz',
-                    location: 'Hopital Lorem',
-                    description: 'Lieu de ravitaillement des réfugiés de Wiltz',
-                    image: 'https://images.unsplash.com/photo-1593131540982-57778192fc21?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: 'video-2.mp4'
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            },
-            {
-                id: 5,
-                geometry: {
-                    coordinates: [50.2994, 5.5119]
-                },
-                properties: {
-                    place: 'Grande-Bretagne',
-                    location: 'Hopital Lorem',
-                    description: 'Lieu de ravitaillement des réfugiés de Wiltz',
-                    image: 'https://images.unsplash.com/photo-1593131540982-57778192fc21?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    media: 'video-2.mp4'
-                },
-                notes_related: [
-                    {
-                        title: 'Note 01',
-                        description: "Lorem ipsum dolor sit amet consectetur."
-                    },
-                    {
-                        title: 'Note 02',
-                        description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                    },
-                    {
-                        title: 'Note 03',
-                        description: "Dolor sit amet consectetur."
-                    }
-                ]
-            }
-        ]
-    };
+    const [data, setData] = useState(null)
 
     useEffect(() => {
-
         if (isMobile) {
             setArrowMarker(smallLeftArrow)
         } else {
@@ -195,93 +61,152 @@ export default function Home() {
     }, [isMobile])
 
 
-    return isLoaded && (
+
+    const [isLoading, setIsLoading] = useState(false)
+
+    
+    useEffect(() => {
+        fetch("https://ww2-lu.netlify.app/api/story/?filters=%7B%22mentioned_to__slug%22%3A%22level-01-journeys%22%2C%22covers__data__type%22%3A%22place%22%7D&limit=100&h=4a75fb8cbf80d23b000166e1dbc06eb397d542efaa28a7f89ceb914fb95c051b", {
+            method: "GET",
+            headers: {}
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            setData(data)
+            setIsLoading(true)
+        })
+        .catch((error) => console.log(error))
+    }, [isLoading])
+    
+
+    return isLoaded && data && data.results && (
         <>      
             {/* <Intro /> */}
-            <MapBox items={geojson.features} arrow={arrowMarker}/>
+            <MapBox items={data.results} arrow={arrowMarker}/>
         </>
     )
 }
 
-
-
-const MapBox = ({items, arrow}) => {
-    const mapRef = useRef(null)
+const MapBox = ({ items, arrow }) => {
+    const mapRef = useRef(null);
     const [lng, setLng] = useState(6.131514);
     const [lat, setLat] = useState(49.815764);
     const [zoom, setZoom] = useState(8);
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
+    const [convertedItems, setConvertedItems] = useState([]);
+    
+    useEffect(() => {
 
-    return (
-        <div className='mask h-[calc(100vh-80px)] overflow-hidden'>
-            <Map
-                ref={mapRef}
-                style={{ width: '100%', height: '100%' }}
-                mapboxAccessToken={apiKeyMapbox}
-                mapStyle={apiStyleMapbox}              
-                initialViewState={{
-                    longitude: lng,
-                    latitude: lat,
-                    zoom: zoom,
-                    pitch: 30 // Inclinaison en degrés
-                }}
-                minZoom={8} // Ne peut pas dézoomer en dessous de x8
-                dragRotate={true} // 3D Relief : désactiver 
-                scrollZoom={true} // Désactiver Zoom scroll
-            >
+        Promise.all(items.filter(item => item.covers.filter(item => item.data?.type == 'place').length > 0).map(async (item, index) =>  {      
+            try {
+                const place = item.covers.filter(item => item.data?.type == 'place').shift();
+                const convertedCoor = await maptilerClient.coordinates.transform(place.data.geojson.geometry.coordinates,{ sourceCrs: 2169 },{ targetCrs: 4326 })
+                const t = { ...item, convertedCoordinates: convertedCoor.results[0], country: place.data.geojson.geometry.properties.country, description: place.data.description, title: place.data.title }
+                return t
+            } catch (error) {
+                console.error(error)
+                return null;
+            }   
+        })).then((data) => {
+            setConvertedItems(data.filter(item => item !== null))
+        })
 
+    }, [items])
+
+
+
+    // useEffect(() => {
+
+    //     const map = document.querySelector('.mapboxgl-map')
+
+    //     if (map) {
+            
+    //                if (selectedMarker.id !== null) {
+    //                    console.log('la')
+    //                    map.addEventListener('click', () => {
+    //                        setSelectedMarker({ id: null, marker: null})
+    //                    })
+    //                }
+
+    //     }
         
-                { items.map((marker, index) => {
-                    return (
+    //     console.log(selectedMarker)
+    // }, [selectedMarker])
 
-                        <Marker 
-                            key={ index } 
-                            longitude={ marker.geometry.coordinates[1] } 
-                            latitude={ marker.geometry.coordinates[0] } 
-                            anchor={ marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom" }   
-                        >
-                            <div className='relative'> 
-                                <img src={ marker.properties.place === 'Grande-Bretagne' ? arrow : pinMarker } alt="marker" className="cursor-pointer" onMouseOver={() => setSelectedMarker({ id: index, data: marker }) }/>
+ 
+    
+    return (
+        <>
+            <div className='mask h-[calc(100vh-80px)] overflow-hidden relative'>
+                <Map
+                    ref={mapRef}
+                    style={{ width: '100%', height: '100%' }}
+                    mapboxAccessToken={apiKeyMapbox}
+                    mapStyle={apiStyleMapbox}
+                    initialViewState={{
+                        longitude: lng,
+                        latitude: lat,
+                        zoom: zoom,
+                        pitch: 30 // Inclinaison en degrés
+                    }}
+                    minZoom={8} // Ne peut pas dézoomer en dessous de x8
+                    dragRotate={true} // 3D Relief : désactiver
+                    scrollZoom={true} // Désactiver Zoom scroll
+                >
 
-                                { marker.properties.place !== 'Grande-Bretagne' ?
-                                    <AnimatePresence>
-                                        { selectedMarker && selectedMarker.id == index &&
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.8 }}
-                                                transition={{ duration: 0.4, ease: 'easeInOut'}}
-                                                className='w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
-                                                style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
-                                                onMouseLeave={() => setSelectedMarker({ id: null, data: null }) }
-                                            >
-                                                <div className='border border-black rounded-[6px] h-full w-full'>
-                                                    <Link to={`/notice/${selectedMarker.data.id}`}>
+                    {convertedItems.map((marker, index) => {
+                        return (
+                            <Marker
+                                key={index}
+                                longitude={marker.convertedCoordinates.x}
+                                latitude={marker.convertedCoordinates.y}
+                                anchor={marker.country === 'Grande-Bretagne' ? "center" : "bottom"}
+                            >
+                                <div className='relative z-[9999]'>
+                                    <img
+                                        src={marker.country === 'Grande-Bretagne' ? arrow : pinMarker}
+                                        alt="marker"
+                                        className="cursor-pointer"
+                                        onClick={() => { setSelectedMarker({ id: index, data: marker }) }}
+                                    />
 
-                                                        <div className='flex py-[12px]'>
-                                                            <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                                                            <div>                                                
-                                                                <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
-                                                                <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
+                                    { marker.country !== 'Grande-Bretagne' ?
+                                        <AnimatePresence>
+                                            { selectedMarker && selectedMarker.id == index &&
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0.8 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 0.8 }}
+                                                    transition={{ duration: 0.4, ease: 'easeInOut'}}
+                                                    className='flex w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
+                                                    style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
+                                                >
+                                                    <div className='border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative'>
+                                                        <Link to={`/notice/${marker.slug}`}>
+                                                            <div className='flex'>
+                                                                <span className='abril block pr-[10px]'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
+                                                                <div>                                                
+                                                                    <h3 className='abril text-[18px] pb-[8px]'>{ marker.title.fr_FR }</h3>
+                                                                    <p className='text-[18px] leading-none sofia uppercase'>{ marker.description.fr_FR }</p>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </Link>
-                                                </div>
-                                            </motion.div>
-                                        }
-                                    </AnimatePresence>
-                                    :
-                                    <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] sm:top-0 -translate-y-[50%] left-[100%] sm:right-[100%] sm:left-auto mx-[10px] sm:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
-                                }
-                            </div>
-                        </Marker>
-                    )
-                })}
-            </Map>
-        </div>    
-    )
+                                                        </Link>
+                                                        <FontAwesomeIcon icon={faXmark} className="absolute top-[2px] right-[4px]" onClick={() => setSelectedMarker({ id: null, data: null })} />
+                                                    </div>
+                                                </motion.div>
+                                            }
+                                        </AnimatePresence>
+                                        :
+                                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] sm:top-0 -translate-y-[50%] left-[100%] sm:right-[100%] sm:left-auto mx-[10px] sm:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
+                                    }
+                                </div>
+                            </Marker>
+                        );
+                    })}
+                </Map>
+            </div>
+        </>
+    );
 }
-
-
 
 
