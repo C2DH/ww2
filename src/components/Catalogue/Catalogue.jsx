@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import Accordion from '../Accordion/Accordion'
 import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 
 export default function Catalogue() {
 
@@ -17,6 +18,8 @@ export default function Catalogue() {
     const [readTheme4, setReadTheme4] = useState(85/100)
     const [isLoaded, setIsLoaded] = useState(false)
     const [theme, setTheme] = useState([])
+
+    const { i18n, t } = useTranslation();
 
 
     useEffect(() => {
@@ -55,7 +58,7 @@ export default function Catalogue() {
     
                         <div className="hidden lg:flex col-span-4 border-l border-black mt-[70px] mb-[45px] pl-[20px] flex-col justify-between">
                             <div className='flex items-center'>
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 1</span>  
+                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')} 1</span>  
                                 <ProgressBar progress={readTheme1}/>
     
                                 {/* <div className='resume-reading'>
@@ -64,16 +67,16 @@ export default function Catalogue() {
                             </div>
     
                             <div className='flex items-center'>
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 2</span>   
+                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')} 2</span>   
                                 <ProgressBar progress={readTheme2} />
                             </div>
     
                             <div className='flex items-center'> 
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 3</span>   
+                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')}  3</span>   
                                 <ProgressBar progress={readTheme3} />   
                             </div>
                             <div className='flex items-center'>
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>Thème 4</span>   
+                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')}  4</span>   
                                 <ProgressBar progress={readTheme4} />
                             </div>
                         </div>

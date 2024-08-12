@@ -1,8 +1,11 @@
 import classNames from 'classnames'
 import React, { useState, useRef } from 'react'
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function Accordion({ items }) {
+
+    const { i18n, t } = useTranslation();
 
     const [currentTheme, setCurrentTheme] = useState(-1)
     const contentRefs = useRef([])
@@ -27,13 +30,11 @@ export default function Accordion({ items }) {
             noteId: id,
             theme: parseInt(theme) + 1
         }
-
         localStorage.setItem('params', JSON.stringify(params))
-
         navigate(`/note/${id}`)
     } 
 
-    return (    
+    return (        
         <div className='h-full'>
             {items.map((item, index) => (
                 <div key={ index }>
@@ -44,13 +45,13 @@ export default function Accordion({ items }) {
                             <div>
                                 <span className="text-[24px] uppercase theme pr-[15px]">{ item.title.split('-')[0] }</span>
                                 <span className="lg:hidden pl-[80px] abril text-[24px] leading-none">{item.stories.length}</span>
-                                <span className="lg:hidden pl-[10px] text-[24px] uppercase">Notes</span>
+                                <span className="lg:hidden pl-[10px] text-[24px] uppercase">{ t('notes') }</span>
                             </div>
                             <h2 className="abril text-[30px] leading-none lg:text-[60px] uppercase pb-[35px] pt-[10px]">{item.title.split('-')[1]}</h2> 
                         </div>
                         <div className="hidden lg:flex flex-col justify-center items-center pr-[50px]">
                             <span className="abril text-[60px] leading-none block">{item.stories.length}</span>
-                            <span className="text-[24px] uppercase">Notes</span>
+                            <span className="text-[24px] uppercase">{ t('notes') }</span>
                         </div>
                     </div>
 

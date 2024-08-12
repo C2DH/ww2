@@ -22,26 +22,34 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { useState, useContext, useEffect } from 'react'
 import classNames from 'classnames'
 
-
+// TRANSLATION
+import { useTranslation } from 'react-i18next'
 
 export default function Menu() {
-    const [isOpenMenu, setIsOpenMenu] = useState(false)
 
+    // const [isOpenMenu, setIsOpenMenu] = useState(false)
+    // const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+
+    const { i18n, t } = useTranslation();
+    
+    const [language, setLanguage] = useState('fr_FR')
     const { openMenu, setOpenMenu } = useMenuContext()
-    const [isAnimationComplete, setIsAnimationComplete] = useState(false);
     const [sharedState, setSharedState] = useSharedState();
     const [results, setResults] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
-
     const { pathname } = useLocation()
     const locations = ['/catalogue', '/historian-workshop', '/historical-index', '/research-institutions', '/bibliography', '/glossary','/sources']
 
+    // TRANSLATION
+    const handleLanguageChange = (e) => {
+        i18n.changeLanguage(e)
+        if (localStorage.getItem('i18nextLng')) {
+            setLanguage(e)
+        }
+    }
 
-    useEffect(() => {
-        setSharedState({ ...sharedState, showClouds: false, showCurtains: false });
-    }, [])
 
-
+    // API DATA
     useEffect(() => {
         fetch("https://ww2-lu.netlify.app/api/story/?filters=%7B%22tags__slug%22%3A%22menu%22%7D&order_by=slug&limit=10&h=d159095c9a67b4a002ed8a5c522df27440e74f0f58af01bd93b7d38de7ad7bfa", {
             method: "GET",
@@ -57,22 +65,23 @@ export default function Menu() {
     }, [isLoading])
 
 
+    // ANIMATION MENU 
     useEffect(() => {
-      
             if (openMenu) {
-                document.body.style.height = '100vh';
+                document.body.style.height = '';
                 document.body.style.overflow = 'hidden';
             } else {
                 document.body.style.height = '';
                 document.body.style.overflow = '';
             }
-
             console.log(openMenu)
-        
     }, [openMenu])
 
 
-
+    // ANIMATION CURTAINS
+    useEffect(() => {
+        setSharedState({ ...sharedState, showClouds: false, showCurtains: false });
+    }, [])
 
 
     return (
@@ -92,11 +101,10 @@ export default function Menu() {
 
                     {/** HEADER */}
                     <div className="flex justify-between px-[30px] sm:px-[90px] pt-[140px] md:pt-[20px]">
-                        <Sound />
-                        <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} />
-                        <LanguageSwitcher />
+                        <Sound translate={t}/>
+                        <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
+                        <LanguageSwitcher switchLanguage={handleLanguageChange} lang={language}/>
                     </div>
-z
 
                     {/** ITEMS */}
                     <div className='flex justify-center mt-[60px] sm:mt-[90px]'>
@@ -152,9 +160,9 @@ z
                     {/** ITEMS SUITE */}
                     <div className='flex justify-center items-center mt-[20px]'>
                         <ul className='flex text-[20px]'>
-                            <li className='tiret'><Link to='/about'>A propos</Link></li>
-                            <li className='tiret'><Link to='/terms'> Conditions</Link></li>
-                            <li><Link to='/contact'> Contact</Link></li>
+                            <li className='tiret'><Link to='/about'>{ t('about')}</Link></li>
+                            <li className='tiret'><Link to='/terms'> { t('conditions')}</Link></li>
+                            <li><Link to='/contact'> { t('contact')}</Link></li>
                         </ul>
                     </div>
                 </header>
@@ -180,12 +188,12 @@ export function MenuItem({path, title = "", text = "", handleMenuItemClick}) {
     )
 }
 
-export function MenuLogo({ isOpenMenu, setIsOpenMenu }) {
+export function MenuLogo({ isOpenMenu, setIsOpenMenu, translate }) {
     return (
         <div className='absolute top-[20px] sm:top-[3px] left-[50%] -translate-x-[50%]'>
             <div>
-                <span className='block text-center cursor-pointer' onClick={() => setIsOpenMenu(!isOpenMenu) }
-                >{isOpenMenu ? "- FERMER -" : "- MENU -"  }</span>
+                <span className='block text-center cursor-pointer uppercase' onClick={() => setIsOpenMenu(!isOpenMenu) }
+                >{isOpenMenu ? `- ${translate('close')} -` : `- ${translate('menu')} -`  }</span>
                 <Link to={'/'}>
                     <img src={ logo } alt="Logo Menu" className='w-[180px]' onClick={() => setIsOpenMenu(false)}/>
                 </Link>
@@ -194,18 +202,20 @@ export function MenuLogo({ isOpenMenu, setIsOpenMenu }) {
     )
 }
 
-const LanguageSwitcher = () => {
+const LanguageSwitcher = ({ switchLanguage, lang }) => {
     return (
         <div>   
-            <span className='text-[20px] cursor-pointer'>EN DE FR</span>
+            <span className={classNames('text-[20px] cursor-pointer mr-[5px]', {'blue': lang === 'en_EN'})} onClick={() => switchLanguage('en_EN') }>EN</span>
+            <span className={classNames('text-[20px] cursor-pointer mr-[5px]', {'blue': lang === 'de_DE'})}  onClick={() => switchLanguage('de_DE') }>DE</span>
+            <span className={classNames('text-[20px] cursor-pointer', {'blue': lang === 'fr_FR'})}  onClick={() => switchLanguage('fr_FR') }>FR</span>
         </div>
     )
 }
 
-const Sound = () => {
+const Sound = ({ translate }) => {
     return (
         <div>
-            <span className="text-[20px]">SOUND ON</span>
+            <span className="text-[20px]">{ translate('sound') }</span>
             <FontAwesomeIcon 
                 icon={ faVolume } 
                 style={{ fontSize: '26px', marginLeft: '10px', cursor: 'pointer' }}
