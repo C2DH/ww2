@@ -1,17 +1,11 @@
-import { Outlet, useLocation, useRouteError } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useMenuContext } from '../../contexts/MenuProvider'
 import classNames from "classnames";
-import { useEffect } from "react";
 
 export default function Layout() {
 
     const { pathname } = useLocation()
     const { openMenu, setOpenMenu } = useMenuContext()
-
-
-    // useEffect(() => {
-    //     console.log('menu open',openMenu)
-    // }, [openMenu])
 
     if (pathname === '/' || pathname === '/spacetime-map' || pathname.includes('/notice/')) {
         return (

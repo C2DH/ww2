@@ -25,7 +25,7 @@ export default i18n
   .init({
     resources,
     lng: "fr_FR",
-    debug: true,
+    // debug: true,
     fallbackLng: "fr_FR",
     interpolation: {
       escapeValue: false

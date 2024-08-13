@@ -1,25 +1,22 @@
 import Intro from "../Intro/Intro"
-
 import { useEffect, useRef, useState } from "react"
 import { useMediaQuery } from 'react-responsive'
+import { useSharedState } from "../../contexts/SharedStateProvider"
 
 import pinMarker from '../../assets/images/common/marker.svg'
 import longLeftArrow from '../../assets/images/common/longLeftArrow.png'
-import longRightArrow from '../../assets/images/common/longRightArrow.png'
 import smallLeftArrow from '../../assets/images/common/smallLeftArrow.png'
-import smallRightArrow from '../../assets/images/common/smallRightArrow.png'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faXmark } from "@fortawesome/free-solid-svg-icons"
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Map, { Marker, Source, Layer } from 'react-map-gl';
+import * as maptilerClient from "@maptiler/client"
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
 import { Link } from "react-router-dom";
-
-import * as maptilerClient from "@maptiler/client"
 
 
 const apiKeyMapbox = import.meta.env.VITE_API_KEY_MAPBOX
@@ -27,13 +24,18 @@ const apiStyleMapbox = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
 maptilerClient.config.apiKey = import.meta.env.VITE_API_MAPTILER
 
 
-
 export default function Home() {
+    const [sharedState, setSharedState] = useSharedState();
+
+    useEffect(() => {
+        setSharedState({ ...sharedState, showCurtains: false });
+    })
 
     const isMobile = useMediaQuery({
         query: '(max-width: 640px)'
     })
 
+    const [isLoading, setIsLoading] = useState(false)
     const [arrowMarker, setArrowMarker] = useState(longLeftArrow)
     const [showIntro, setShowIntro] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false); 
@@ -62,7 +64,6 @@ export default function Home() {
 
 
 
-    const [isLoading, setIsLoading] = useState(false)
 
     
     useEffect(() => {
@@ -143,6 +144,7 @@ const MapBox = ({ items, arrow }) => {
                     style={{ width: '100%', height: '100%' }}
                     mapboxAccessToken={apiKeyMapbox}
                     mapStyle={apiStyleMapbox}
+                    dragPan={false}
                     initialViewState={{
                         longitude: lng,
                         latitude: lat,
@@ -150,7 +152,7 @@ const MapBox = ({ items, arrow }) => {
                         pitch: 30 // Inclinaison en degrés
                     }}
                     minZoom={8} // Ne peut pas dézoomer en dessous de x8
-                    dragRotate={true} // 3D Relief : désactiver
+                    dragRotate={false} // 3D Relief : désactiver
                     scrollZoom={true} // Désactiver Zoom scroll
                 >
 

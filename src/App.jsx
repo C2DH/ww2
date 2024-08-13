@@ -23,6 +23,7 @@ import ResearchInstitutions from "./components/ResearchInstitutions/ResearchInst
 import Bibliography from './components/Bibliography/Bibliography'
 import Glossary from "./components/Glossary/Glossary";
 import { MenuProvider } from "./contexts/MenuProvider";
+import { LanguageProvider } from "./contexts/LanguageProvider"
 
 export default function App() {
 
@@ -32,49 +33,49 @@ export default function App() {
 
     useEffect(() => {
         if (!firstLaunch) {
-          if ((location.state?.from == '/' && location.pathname.includes('notice')) || (location.state?.from.includes('notice') && location.pathname == '/')) {
-            setSharedState({ ...sharedState, showClouds: true });
-          } else if(location.state) {
-            setSharedState({ ...sharedState, showCurtains: true });
-          }
+            if ((location.state?.from == '/' && location.pathname.includes('notice')) || (location.state?.from.includes('notice') && location.pathname == '/')) {
+                setSharedState({ ...sharedState, showClouds: true });
+            } else if(location.state) {
+                setSharedState({ ...sharedState, showCurtains: true });
+            }
         }
         setFirstLaunch(false);
-      }, [location.pathname]);
-
-
+    }, [location.pathname]);
 
     return (
-      <>
-        <MenuProvider>
-          <Menu />
-          <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname}>
-                  <Route path='/' element={ <Layout/>} >
-                        <Route index element={ <Home /> }/>
-                        <Route path='/catalogue' element={ <Catalogue /> }/>
-                        <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
-                        <Route path='/historical-index' element={ <HistoricalIndex /> }/>
-                        <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
-                        <Route path='/bibliography' element={ <Bibliography /> }/>
-                        <Route path='/glossary' element={ <Glossary /> }/>
-                        <Route path='/spacetime-map' element={ <SpaceTimeMap /> }/>
-                        <Route path='/notice/:slug' element={ <Notice /> }/>
-                        <Route path='/note/:slug' element={ <Note /> }/>
-                        <Route path='/sources' element={ <Sources /> }/>
-                        <Route path='/source/:id' element={ <Source /> }/>
-                        <Route path='/credits' element={ <Credits /> }/>
-                        <Route path='/about' element={ <About /> }/>
-                        <Route path='/terms' element={ <Terms /> }/>
-                        <Route path='/contact' element={ <Contact /> }/>
-                  </Route>
-              </Routes>
-          </AnimatePresence>
+        <>
+            <LanguageProvider>
+                <MenuProvider>
+                    <Menu />
+                    <AnimatePresence mode="wait">
+                        <Routes location={location} key={location.pathname}>
+                            <Route path='/' element={ <Layout/>} >
+                                <Route index element={ <Home /> }/>
+                                <Route path='/catalogue' element={ <Catalogue /> }/>
+                                <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
+                                <Route path='/historical-index' element={ <HistoricalIndex /> }/>
+                                <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
+                                <Route path='/bibliography' element={ <Bibliography /> }/>
+                                <Route path='/glossary' element={ <Glossary /> }/>
+                                <Route path='/spacetime-map' element={ <SpaceTimeMap /> }/>
+                                <Route path='/notice/:slug' element={ <Notice /> }/>
+                                <Route path='/note/:slug' element={ <Note /> }/>
+                                <Route path='/sources' element={ <Sources /> }/>
+                                <Route path='/source/:id' element={ <Source /> }/>
+                                <Route path='/credits' element={ <Credits /> }/>
+                                <Route path='/about' element={ <About /> }/>
+                                <Route path='/terms' element={ <Terms /> }/>
+                                <Route path='/contact' element={ <Contact /> }/>
+                            </Route>
+                        </Routes>
+                    </AnimatePresence>
 
-          <AnimatePresence>
-              {/* {sharedState.showClouds && <Clouds />}
-              {sharedState.showCurtains && <Curtains />} */}
-          </AnimatePresence>
-        </MenuProvider>
-      </>
+                    <AnimatePresence>
+                        {sharedState.showClouds && <Clouds />}
+                        {sharedState.showCurtains && <Curtains />}
+                    </AnimatePresence>
+                </MenuProvider>
+            </LanguageProvider>
+        </>
     )
 }

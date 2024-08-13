@@ -2,10 +2,12 @@ import classNames from 'classnames'
 import React, { useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom'
+import { useLanguageContext } from '../../contexts/LanguageProvider';
 
 export default function Accordion({ items }) {
 
-    const { i18n, t } = useTranslation();
+    const { t } = useTranslation()
+    const { language } = useLanguageContext()
 
     const [currentTheme, setCurrentTheme] = useState(-1)
     const contentRefs = useRef([])
@@ -30,8 +32,6 @@ export default function Accordion({ items }) {
             noteId: id,
             theme: parseInt(theme) + 1
         }
-        localStorage.setItem('params', JSON.stringify(params))
-        navigate(`/note/${id}`)
     } 
 
     return (        
@@ -66,7 +66,7 @@ export default function Accordion({ items }) {
                             {item.stories.map((note, index) => (        
                                 <Link to={ `/note/${note.slug}` } key={ index } className="block text-[24px] lg:text-[40px] uppercase pb-[20px] cursor-pointer" onClick={() => handlePopup({id: note.id, theme: currentTheme})}>
                                     <span className='lg:text-[38px] font-light'>N{index < 10 ? '0' + (index + 1) : index }</span>
-                                    <span className='abril'> { note.data.title.fr_FR.split('(')[0] }</span> 
+                                    <span className='abril'> { note.data.title[language]?.split('(')[0] }</span> 
                                 </Link>      
                             ))}
                         </div>

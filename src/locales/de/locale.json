@@ -6,5 +6,9 @@
     "contact": "Kontakt",
     "conditions": "Bedingungen",
     "theme": "Thema",
-    "notes": "Notizen"
+    "notes": "Notizen",
+    "next": "Nächster",
+    "prev": "Vorheriger",
+    "references": "Referenzen",
+    "links": "Links"
 }

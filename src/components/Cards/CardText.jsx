@@ -1,5 +1,5 @@
 import { useMediaQuery } from 'react-responsive'
-import { truncateText } from "../../lib/truncate";
+import { truncateText } from "../../lib/utils";
 import { useEffect, useState } from 'react';
 
 export default function CardText({title, text}) {

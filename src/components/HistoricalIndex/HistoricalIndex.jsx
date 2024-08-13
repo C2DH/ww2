@@ -74,8 +74,6 @@ export default function HistoricalIndex() {
         }
     }
 
-    console.log(filters)
-
     return (
             
         <LayoutHistorianWorkshop pageTitle={'Index historique'}>

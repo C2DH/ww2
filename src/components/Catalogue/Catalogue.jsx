@@ -1,17 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import Accordion from '../Accordion/Accordion'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { useLanguageContext } from '../../contexts/LanguageProvider'
+import { useSharedState } from '../../contexts/SharedStateProvider'
 
 export default function Catalogue() {
 
     // Stocker un json dans le local storage pour gérer les progress bar
     // Quand j'ouvre la popup de la note je sette le localstorage
-
+    const { i18n, t } = useTranslation()
+    const { language } = useLanguageContext()
     const [lastRead, setLastRead] = useState('')
     const storedParams = localStorage.getItem('params')
-
+    const [sharedState, setSharedState] = useSharedState()
     const [readTheme1, setReadTheme1] = useState(60/100)
     const [readTheme2, setReadTheme2] = useState(20/100)
     const [readTheme3, setReadTheme3] = useState(50/100)
@@ -19,11 +22,7 @@ export default function Catalogue() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [theme, setTheme] = useState([])
 
-    const { i18n, t } = useTranslation();
-
-
     useEffect(() => {
-        // Utiliser async/await pour une gestion plus propre des appels API
         const fetchThemes = async () => {
             try {
                 const response1 = await fetch(`https://ww2-lu.netlify.app/api/story/theme-01-vivre-sous-lannexion`)
@@ -32,15 +31,16 @@ export default function Catalogue() {
                 const response2 = await fetch(`https://ww2-lu.netlify.app/api/story/theme-02-reagir-a-lannexion`)
                 const data2 = await response2.json()
 
-                // Mettre à jour l'état avec les deux thèmes
                 setTheme([data1, data2])
                 setIsLoaded(true)
             } catch (error) {
                 console.log(error)
             }
         }
-
         fetchThemes()
+
+        setSharedState({ ...sharedState, showCurtains: false });
+
     }, [])
 
 
@@ -60,10 +60,6 @@ export default function Catalogue() {
                             <div className='flex items-center'>
                                 <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')} 1</span>  
                                 <ProgressBar progress={readTheme1}/>
-    
-                                {/* <div className='resume-reading'>
-    
-                                </div> */}
                             </div>
     
                             <div className='flex items-center'>
@@ -79,6 +75,11 @@ export default function Catalogue() {
                                 <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')}  4</span>   
                                 <ProgressBar progress={readTheme4} />
                             </div>
+
+                                
+                                {/* <div className='resume-reading'>
+    
+                                </div> */}
                         </div>
                     </div>
                     
@@ -89,10 +90,7 @@ export default function Catalogue() {
             </div>
         )
     }
-    
-
 }
-
 
 
 

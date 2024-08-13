@@ -124,11 +124,6 @@ p {
     position: relative;
 }
 
-.resume
-
-
-
-
 
 
 // NOTICE (Capsule)
@@ -145,7 +140,11 @@ video {
 }
 
 
-
+// TIRET
+.tiret::after {
+    content: "—";
+    padding: 0 10px;
+}
 
 
 // IMAGE ZOOM 
@@ -225,11 +224,16 @@ video {
 
 
 // CARTE SPATIO-TEMPORELLE
+
+.mapboxgl-ctrl-attrib-inner, .mapboxgl-ctrl-logo {
+    display: none!important;
+}
+
 .multi-range-slider {
     border: none;
     padding: 20px 10px;
     box-shadow: none;
-   
+
     .labels {
         margin-top: 14px;
 
@@ -241,6 +245,18 @@ video {
     }
 
     .bar {
+        position: relative;
+
+        &::before {
+            content: "";
+            height: 1px;
+            background-color: white;
+            position: absolute;
+            top: 2px;
+            left: -200px;
+            right: -200px;
+        }
+
         .bar-left,
         .bar-inner,
         .bar-right {
@@ -260,20 +276,42 @@ video {
             position: absolute;
             top: -9px;
             z-index: 100;
+            transition: all 0.3s ease-in-out;
         }
 
-        // .bar-inner:hover::after {
-        //     height: 40px;
-        //     background: red;
-        // }
+        .bar-inner:hover::after {
+            background: black;
+            opacity: 0.5;
+            height: 60px;
+            width: auto;
+            position: absolute;
+            left: -50px;
+            right: -50px;
+            top: 0;
+            transform: translateY(-50%);
+            border-radius: 20px;
+        }
+
         .thumb {
             z-index: 101;
+        }
+
+        .thumb:hover ~ .bar-inner::after {
+            content: '';
+            width: 100%;
+            height: 25px;
+            background: black;
+            opacity: 0.5;
+            position: absolute;
+            top: -9px;
+            z-index: 100;
+            transition: all 0.3s ease-in-out;
         }
 
         .thumb::before {
             margin: -8px -10px;
             border-radius: 0;
-            transform: rotate(45deg)
+            transform: rotate(45deg);
         }
     }
 
@@ -394,4 +432,37 @@ video {
 }
 ::-webkit-scrollbar { 
     display: none;  /* Safari and Chrome */
+}
+
+
+
+
+
+// NOTE
+.note h2 {
+    margin-left: 20px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    text-transform: uppercase;
+    font-size: 20px;
+    border-bottom: 1px solid black;
+    font-family: "Abril Fatface", serif;
+
+    ~ p {
+        margin-left: 20px;
+        font-size: 22px;
+        list-style: disc;
+        font-weight: 400;
+        padding-bottom: 10px;
+
+        &::before {
+            content: '•';
+            color: black;
+            font-size: 1.2em;
+            margin-right: 8px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
 }

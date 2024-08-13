@@ -19,6 +19,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import MultiRangeSlider, { ChangeResult } from "multi-range-slider-react";
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
+import { useSharedState } from '../../contexts/SharedStateProvider'
 
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const styleBlueprint = import.meta.env.VITE_API_STYLE_MAPBOX_BLUEPRINT
@@ -167,11 +168,10 @@ const geojson = {
 };
 
 export default function SpaceTimeMap() {
-
-    const mapRef = useRef(null);
-
-    const [openFilter, setOpenFilter] = useState(false)
     
+    const [sharedState, setSharedState] = useSharedState()
+    const mapRef = useRef(null);
+    const [openFilter, setOpenFilter] = useState(false)
     const [ viewState, setViewState ] = useState({
         longitude: 6.1243943,
         latitude: 49.6099615,
@@ -183,8 +183,8 @@ export default function SpaceTimeMap() {
     })
 
     useEffect(() => {
-        console.log(viewState)
-    }, [viewState])
+        setSharedState({ ...sharedState, showCurtains: false })
+    })
 
 
     const handleMap = (element) => {
@@ -194,7 +194,6 @@ export default function SpaceTimeMap() {
 
         // if (element.zoom && element.zoom >= 8) {
         if (element.zoom && element.zoom >= 8 && element.zoom <= 18) {
-            console.log(element)
             setViewState((prevState) => ({ ...prevState, zoom: element.zoom }))
             const map = mapRef.current.getMap()
             map.flyTo({center: [viewState.longitude, viewState.latitude], zoom: element.zoom})
@@ -208,10 +207,12 @@ export default function SpaceTimeMap() {
         // </motion.div>
 
         <>
-
+            
             <div className='mask h-[calc(100vh-80px)] overflow-hidden'>
                 <MapBox items={geojson.features} state={viewState} mapRef={mapRef}/>
             </div>
+
+            <span className='block absolute z-[999] bottom-[15px] right-[15px] text-[13px] text-white antonio'>© MAPBOX 2024</span>
 
             {/** Gradient Bottom */}
             <div className="hidden sm:block bottom-gradient absolute bottom-0"></div>
@@ -282,27 +283,25 @@ export default function SpaceTimeMap() {
 }
 
 
-const MapBox = ({items, state, mapRef}) => {
-
+const MapBox = ({ items, state, mapRef }) => {
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
-    const [ openLocation, setOpenLocation ] = useState(false)
-    const [ btnHover, setBtnHover ] = useState(false)
-
-    console.log(state)
+    const [openLocation, setOpenLocation] = useState(false);
+    const [btnHover, setBtnHover] = useState(false);
 
     const sourceStyle = {
         id: 'geoportail',
         type: 'raster',
-        tileSize: 256,     
-        tiles: ['https://wms.geoportail.lu/public_map_layers/service/220?service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=220&bbox={bbox-epsg-3857}&format=image/png&styles']
-     };
-
+        tileSize: 256,
+        tiles: [
+            'https://wms.geoportail.lu/public_map_layers/service/220?service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=220&bbox={bbox-epsg-3857}&format=image/png&styles'
+        ]
+    };
 
     const layerStyle = {
-        id: "geoportail-layer", 
-        type: "raster", 
+        id: "geoportail-layer",
+        type: "raster",
         source: "geoportail"
-    }
+    };
 
     return (
         <>
@@ -310,7 +309,7 @@ const MapBox = ({items, state, mapRef}) => {
                 ref={mapRef}
                 style={{ width: '100%', height: '100%' }}
                 mapboxAccessToken={state.token}
-                mapStyle={state.style}              
+                mapStyle={state.style}
                 initialViewState={{
                     longitude: state.longitude,
                     latitude: state.latitude,
@@ -318,83 +317,89 @@ const MapBox = ({items, state, mapRef}) => {
                     pitch: 30 // Inclinaison en degrés
                 }}
                 minZoom={8} // Ne peut pas dézoomer en dessous de x8
-                dragRotate={true} // 3D Relief : désactiver 
+                dragRotate={true} // 3D Relief : désactiver
                 scrollZoom={true} // Désactiver Zoom scroll
             >
-
                 {state.style === 'geoportail' && (
-                    <Source {...sourceStyle } >
+                    <Source {...sourceStyle}>
                         <Layer {...layerStyle} />
                     </Source>
                 )}
-            
 
-                { items.map((marker, index) => {
-                    return (
-                        <>
-                            <Marker 
-                                key={ index + marker.id } 
-                                longitude={ marker.geometry.coordinates[1] } 
-                                latitude={ marker.geometry.coordinates[0] } 
-                                anchor={ marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom" }   
-                            >
-                                <div className='relative'> 
-                                    <img src={ pinMarker } alt="marker" className="cursor-pointer" 
-                                        onMouseOver={() => setSelectedMarker({ id: index, data: marker }) } 
-                                        onClick={() => setSelectedMarker({ id: index, data: marker }) }/>
+                {items.map((marker) => (
+                    <Marker
+                        key={marker.id}
+                        longitude={marker.geometry.coordinates[1]}
+                        latitude={marker.geometry.coordinates[0]}
+                        anchor={marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom"}
+                    >
+                        <div className='relative'>
+                            <img
+                                src={pinMarker}
+                                alt="marker"
+                                className="cursor-pointer"
+                                onMouseOver={() => setSelectedMarker({ id: marker.id, data: marker })}
+                                onClick={() => setSelectedMarker({ id: marker.id, data: marker })}
+                            />
 
-                                    <AnimatePresence>
-                                        { selectedMarker && selectedMarker.id == index &&
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.8 }}
-                                                transition={{ duration: 0.4, ease: 'easeInOut'}}
-                                                className='w-[300px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
-                                                style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
-                                                onMouseLeave={() => openLocation ? "" : setSelectedMarker({ id: null, data: null }) }
-                                                onClick={() =>{
-                                                    setOpenLocation(true)
-                                                }}
-                                            >
-                                                <div className='border border-black rounded-[6px] h-full w-full overflow-scroll'>
-                                                    <div className='flex py-[12px]'>
-                                                        <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                                                        <div className='pr-3'>                                                
-                                                            <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
-                                                            <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
-                                                        </div>
-                                                    </div>
+                            <AnimatePresence>
+                                {selectedMarker && selectedMarker.id === marker.id && (
+                                    <motion.div
+                                        key={selectedMarker.id}
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.8 }}
+                                        transition={{ duration: 0.4, ease: 'easeInOut' }}
+                                        className='w-[300px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center cursor-pointer p-[6px] rounded-[6px]'
+                                        style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)' }}
+                                        onMouseLeave={() => !openLocation && setSelectedMarker({ id: null, data: null })}
+                                        onClick={() => setOpenLocation(true)}
+                                    >
+                                        <div className='border border-black rounded-[6px] h-full w-full overflow-scroll'>
+                                            <div className='flex py-[12px]'>
+                                                <span className='abril block px-3'>{marker.id < 10 ? '0' + marker.id : marker.id}</span>
+                                                <div className='pr-3'>
+                                                    <h3 className='abril text-[20px] pb-[8px]'>{selectedMarker.data.properties.location}</h3>
+                                                    <p className='sofia uppercase text-[20px]'>{selectedMarker.data.properties.description}</p>
                                                 </div>
-                                            </motion.div>
-                                        }
-                                    </AnimatePresence>
-                                </div>
-                            </Marker>
-                        </>
-                    )
-                })}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </Marker>
+                ))}
             </Map>
 
             <AnimatePresence>
-                { openLocation &&            
-                    <motion.div 
-                            initial={{ x: '-100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '-100%' }}
-                            transition={{ duration: 0.8, ease: 'easeInOut'}}
-                        className='w-[40%] h-full bg-white absolute top-0 pt-[100px] pl-[80px] pr-[40px]'>
-                        <FontAwesomeIcon icon={faXmark} className='absolute right-[40px] top-[60px] cursor-pointer' style={{ fontSize: '40px'}} 
-                            onClick={() =>{
-                                setOpenLocation(false)
-                                setSelectedMarker({ id: null, data: null })
-                            }} 
+                {openLocation &&
+                    <motion.div
+                        key="location-panel"
+                        initial={{ x: '-100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '-100%' }}
+                        transition={{ duration: 0.8, ease: 'easeInOut' }}
+                        className='w-[40%] h-full bg-white absolute top-0 pt-[100px] pl-[80px] pr-[40px]'
+                    >
+                        <FontAwesomeIcon
+                            icon={faXmark}
+                            className='absolute right-[40px] top-[60px] cursor-pointer'
+                            style={{ fontSize: '40px' }}
+                            onClick={() => {
+                                setOpenLocation(false);
+                                setSelectedMarker({ id: null, data: null });
+                            }}
                         />
                         <div>
                             <h2 className='text-[30px] pb-[30px] font-semibold'>{selectedMarker.data.properties.location}</h2>
                             <span className='text-[28px] block mb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
-                            <img src={selectedMarker.data.properties.image } alt="" className='rounded-[5px]' />
-                            <Link className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[30px] flex items-center rounded-[4px] cursor-pointer" onMouseOver={() => setBtnHover(true)} onMouseLeave={() => setBtnHover(false)}>
+                            <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' />
+                            <Link
+                                className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[30px] flex items-center rounded-[4px] cursor-pointer"
+                                onMouseOver={() => setBtnHover(true)}
+                                onMouseLeave={() => setBtnHover(false)}
+                            >
                                 <span className='uppercase text-[24px] font-medium pr-[12px]'>En savoir plus</span>
                                 <span className='block icon-arrow'></span>
                             </Link>
@@ -403,8 +408,9 @@ const MapBox = ({items, state, mapRef}) => {
                 }
             </AnimatePresence>
         </>
-    )
-}
+    );
+};
+
 
 
 
@@ -413,6 +419,20 @@ const MultiRangeSelector = () => {
     const monthNames = ["Jan", "Apr", "Jul", "Oct"]
     const labels = ["1939", "", "", "", "1940", "", "", "", "1941", "", "", "", "1942", "", "", "", "1943", "", "", "", "1944", "", "", "", "1945", "", "", "", "1946"]
     
+
+    // const labels = [
+    //     { label: "1939", key: "1939-0" }, { label: "", key: "1939-1" }, { label: "", key: "1939-2" }, { label: "", key: "1939-3" },
+    //     { label: "1940", key: "1940-0" }, { label: "", key: "1940-1" }, { label: "", key: "1940-2" }, { label: "", key: "1940-3" },
+    //     { label: "1941", key: "1941-0" }, { label: "", key: "1941-1" }, { label: "", key: "1941-2" }, { label: "", key: "1941-3" },
+    //     { label: "1942", key: "1942-0" }, { label: "", key: "1942-1" }, { label: "", key: "1942-2" }, { label: "", key: "1942-3" },
+    //     { label: "1943", key: "1943-0" }, { label: "", key: "1943-1" }, { label: "", key: "1943-2" }, { label: "", key: "1943-3" },
+    //     { label: "1944", key: "1944-0" }, { label: "", key: "1944-1" }, { label: "", key: "1944-2" }, { label: "", key: "1944-3" },
+    //     { label: "1945", key: "1945-0" }, { label: "", key: "1945-1" }, { label: "", key: "1945-2" }, { label: "", key: "1945-3" },
+    //     { label: "1946", key: "1946-0" }
+    // ]
+
+
+
     const generateDateLabels = (startYear, endYear) => {
         let dates = []
         
@@ -445,8 +465,7 @@ const MultiRangeSelector = () => {
  
     return (
         <MultiRangeSlider
-            // labels={labels}
-            labels={false}
+            labels={labels}
             min={0}
             max={dateGenerated.length - 1}
             minValue={0}
@@ -455,6 +474,7 @@ const MultiRangeSelector = () => {
             minCaption={minDateCaption}
             maxCaption={maxDateCaption}
             onInput={handleDateChange}
+            // onChange={(e) => console.log(e)}
         />
     )
 }

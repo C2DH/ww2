@@ -5,11 +5,15 @@ import { Link, useParams } from 'react-router-dom'
 import Source from '../Source/Source'
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from 'react'
+import { useLanguageContext } from '../../contexts/LanguageProvider'
+import { t } from 'i18next'
+import { convertToHtml } from '../../lib/utils'
 
 
 export default function Note() {
 
     const { slug } = useParams()
+    const { language } = useLanguageContext()
     const [sourcePopup, setSourcePopup] = useState({ open: false, src: null })
     const [data, setData] = useState(null)
     const [isLoaded, setIsLoaded] = useState(false)
@@ -21,9 +25,6 @@ export default function Note() {
         })
         .then((response) => response.json())
         .then((data) => {
-
-            console.log(data.contents)
-
             setData(data)
             setIsLoaded(true)
         })
@@ -50,58 +51,49 @@ export default function Note() {
     if (isLoaded) {
         return (
             <>
-                <div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} className='notes'>
-                    <div className="container mx-auto relative h-[calc(100vh-140px)] flex flex-col px-[30px] lg:px-0">
+                <div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} className='note'>
+                    <div className="container mx-auto relative h-[calc(100vh-120px)] flex flex-col px-[30px] lg:px-0">
     
                         <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[80px] text-[20px] lg:text-[30px] pt-[20px] 2xl:pt-0'>
-                            <FontAwesomeIcon icon={faArrowLeftLongToLine}  />
+                            <FontAwesomeIcon icon={faArrowLeftLongToLine} />
                         </Link>
     
                         <div className="flex lg:justify-between lg:border-b border-black pt-[20px] 2xl:pt-[60px]">
                             <div className="uppercase">
-                                <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">{ data.data.title.fr_FR.split('(')[1].replace(')',"") }</span>
-                                <span className="hidden lg:inline-block text-[40px] abril pl-[10px]">{ data.data.title.fr_FR.split('(')[0] }</span>
+                                <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">{ data.data.title.fr_FR.split('(')[1]?.replace(')',"") }</span>
+                                <span className="hidden lg:inline-block text-[40px] abril pl-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
                             </div>
     
                             <div className='text-[22px] lg:text-[24px] uppercase flex items-center lg:items-end lg:leading-[48px] cursor-pointer pl-[20px] lg:pl-0'>   
-                                <span className='pr-[10px] lg:pr-[20px]' onClick={() => console.log('previous')}>Précèdente</span>
-                                <span className='pl-[10px] lg:pl-[20px] relative before:content-[""] before:absolute before:left-[0px] before:bottom-[50%] lg:before:bottom-0 before:translate-y-[50%] lg:before:translate-y-0 before:h-[30px] lg:before:h-[60px] before:w-[1px] before:bg-black' onClick={() => console.log('next')}>Suivante</span>
+                                <span className='pr-[10px] lg:pr-[20px]' onClick={() => console.log('previous')}>{ t('prev') }</span>
+                                <span className='pl-[10px] lg:pl-[20px] relative before:content-[""] before:absolute before:left-[0px] before:bottom-[50%] lg:before:bottom-0 before:translate-y-[50%] lg:before:translate-y-0 before:h-[30px] lg:before:h-[60px] before:w-[1px] before:bg-black' onClick={() => console.log('next')}>{ t('next') }</span>
                             </div>
                         </div>
 
-                        <span className="block lg:hidden uppercase text-[35px] leading-none abril border-b border-black pb-[20px] pt-[10px]">{ data.data.title.fr_FR.split('(')[0] }</span>
-
-                        
+                        <span className="block lg:hidden uppercase text-[35px] leading-none abril border-b border-black pb-[20px] pt-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
     
                         <div className="flex flex-col lg:flex-row overflow-scroll" id="text">
                             <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
                                 
-                                {/** CONTENT */}
-                                <div className='text-[28px]'>
-                                    {JSON.parse(data.contents).modules.map((text, index) => {
-                                        return (
-                                            <p key={index}>{ text.text.content.fr_FR }</p>
-                                        )
-                                    })}
+                                {/** CONTENT - REFERENCES */}
+                                <div className='text-[28px]' id="content">
+                                    {JSON.parse(data.contents).modules.map((text, index) => (
+                                        <ContentDisplay
+                                            key={index}
+                                            text={text.text.content[language]}
+                                            index={index}
+                                        />
+                                    ))}
                                 </div>
-    
-                                {/** RÉFERENCES */}
-                                <div className='ml-[20px] mt-[30px] pb-[10px]'>
-                                    <span className='uppercase abril text-[20px] border-b border-black block pb-[10px]'>Réferences :</span>
-                                    <ul className='text-[22px] pt-[15px] list-disc'>
-                                        <li>With the outbreak of the Second World War, Luxembourg found itself in a precarious political position.</li>
-                                        <li>With the outbreak of the Second World War, Luxembourg found itself in a precarious political position.</li>
-                                        <li>This time, however, the Government was poised to act within the narrow frames of neutrality.</li>
-                                    </ul>
-                                </div>
+            
 
                                 {/** RELATED NOTES */}
                                 <div className='ml-[20px] mt-[30px] pb-[10px]'>
-                                    <span className='uppercase abril text-[20px] border-b border-black block pb-[10px]'>Liens :</span>
+                                    <span className='uppercase abril text-[20px] border-b border-black block pb-[10px]'>{ t('links')} :</span>
                                     <div className='text-[24px] pt-[15px]'>
                                         <Link className=' uppercase'>
-                                            <span className='font-normal'>{ data.data.title.fr_FR.split('(')[1].replace(')',"") }</span> 
-                                            <span className='abril pl-[10px]'>{ data.data.title.fr_FR.split('(')[0] }</span>
+                                            <span className='font-normal'>{ data.data.title[language]?.split('(')[1]?.replace(')',"") }</span> 
+                                            <span className='abril pl-[10px]'>{ data.data.title[language]?.split('(')[0] }</span>
                                         </Link>
                                     </div>
                                 </div>
@@ -175,5 +167,13 @@ export default function Note() {
             </>
         )
     }
-
 }
+
+
+
+const ContentDisplay = ({ text, index }) => {
+    const htmlContent = convertToHtml(text);
+    return (
+        <div dangerouslySetInnerHTML={{ __html: htmlContent }} ></div>
+    )
+};

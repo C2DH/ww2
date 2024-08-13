@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { truncateText } from "../../lib/truncate";
+import { truncateText } from "../../lib/utils";
 
 export default function CardLink({ link }) {
     return (

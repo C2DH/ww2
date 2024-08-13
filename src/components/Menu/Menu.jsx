@@ -1,18 +1,16 @@
 // ASSETS
-import './Menu.scss'
 import bgBlack from '../../assets/images/common/bg-black.jpg'
 import logo from '../../assets/images/common/logo.png'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
 import cloud from '../../assets/images/common/cloud.png'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faVolume } from '@fortawesome/pro-light-svg-icons'
 
 // CONTEXT
 import { useSharedState } from "../../contexts/SharedStateProvider";
 import { useMenuContext } from '../../contexts/MenuProvider'
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faVolume } from '@fortawesome/pro-light-svg-icons'
-
+import { useLanguageContext } from '../../contexts/LanguageProvider'
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
@@ -25,28 +23,19 @@ import classNames from 'classnames'
 // TRANSLATION
 import { useTranslation } from 'react-i18next'
 
+
 export default function Menu() {
 
-    // const [isOpenMenu, setIsOpenMenu] = useState(false)
     // const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
     const { i18n, t } = useTranslation();
-    
-    const [language, setLanguage] = useState('fr_FR')
     const { openMenu, setOpenMenu } = useMenuContext()
     const [sharedState, setSharedState] = useSharedState();
     const [results, setResults] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const { pathname } = useLocation()
     const locations = ['/catalogue', '/historian-workshop', '/historical-index', '/research-institutions', '/bibliography', '/glossary','/sources']
-
-    // TRANSLATION
-    const handleLanguageChange = (e) => {
-        i18n.changeLanguage(e)
-        if (localStorage.getItem('i18nextLng')) {
-            setLanguage(e)
-        }
-    }
+    const {language, changeLanguage } = useLanguageContext()
 
 
     // API DATA
@@ -74,7 +63,6 @@ export default function Menu() {
                 document.body.style.height = '';
                 document.body.style.overflow = '';
             }
-            console.log(openMenu)
     }, [openMenu])
 
 
@@ -92,10 +80,11 @@ export default function Menu() {
                     animate={{ opacity: 1}}
                     transition={{ duration: 1500 }}
                     style={{ background: `url(${bgBlack}) 50% / cover no-repeat`}}
-                    className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[50px]', {
+                    className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[50px] text-white', {
                         'max-h-[120vh] h-[100vh]': openMenu,
-                        'max-h-[120px] h-[120px]': !openMenu && locations.includes(pathname),
-                        'max-h-[140px] h-[140px]': !openMenu && !locations.includes(pathname)
+                        'max-h-[120px] h-[120px]': !openMenu,
+                        // 'max-h-[120px] h-[120px]': !openMenu && locations.includes(pathname),
+                        // 'max-h-[140px] h-[140px]': !openMenu && !locations.includes(pathname)
                     })} 
                 >
 
@@ -103,7 +92,7 @@ export default function Menu() {
                     <div className="flex justify-between px-[30px] sm:px-[90px] pt-[140px] md:pt-[20px]">
                         <Sound translate={t}/>
                         <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
-                        <LanguageSwitcher switchLanguage={handleLanguageChange} lang={language}/>
+                        <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>
                     </div>
 
                     {/** ITEMS */}
@@ -112,15 +101,6 @@ export default function Menu() {
                             'opacity-1': openMenu,
                             'opacity-0': !openMenu 
                         })}>
-                        
-                        {/* {results.results.map(item => {
-                            return (
-                                <li>
-                                    <MenuItem path={'/'} title={item.data.title.fr_FR} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setIsOpenMenu(false) }/>
-                                </li>
-                            )
-                        })} */}
-
                             <li>
                                 <MenuItem path={'/'} title={"Parcours"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} handleMenuItemClick={() => setOpenMenu(false) }/>
                             </li>
@@ -157,10 +137,16 @@ export default function Menu() {
 
                     {/** ITEMS SUITE */}
                     <div className='flex justify-center items-center mt-[20px]'>
-                        <ul className='flex text-[20px]'>
-                            <li className='tiret'><Link to='/about'>{ t('about')}</Link></li>
-                            <li className='tiret'><Link to='/terms'> { t('conditions')}</Link></li>
-                            <li><Link to='/contact'> { t('contact')}</Link></li>
+                        <ul className='flex text-[24px]'>
+                            <li className='tiret'>
+                                <Link>{ t('about')}</Link>
+                            </li>
+                            <li className='tiret'>
+                                <Link to='/terms'> { t('conditions')}</Link>
+                            </li>
+                            <li>
+                                <Link to='/contact'> { t('contact')}</Link>
+                            </li>
                         </ul>
                     </div>
                 </header>
@@ -172,7 +158,6 @@ export default function Menu() {
 
 export function CustomLink(props) {
     const location = useLocation();
-
     return <Link {...props} state={{ from: location.pathname }} className="block"/>
 }
 
@@ -180,8 +165,8 @@ export function CustomLink(props) {
 export function MenuItem({path, title = "", text = "", handleMenuItemClick}) {
     return (
         <CustomLink to={path} onClick={handleMenuItemClick}>
-            <h3 className='mb-[40px] sm:mb-0'>{title}</h3>
-            <p className="hidden sm:block">{text}</p>
+            <h3 className='mb-[40px] sm:mb-0 text-[40px] leading-none blue abril'>{title}</h3>
+            <p className="hidden sm:block pt-[14px] text-[20px] leading-none mb-[30px]">{text}</p>
         </CustomLink>
     )
 }
@@ -190,7 +175,7 @@ export function MenuLogo({ isOpenMenu, setIsOpenMenu, translate }) {
     return (
         <div className='absolute top-[20px] sm:top-[3px] left-[50%] -translate-x-[50%]'>
             <div>
-                <span className='block text-center cursor-pointer uppercase' onClick={() => setIsOpenMenu(!isOpenMenu) }
+                <span className='block text-center cursor-pointer uppercase text-[18px]' onClick={() => setIsOpenMenu(!isOpenMenu) }
                 >{isOpenMenu ? `- ${translate('close')} -` : `- ${translate('menu')} -`  }</span>
                 <Link to={'/'}>
                     <img src={ logo } alt="Logo Menu" className='w-[180px]' onClick={() => setIsOpenMenu(false)}/>
@@ -213,7 +198,7 @@ const LanguageSwitcher = ({ switchLanguage, lang }) => {
 const Sound = ({ translate }) => {
     return (
         <div>
-            <span className="text-[20px]">{ translate('sound') }</span>
+            <span className="text-[24px] uppercase">{ translate('sound') }</span>
             <FontAwesomeIcon 
                 icon={ faVolume } 
                 style={{ fontSize: '26px', marginLeft: '10px', cursor: 'pointer' }}
