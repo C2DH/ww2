@@ -114,27 +114,6 @@ const MapBox = ({ items, arrow }) => {
 
     }, [items])
 
-
-
-    // useEffect(() => {
-
-    //     const map = document.querySelector('.mapboxgl-map')
-
-    //     if (map) {
-            
-    //                if (selectedMarker.id !== null) {
-    //                    console.log('la')
-    //                    map.addEventListener('click', () => {
-    //                        setSelectedMarker({ id: null, marker: null})
-    //                    })
-    //                }
-
-    //     }
-        
-    //     console.log(selectedMarker)
-    // }, [selectedMarker])
-
- 
     
     return (
         <>

@@ -20,6 +20,8 @@ import MultiRangeSlider, { ChangeResult } from "multi-range-slider-react";
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSharedState } from '../../contexts/SharedStateProvider'
+import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const styleBlueprint = import.meta.env.VITE_API_STYLE_MAPBOX_BLUEPRINT
@@ -169,6 +171,7 @@ const geojson = {
 
 export default function SpaceTimeMap() {
     
+    const { t } = useTranslation()
     const [sharedState, setSharedState] = useSharedState()
     const mapRef = useRef(null);
     const [openFilter, setOpenFilter] = useState(false)
@@ -202,17 +205,55 @@ export default function SpaceTimeMap() {
 
 
     return (
-        // <motion.div initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}}>
-        //     <h1 className="text-center text-[60px] mt-[100px]">Carte Spatio-temporelle</h1>
-        // </motion.div>
-
         <>
-            
-            <div className='mask h-[calc(100vh-80px)] overflow-hidden'>
+            <div className='mask w-full h-[calc(100vh-120px)]'>
                 <MapBox items={geojson.features} state={viewState} mapRef={mapRef}/>
+                                {/** Map style and zoom */}
+                                <div className='absolute top-[40px] right-[20px]'>
+                    <div className='flex gap-2 lg:gap-5'>
+
+                        { viewState.style !== styleGeo &&     
+                            <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleGeo}) }>
+                                <img src={map1} alt="map" className='rounded-[4px]' />
+                            </div>
+                        }
+
+                        { viewState.style !== styleMSF &&                    
+                            <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleMSF}) }>
+                                <img src={map2} alt="map" className='rounded-[4px]'/>
+                            </div>
+                        }
+
+                        { viewState.style !== styleBlueprint &&
+                            <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleBlueprint}) }>
+                                <img src={map3} alt="map" className='rounded-[4px]'/>
+                            </div>
+                        }
+
+                        <div>
+                            <>
+                                <div className='h-[40px] w-[40px] bg-white rounded-t-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) + 1}) }>
+                                    <FontAwesomeIcon icon={faPlus} className={classNames('cursor-pointer', {
+                                        'pointer-events-none text-gray-300': viewState.zoom >= 18
+                                    })} />
+                                </div>
+                                <hr />
+                            </>
+
+                            <div className='h-[40px] w-[40px] bg-white rounded-b-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) - 1}) }>
+                                <FontAwesomeIcon icon={faMinus} className={classNames('cursor-pointer', {
+                                    'pointer-events-none text-gray-300': viewState.zoom <= 8
+                                })} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <span className='block absolute z-[999] bottom-[15px] right-[15px] text-[13px] text-white antonio'>© MAPBOX 2024</span>
+
+
+
+            <span className='hidden lg:block absolute z-[100] bottom-[15px] right-[15px] text-[13px] text-white antonio'>© MAPBOX 2024</span>
 
             {/** Gradient Bottom */}
             <div className="hidden sm:block bottom-gradient absolute bottom-0"></div>
@@ -228,55 +269,13 @@ export default function SpaceTimeMap() {
 
             {/** Filter period Mobile Tablet */}
             <div className='sm:hidden bg-[#475DA9] h-[70px] fixed z-[100] bottom-0 left-0 right-0 flex justify-center items-center border-t border-white' onClick={() => setOpenFilter(!openFilter)}>
-                <span className='uppercase text-white text-[24px]'>Filtrer par période</span>
+                <span className='uppercase text-white text-[24px]'>{ t('filter_by_period') }</span>
             </div>
 
             <div className={classNames('sm:hidden bg-[#475DA9] h-[150px] fixed bottom-[70px] left-0 right-0 flex justify-center items-center border-t border-white transition-all duration-[750ms]', {
                 "translate-y-full": !openFilter,
                 "translate-y-0": openFilter
             })}>
-            </div>
-            
-
-            {/** Map style */}
-            <div className='absolute top-[40px] right-[20px]'>
-                <div className='flex gap-5'>
-
-                    { viewState.style !== styleGeo &&     
-                        <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleGeo}) }>
-                            <img src={map1} alt="map" className='rounded-[4px]' />
-                        </div>
-                    }
-
-                    { viewState.style !== styleMSF &&                    
-                        <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleMSF}) }>
-                            <img src={map2} alt="map" className='rounded-[4px]'/>
-                        </div>
-                    }
-
-                    { viewState.style !== styleBlueprint &&
-                        <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleBlueprint}) }>
-                            <img src={map3} alt="map" className='rounded-[4px]'/>
-                        </div>
-                    }
-
-                    <div>
-                        <>
-                            <div className='h-[40px] w-[40px] bg-white rounded-t-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) + 1}) }>
-                                <FontAwesomeIcon icon={faPlus} className={classNames('cursor-pointer', {
-                                    'pointer-events-none text-gray-300': viewState.zoom >= 18
-                                })} />
-                            </div>
-                            <hr />
-                        </>
-
-                        <div className='h-[40px] w-[40px] bg-white rounded-b-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) - 1}) }>
-                            <FontAwesomeIcon icon={faMinus} className={classNames('cursor-pointer', {
-                                'pointer-events-none text-gray-300': viewState.zoom <= 8
-                            })} />
-                        </div>
-                    </div>
-                </div>
             </div>
         </>
     )
@@ -380,7 +379,7 @@ const MapBox = ({ items, state, mapRef }) => {
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
                         transition={{ duration: 0.8, ease: 'easeInOut' }}
-                        className='w-[40%] h-full bg-white absolute top-0 pt-[100px] pl-[80px] pr-[40px]'
+                        className='md:w-[70%] lg:w-[60%] xl:w-[40%] h-full bg-white absolute z-[9999] top-0 md:pt-[100px] md:pl-[80px] md:pr-[40px]'
                     >
                         <FontAwesomeIcon
                             icon={faXmark}
@@ -391,16 +390,26 @@ const MapBox = ({ items, state, mapRef }) => {
                                 setSelectedMarker({ id: null, data: null });
                             }}
                         />
-                        <div>
-                            <h2 className='text-[30px] pb-[30px] font-semibold'>{selectedMarker.data.properties.location}</h2>
-                            <span className='text-[28px] block mb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
+
+                        <div 
+                            className="md:hidden bg-black h-[160px] flex justify-center items-center" 
+                            onClick={() => {
+                                setOpenLocation(false);
+                                setSelectedMarker({ id: null, data: null });
+                            }}>
+                                <span className='cursor-pointer text-[24px] uppercase text-white'>{ t('close') }</span>
+                        </div>
+
+                        <div className='px-[20px] md:px-0'>
+                            <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.properties.location}</h2>
+                            <span className='text-[28px] block pb-[40px] md:pb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
                             <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' />
                             <Link
-                                className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[30px] flex items-center rounded-[4px] cursor-pointer"
+                                className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
                                 onMouseOver={() => setBtnHover(true)}
                                 onMouseLeave={() => setBtnHover(false)}
                             >
-                                <span className='uppercase text-[24px] font-medium pr-[12px]'>En savoir plus</span>
+                                <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
                                 <span className='block icon-arrow'></span>
                             </Link>
                         </div>
@@ -408,8 +417,8 @@ const MapBox = ({ items, state, mapRef }) => {
                 }
             </AnimatePresence>
         </>
-    );
-};
+    )
+}
 
 
 

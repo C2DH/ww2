@@ -10,5 +10,7 @@
     "next": "Next",
     "prev": "Previous",
     "references": "References",
-    "links": "Links"
+    "links": "Links",
+    "learn_more": "Learn More",
+    "filter_by_period": "Filter by period"
 }

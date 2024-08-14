@@ -1,4 +1,4 @@
-import patternBG from '../../assets/images/source/texture.png'
+import patternBG from '../../assets/images/source/squarePattern.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLongToLine } from '@fortawesome/pro-regular-svg-icons'
 import { Link } from 'react-router-dom'
@@ -9,16 +9,16 @@ import ImageZoom from '../ImageZoom/ImageZoom'
 export default function Source({ src, handleSourcePopup }) {
 
     return (
-        <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='w-full lg:relative lg:top-0 absolute -top-[140px]'>
+        <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='w-full lg:relative lg:top-0 absolute -top-[120px]'>
             <div className='hidden lg:block absolute top-[40px] left-[40px] text-[30px] text-white'>
                 <FontAwesomeIcon icon={faArrowLeftLongToLine} onClick={ handleSourcePopup } className='cursor-pointer'/>
             </div>
 
-            <div className='lg:hidden pt-[80px] pb-[20px] flex justify-center border-b border-white'>
+            <div className='h-[120px] lg:hidden pt-[80px] pb-[10px] flex justify-center border-b border-white'>
                 <span className='text-white uppercase text-[24px] cursor-pointer' onClick={ handleSourcePopup }>FERMER</span>
             </div>
 
-            <div className="container mx-auto relative flex h-screen lg:h-[calc(100vh-140px)] px-[20px] overflow-scroll">
+            <div className="container mx-auto relative flex h-[calc(100vh-120px)] px-[20px]">
                 <div className="grid grid-cols-12 pt-[40px]">
                     <div className="col-span-12 lg:col-span-9 lg:pt-[80px]">
                         <div className="grid grid-cols-9">

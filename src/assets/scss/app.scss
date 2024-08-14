@@ -66,6 +66,17 @@ p {
     mask-size: cover;
 }
 
+@media screen and (min-width: 768px) {
+    .mask-spacetime {
+        width: 100%;
+        -webkit-mask-image: url('../../assets/images/common/mask.svg');
+        mask-image: url('../../assets/images/common/mask.svg');
+        -webkit-mask-size: cover;
+        mask-size: cover;
+    }
+}
+
+
 
 .boxShadow {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);

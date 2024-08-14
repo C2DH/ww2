@@ -26,17 +26,19 @@ import { useTranslation } from 'react-i18next'
 
 export default function Menu() {
 
-    // const [isAnimationComplete, setIsAnimationComplete] = useState(false);
-
-    const { i18n, t } = useTranslation();
+    
+    const { t } = useTranslation();
     const { openMenu, setOpenMenu } = useMenuContext()
     const [sharedState, setSharedState] = useSharedState();
     const [results, setResults] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const { pathname } = useLocation()
-    const locations = ['/catalogue', '/historian-workshop', '/historical-index', '/research-institutions', '/bibliography', '/glossary','/sources']
+    const test = useLocation()
+    // const locations = ['/catalogue', '/historian-workshop', '/historical-index', '/research-institutions', '/bibliography', '/glossary','/sources', '/note']
+    // (pathname === '/' || pathname === '/spacetime-map' || pathname.includes('/notice/'))
+    
+    const locations = ['/', '/spacetime-map', '/^\/notice\/[a-zA-Z0-9_-]+$/']
     const {language, changeLanguage } = useLanguageContext()
-
 
     // API DATA
     useEffect(() => {
@@ -82,9 +84,8 @@ export default function Menu() {
                     style={{ background: `url(${bgBlack}) 50% / cover no-repeat`}}
                     className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[50px] text-white', {
                         'max-h-[120vh] h-[100vh]': openMenu,
-                        'max-h-[120px] h-[120px]': !openMenu,
-                        // 'max-h-[120px] h-[120px]': !openMenu && locations.includes(pathname),
-                        // 'max-h-[140px] h-[140px]': !openMenu && !locations.includes(pathname)
+                        'max-h-[120px] h-[120px]': (!openMenu && !locations.includes(pathname)),
+                        'max-h-[140px] h-[140px]': (!openMenu && locations.includes(pathname))
                     })} 
                 >
 
@@ -96,7 +97,7 @@ export default function Menu() {
                     </div>
 
                     {/** ITEMS */}
-                    <div className='flex justify-center mt-[60px] sm:mt-[90px]'>
+                    <div className='flex justify-center mt-[60px] sm:mt-[160px]'>
                         <ul className={classNames('w-2/3 lg:w-1/3 text-center transition-all duration-[750ms]', {
                             'opacity-1': openMenu,
                             'opacity-0': !openMenu 
@@ -173,7 +174,7 @@ export function MenuItem({path, title = "", text = "", handleMenuItemClick}) {
 
 export function MenuLogo({ isOpenMenu, setIsOpenMenu, translate }) {
     return (
-        <div className='absolute top-[20px] sm:top-[3px] left-[50%] -translate-x-[50%]'>
+        <div className='absolute top-[5px] left-[50%] -translate-x-[50%]'>
             <div>
                 <span className='block text-center cursor-pointer uppercase text-[18px]' onClick={() => setIsOpenMenu(!isOpenMenu) }
                 >{isOpenMenu ? `- ${translate('close')} -` : `- ${translate('menu')} -`  }</span>
@@ -187,10 +188,10 @@ export function MenuLogo({ isOpenMenu, setIsOpenMenu, translate }) {
 
 const LanguageSwitcher = ({ switchLanguage, lang }) => {
     return (
-        <div>   
-            <span className={classNames('text-[20px] cursor-pointer mr-[5px]', {'blue': lang === 'en_EN'})} onClick={() => switchLanguage('en_EN') }>EN</span>
-            <span className={classNames('text-[20px] cursor-pointer mr-[5px]', {'blue': lang === 'de_DE'})}  onClick={() => switchLanguage('de_DE') }>DE</span>
-            <span className={classNames('text-[20px] cursor-pointer', {'blue': lang === 'fr_FR'})}  onClick={() => switchLanguage('fr_FR') }>FR</span>
+        <div className='text-[24px]'>   
+            <span className={classNames('cursor-pointer mr-[5px]', {'blue': lang === 'en_EN'})} onClick={() => switchLanguage('en_EN') }>EN</span>
+            <span className={classNames('cursor-pointer mr-[5px]', {'blue': lang === 'de_DE'})}  onClick={() => switchLanguage('de_DE') }>DE</span>
+            <span className={classNames('cursor-pointer', {'blue': lang === 'fr_FR'})}  onClick={() => switchLanguage('fr_FR') }>FR</span>
         </div>
     )
 }

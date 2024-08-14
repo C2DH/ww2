@@ -10,6 +10,9 @@ export default function HeaderHistorianWorkshop({filters}) {
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenFilters, setIsOpenFilters] = useState(false)
     const { pathname } = useLocation()
+    const [ categories, setCategories ] = useState({
+        types: [], tags: []
+    })
 
     const menuItems = [
         {
@@ -45,10 +48,28 @@ export default function HeaderHistorianWorkshop({filters}) {
         }
     }
 
+    const clickButton = (type) => {
+        if (!categories.types.includes(type)) {
+            setCategories(prevFilters => ({
+                ...prevFilters,
+                types: [...prevFilters.types, type]
+            }));
+        } else {
+            setCategories(prevFilters => ({
+                ...prevFilters,
+                types: prevFilters.types.filter(t => t !== type)
+            }))
+        }
+    }
+
+
+
+
 
     useEffect(() => {
         setCurrentPage(pathname)
-    })
+        console.log(categories)
+    }, [categories])
 
     return (
         <>
@@ -100,7 +121,16 @@ export default function HeaderHistorianWorkshop({filters}) {
                     "translate-y-[100%]": !isOpenFilters
                 })}>
                     <div className='flex flex-col shrink-0'>
-                        <FilterItems items={filters}/>    
+                        { filters.map((item, index) => {
+                            return (
+                                <ButtonFilter 
+                                    key={index} 
+                                    title={item.category} 
+                                    number={item.number} 
+                                    handleClick={() => clickButton(item.category)}
+                                />)
+                        }) }
+
                     </div>
                 </div>
             }
@@ -123,10 +153,3 @@ const MenuItems = ({items, page}) => {
 }
 
 
-const FilterItems = ({items}) => {
-    return (
-        items.map((item, index) => {
-            return <ButtonFilter key={index} category={item.category} number={item.number}/>
-        })
-    )
-}

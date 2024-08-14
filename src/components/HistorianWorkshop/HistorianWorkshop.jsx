@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 
 // Assets
@@ -17,7 +17,8 @@ import img8 from '../../assets/images/historianWorkshop/img-8.png'
 
 export default function HistorianWorkshop() {
 
-    const [sharedState, setSharedState] = useSharedState();
+    const [sharedState, setSharedState] = useSharedState()
+    const [imgLoaded, setImgLoaded] = useState(false)
 
     useEffect(() => {
         setSharedState({ ...sharedState, showCurtains: false });
@@ -25,39 +26,39 @@ export default function HistorianWorkshop() {
 
     return (
         <>
-            <div style={{ backgroundImage: `url(${bgBlack})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='hidden lg:block w-full h-[calc(100vh-120px)] overflow-hidden'>
-                <div className="container mx-auto flex justify-center">
+            <div style={{ backgroundImage: `url(${bgBlack})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='hidden md:block w-full h-[calc(100vh-120px)] overflow-hidden'>
+                <div className="container mx-auto">
                     <motion.div className='absolute' initial={{ y: '150%'}} animate={{ y: '-3%' }} transition={{ duration: 0.75, delay: 1 }}>
-                        <img src={img1} alt="" className=''/>
+                        <img src={img1} alt=""/>
                     </motion.div>
 
-                    <motion.div className="absolute" initial={{ y: '150%'}} animate={{ y: 0 }} transition={{ duration: 0.75, delay: 2 }}>
-                        <img src={img2} alt="" className=''/>
+                    <motion.div className="absolute flex justify-center" initial={{ y: '150%'}} animate={{ y: 0 }} transition={{ duration: 0.75, delay: 2 }}>
+                        <img src={img2} alt=""/>
                     </motion.div>
 
-                    <motion.div className="absolute" initial={{ x: '150%' }} animate={{ x: '5%' }} transition={{ duration: 0.75, delay: 3 }}>
-                        <img src={img3} alt="" className=''/>
+                    <motion.div className="absolute flex justify-center" initial={{ x: '150%' }} animate={{ x: '5%' }} transition={{ duration: 0.75, delay: 3 }}>
+                        <img src={img3} alt=""/>
                     </motion.div>
 
-                    <motion.div className="absolute" initial={{ x: '-150%' }} animate={{ x: '3%' }} transition={{ duration: 0.75, delay: 4 }}>
-                        <img src={img4} alt="" className=''/>
+                    <motion.div className="absolute flex justify-center" initial={{ x: '-150%' }} animate={{ x: '3%' }} transition={{ duration: 0.75, delay: 4 }}>
+                        <img src={img4} alt=""/>
                     </motion.div>
 
                     <motion.div className="absolute" initial={{ x: '-150%', y: '150%' }} animate={{ x: '-4%', y: 0 }} transition={{ duration: 0.75, delay: 5 }}>
-                        <img src={img5} alt="" className=''/>
+                        <img src={img5} alt=""/>
                     </motion.div>
 
                     <motion.div className="absolute" initial={{ x: '150%', y: '150%' }} animate={{ x: '-3%', y: '5%' }} transition={{ duration: 0.75, delay: 6 }}>
-                        <img src={img6} alt="" className=''/>
+                        <img src={img6} alt=""/>
                     </motion.div>
 
                     <motion.div className="absolute" initial={{ x: '-150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 7 }}>
-                        <img src={img7} alt="" className=''/>
+                        <img src={img7} alt=""/>
                     </motion.div>
 
                     <motion.div className="absolute" initial={{ x: '150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 8 }}>
                         <div className='relative'>
-                            <img src={img8} alt=""/>
+                            <img src={img8} alt="" onLoad={() => setImgLoaded(true)}/>
                             
                             <div className='absolute inset-0'>
                                 <svg viewBox="0 0 1432 946" fill="none" xmlns="http://www.w3.org/2000/svg" className='relative'>
@@ -107,18 +108,20 @@ export default function HistorianWorkshop() {
                                 </svg>
                             </div>
 
-                            <div className='absolute bottom-[40px] xl:bottom-[100px] right-[60px] xl:right-[100px] w-1/3'>
-                                <h2 className='blue abril text-[40px] leading-none'>Atelier de l'historien</h2>
-                                <p className='text-white pt-[10px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
-                            </div>
+                            { imgLoaded &&                            
+                                <div className='absolute bottom-[20px] lg:bottom-[40px] xl:bottom-[100px] right-[20px] lg:right-[60px] xl:right-[100px] w-1/2 lg:w-1/3'>
+                                    <h2 className='blue abril text-[40px] leading-none'>Atelier de l'historien</h2>
+                                    <p className='text-white pt-[10px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
+                                </div>
+                            }
                         </div>
                     </motion.div>
 
                 </div>
             </div>
 
-            <div className='flex min-h-[calc(100vh-120px)] lg:min-h-0 relative'>
-                <div className='lg:hidden px-[20px] sm:px-0 flex-grow' style={{ backgroundImage: `url(${img8})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
+            <div className='md:hidden flex min-h-[calc(100vh-120px)] lg:min-h-0 relative'>
+                <div className='px-[20px] sm:px-0 flex-grow' style={{ backgroundImage: `url(${img8})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
                     <div className="container mx-auto relative z-[2]">
                         <h1 className='text-[40px] abril blue pt-[40px] w-[80%] leading-none'>Atelier de l'historien</h1>
                         <p className='text-white text-[24px] pt-[15px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>

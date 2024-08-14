@@ -156,7 +156,7 @@ export default function Note() {
                         <motion.div 
                             className='absolute w-full top-0'
                             initial={{ top: '100%' }}
-                            animate={{ top: '140px' }}
+                            animate={{ top: '120px' }}
                             exit={{ top: '100%'}}
                             transition={{ duration: 0.8, ease: 'easeInOut'}}
                         >
