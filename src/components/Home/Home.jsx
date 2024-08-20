@@ -31,13 +31,7 @@ maptilerClient.config.apiKey = import.meta.env.VITE_API_MAPTILER
 
 export default function Home() {
     const [sharedState, setSharedState] = useSharedState()
-    const { t } = useTranslation()
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setSharedState({ ...sharedState, showClouds: false })
-    //     }, 5000)
-    // })
     useEffect(() => {
         console.log('hideClouds');
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
@@ -111,6 +105,7 @@ export default function Home() {
 }
 
 const MapBox = ({ items, markers }) => {
+    const { t } = useTranslation()
     const mapRef = useRef(null);
     const navigate = useNavigate();
     const [lng, setLng] = useState(6.131514);
@@ -217,7 +212,7 @@ const MapBox = ({ items, markers }) => {
                 >   
                     <div className='relative z-[9999]'>
                         <img src={markers[0].ukArrow} alt="marker" className="cursor-pointer" />
-                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] left-[100%] lg:right-[105%] lg:left-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }}>Grande Bretagne</div>
+                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] left-[100%] lg:right-[105%] lg:left-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }}>{ t('uk') }</div>
                     </div>
                 </Marker>
 
@@ -229,7 +224,7 @@ const MapBox = ({ items, markers }) => {
                 >   
                     <div className='relative z-[9999]'>
                         <img src={markers[1].russiaArrow} alt="marker" className="cursor-pointer" />
-                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >Russie</div>
+                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ t('russia') }</div>
                     </div>
                 </Marker>
 
@@ -241,7 +236,7 @@ const MapBox = ({ items, markers }) => {
                 >   
                     <div className='relative z-[9999]'>
                         <img src={markers[2].polskaArrow} alt="marker" className="cursor-pointer" />
-                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >Pologne</div>
+                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ t('polska') }</div>
                     </div>
                 </Marker>
             </Map>

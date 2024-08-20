@@ -22,5 +22,8 @@
         "bibliography": "Bibliography",
         "sources": "Sources",
         "research_institutions": "Research Institutions"
-    }
+    },
+    "uk": "Great Britain",
+    "polska": "Polska",
+    "russia": "Russia"
 }
