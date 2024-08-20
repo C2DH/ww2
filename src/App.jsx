@@ -37,8 +37,10 @@ export default function App() {
     useEffect(() => {
         if (!firstLaunch) {
             if ((location.state?.from == null && location.pathname.includes('notice')) || (location.state?.from.includes('notice') && location.pathname == '/')) {
+                console.log('showClouds');
                 setSharedState({ ...sharedState, showClouds: true });
-            } else if(location.state) {
+            } else if (location.state) {
+                console.log('showCurtains');
                 setSharedState({ ...sharedState, showCurtains: true });
             }
         }
@@ -49,8 +51,6 @@ export default function App() {
     useEffect(() => {
         console.log(sharedState)
     }, [sharedState])
-
-
 
     return (
         <>

@@ -20,9 +20,9 @@ import * as maptilerClient from "@maptiler/client"
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next"
-
+import siteConfig from '../../../site.config'
 
 const apiKeyMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const apiStyleMapbox = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
@@ -39,9 +39,9 @@ export default function Home() {
     //     }, 5000)
     // })
     useEffect(() => {
-            setSharedState({ ...sharedState, showClouds: false })
-        
-    })
+        console.log('hideClouds');
+        setSharedState({ ...sharedState, showClouds: false })
+    }, []);
 
     const isSmall = useMediaQuery({
         query: '(max-width: 1024px)'
@@ -112,6 +112,7 @@ export default function Home() {
 
 const MapBox = ({ items, markers }) => {
     const mapRef = useRef(null);
+    const navigate = useNavigate();
     const [lng, setLng] = useState(6.131514);
     const [lat, setLat] = useState(49.815764);
     const [zoom, setZoom] = useState(8);
@@ -137,113 +138,114 @@ const MapBox = ({ items, markers }) => {
 
     
     return (
-        <>
-            <div className='mask h-[calc(100vh-80px)] overflow-hidden'>
-                <Map
-                    ref={mapRef}
-                    style={{ width: '100%', height: '100%' }}
-                    mapboxAccessToken={apiKeyMapbox}
-                    mapStyle={apiStyleMapbox}
-                    dragPan={false}
-                    initialViewState={{
-                        longitude: lng,
-                        latitude: lat,
-                        zoom: zoom,
-                        pitch: 30 // Inclinaison en degrés
-                    }}
-                    minZoom={8} // Ne peut pas dézoomer en dessous de x8
-                    dragRotate={false} // 3D Relief : désactiver
-                    scrollZoom={true} // Désactiver Zoom scroll
-                >
+        <motion.div className='mask h-[calc(100vh-80px)] overflow-hidden' exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}}>
+            <Map
+                ref={mapRef}
+                style={{ width: '100%', height: '100%' }}
+                mapboxAccessToken={apiKeyMapbox}
+                mapStyle={apiStyleMapbox}
+                dragPan={false}
+                initialViewState={{
+                    longitude: lng,
+                    latitude: lat,
+                    zoom: zoom,
+                    pitch: 30 // Inclinaison en degrés
+                }}
+                minZoom={8} // Ne peut pas dézoomer en dessous de x8
+                dragRotate={false} // 3D Relief : désactiver
+                scrollZoom={true} // Désactiver Zoom scroll
+            >
 
-                    {convertedItems.map((marker, index) => {
-                        return (
-                            <Marker
-                                key={index}
-                                longitude={marker.convertedCoordinates.x}
-                                latitude={marker.convertedCoordinates.y}
-                                anchor={marker.country === 'Grande-Bretagne' ? "center" : "bottom"}
-                            >
-                                <div className='relative z-[9999]'>
-                                    <img
-                                        src={marker.country === 'Grande-Bretagne' ? arrow : pinMarker}
-                                        alt="marker"
-                                        className="cursor-pointer"
-                                        onClick={() => { setSelectedMarker({ id: index, data: marker }) }}
-                                    />
+                {convertedItems.map((marker, index) => {
+                    return (
+                        <Marker
+                            key={index}
+                            longitude={marker.convertedCoordinates.x}
+                            latitude={marker.convertedCoordinates.y}
+                            anchor={marker.country === 'Grande-Bretagne' ? "center" : "bottom"}
+                        >
+                            <div className='relative z-[9999]'>
+                                <img
+                                    src={marker.country === 'Grande-Bretagne' ? arrow : pinMarker}
+                                    alt="marker"
+                                    className="cursor-pointer"
+                                    onClick={() => { setSelectedMarker({ id: index, data: marker }) }}
+                                />
 
-                                    { marker.country !== 'Grande-Bretagne' ?
-                                        <AnimatePresence>
-                                            { selectedMarker && selectedMarker.id == index &&
-                                                <motion.div
-                                                    initial={{ opacity: 0, scale: 0.8 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 0.8 }}
-                                                    transition={{ duration: 0.4, ease: 'easeInOut'}}
-                                                    className='flex w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
-                                                    style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
-                                                >
-                                                    <div className='border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative'>
-                                                        <Link to={`/notice/${marker.slug}`}>
-                                                            <div className='flex'>
-                                                                <span className='abril block pr-[10px]'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                                                                <div>                                                
-                                                                    <h3 className='abril text-[18px] pb-[8px]'>{ marker.title.fr_FR }</h3>
-                                                                    <p className='text-[18px] leading-none sofia uppercase'>{ marker.description.fr_FR }</p>
-                                                                </div>
+                                { marker.country !== 'Grande-Bretagne' ?
+                                    <AnimatePresence>
+                                        { selectedMarker && selectedMarker.id == index &&
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.8 }}
+                                                transition={{ duration: 0.4, ease: 'easeInOut'}}
+                                                className='flex w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
+                                                style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
+                                            >
+                                                <div className='border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative'>
+                                                    <div onClick={() => {
+                                                        mapRef.current.flyTo({ zoom: zoom + 2, speed: 0.2, curve: 1 });
+                                                        navigate(`/notice/${marker.slug}`);
+                                                    }}>
+                                                        <div className='flex'>
+                                                            <span className='abril block pr-[10px]'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
+                                                            <div>                                                
+                                                                <h3 className='abril text-[18px] pb-[8px]'>{ marker.title.fr_FR }</h3>
+                                                                <p className='text-[18px] leading-none sofia uppercase'>{ marker.description.fr_FR }</p>
                                                             </div>
-                                                        </Link>
-                                                        <FontAwesomeIcon icon={faXmark} className="absolute top-[2px] right-[4px]" onClick={() => setSelectedMarker({ id: null, data: null })} />
+                                                        </div>
                                                     </div>
-                                                </motion.div>
-                                            }
-                                        </AnimatePresence>
-                                        :
-                                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] sm:top-0 -translate-y-[50%] left-[100%] sm:right-[105%] sm:left-auto mx-[10px] sm:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
-                                    }
-                                </div>
-                            </Marker>
-                        )
-                    })}                   
+                                                    <FontAwesomeIcon icon={faXmark} className="absolute top-[2px] right-[4px]" onClick={() => setSelectedMarker({ id: null, data: null })} />
+                                                </div>
+                                            </motion.div>
+                                        }
+                                    </AnimatePresence>
+                                    :
+                                    <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] sm:top-0 -translate-y-[50%] left-[100%] sm:right-[105%] sm:left-auto mx-[10px] sm:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
+                                }
+                            </div>
+                        </Marker>
+                    )
+                })}                   
 
-                    <Marker
-                        key={"great-britain"}
-                        longitude={markers[0].ukLng}
-                        latitude={markers[0].ukLat}
-                        anchor={"center"}
-                    >   
-                        <div className='relative z-[9999]'>
-                            <img src={markers[0].ukArrow} alt="marker" className="cursor-pointer" />
-                            <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] left-[100%] lg:right-[105%] lg:left-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }}>Grande Bretagne</div>
-                        </div>
-                    </Marker>
+                <Marker
+                    key={"great-britain"}
+                    longitude={markers[0].ukLng}
+                    latitude={markers[0].ukLat}
+                    anchor={"center"}
+                >   
+                    <div className='relative z-[9999]'>
+                        <img src={markers[0].ukArrow} alt="marker" className="cursor-pointer" />
+                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] left-[100%] lg:right-[105%] lg:left-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }}>Grande Bretagne</div>
+                    </div>
+                </Marker>
 
-                    <Marker
-                        key={"russia"}
-                        longitude={markers[1].russiaLng}
-                        latitude={markers[1].russiaLat}
-                        anchor={"center"}
-                    >   
-                        <div className='relative z-[9999]'>
-                            <img src={markers[1].russiaArrow} alt="marker" className="cursor-pointer" />
-                            <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >Russie</div>
-                        </div>
-                    </Marker>
+                <Marker
+                    key={"russia"}
+                    longitude={markers[1].russiaLng}
+                    latitude={markers[1].russiaLat}
+                    anchor={"center"}
+                >   
+                    <div className='relative z-[9999]'>
+                        <img src={markers[1].russiaArrow} alt="marker" className="cursor-pointer" />
+                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >Russie</div>
+                    </div>
+                </Marker>
 
-                    <Marker
-                        key={"polska"}
-                        longitude={markers[2].polskaLng}
-                        latitude={markers[2].polskaLat}
-                        anchor={"center"}
-                    >   
-                        <div className='relative z-[9999]'>
-                            <img src={markers[2].polskaArrow} alt="marker" className="cursor-pointer" />
-                            <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >Pologne</div>
-                        </div>
-                    </Marker>
-                </Map>
-            </div>
-        </>
+                <Marker
+                    key={"polska"}
+                    longitude={markers[2].polskaLng}
+                    latitude={markers[2].polskaLat}
+                    anchor={"center"}
+                >   
+                    <div className='relative z-[9999]'>
+                        <img src={markers[2].polskaArrow} alt="marker" className="cursor-pointer" />
+                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >Pologne</div>
+                    </div>
+                </Marker>
+            </Map>
+        </motion.div>
     );
 }
 
