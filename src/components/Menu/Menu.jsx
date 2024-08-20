@@ -4,19 +4,17 @@ import logo from '../../assets/images/common/logo.png'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faVolume } from '@fortawesome/pro-light-svg-icons'
+import { faVolume, faVolumeXmark } from '@fortawesome/sharp-thin-svg-icons'
 
 // CONTEXT
 import { useSharedState } from "../../contexts/SharedStateProvider";
 import { useMenuContext } from '../../contexts/MenuProvider'
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 
-// FRAMER
-import { AnimatePresence, motion } from "framer-motion"
 
 // REACT
-import { Link, Outlet, useLocation } from "react-router-dom";
-import { useState, useContext, useEffect } from 'react'
+import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from 'react'
 import classNames from 'classnames'
 
 // TRANSLATION
@@ -25,14 +23,12 @@ import { useTranslation } from 'react-i18next'
 
 export default function Menu() {
 
-    
-    const { t } = useTranslation();
+    const { t } = useTranslation()
     const { openMenu, setOpenMenu } = useMenuContext()
-    const [sharedState, setSharedState] = useSharedState();
+    const [sharedState, setSharedState] = useSharedState()
     const [results, setResults] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const { pathname } = useLocation()
-    const test = useLocation()
     const locations = ['/', '/spacetime-map', '/^\/notice\/[a-zA-Z0-9_-]+$/']
 
     const isMatch = locations.some(location => {
@@ -200,11 +196,21 @@ const LanguageSwitcher = ({ switchLanguage, lang }) => {
 }
 
 const Sound = ({ translate }) => {
+    const [sound, setSound] = useState({logo: faVolume, text: 'sound_on'})
+
+    const handleSound = () => {
+        if (sound.logo === faVolume) {
+            setSound({...sound, logo: faVolumeXmark, text: 'sound_off' })
+        } else {
+            setSound({...sound, logo: faVolume, text: 'sound_on' })
+        }
+    }
+
     return (
-        <div>
-            <span className="text-[24px] uppercase">{ translate('sound') }</span>
+        <div onClick={() => handleSound()} className='flex items-center'>
+            <span className="block text-[24px] uppercase">{ translate(sound.text) }</span>
             <FontAwesomeIcon 
-                icon={ faVolume } 
+                icon={ sound.logo } 
                 style={{ fontSize: '26px', marginLeft: '10px', cursor: 'pointer' }}
             />
         </div>

@@ -1,5 +1,6 @@
 {
-    "sound": "Son",
+    "sound_on": "Son On",
+    "sound_off": "Son Off",
     "menu": "Menu",
     "close": "Fermer",
     "about": "A propos",
@@ -9,11 +10,17 @@
     "notes": "Notes",
     "next": "Suivant",
     "prev": "Précédent",
-    "references": "References",
     "links": "Liens",
     "learn_more": "En savoir plus",
     "filter_by_period": "Filtrer par période",
     "back": "Retour carte",
-    "sources": "Sources",
-    "historical-index": "Index historique"
+    "references": "References",
+    "menuItems": {
+        "historical_index": "Index historique",
+        "historian_workshop": "Atelier de l'historien",
+        "glossary": "Glossaire",
+        "bibliography": "Bibliographie",
+        "sources": "Sources",
+        "research_institutions": "Institutions de recherche"
+    }
 }

@@ -1,5 +1,6 @@
 {
-    "sound": "Klang",
+    "sound_on": "Klang an",
+    "sound_off": "Klang aus",
     "menu": "Menü",
     "close": "Schließen",
     "about": "Über",
@@ -14,7 +15,12 @@
     "learn_more": "Erfahren Sie mehr",
     "filter_by_period": "Nach Zeitraum filtern",
     "back": "Zurück Karte",
-    "sources": "Quellen",
-    "historical-index": "Historischer Index"
-
+    "menuItems": {
+        "historical_index": "Historischer index",
+        "historian_workshop": "Historiker-workshop",
+        "glossary": "Glossar",
+        "bibliography": "Bibliografie",
+        "sources": "Quellen",
+        "research_institutions": "Forschungseinrichtungen"
+    }
 }

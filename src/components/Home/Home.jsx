@@ -40,7 +40,7 @@ export default function Home() {
     // })
     useEffect(() => {
         console.log('hideClouds');
-        setSharedState({ ...sharedState, showClouds: false })
+        setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, []);
 
     const isSmall = useMediaQuery({

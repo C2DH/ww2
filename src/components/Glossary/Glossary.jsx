@@ -4,13 +4,19 @@ import CardText from "../Cards/CardText";
 import Dropdown from "../Dropdown/Dropdown";
 import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop";
 import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop";
-import classNames from "classnames";
+import bgPaper from '../../assets/images/common/bg-paper.png'
+import classNames from 'classnames'
+import { Link, useLocation } from 'react-router-dom'
+import { useTranslation } from "react-i18next";
 
 export default function Glossary() {
+
+    const { t } = useTranslation()
     const [filter, setFilter] = useState('')
     const [filteredTerms, setFilteredTerms] = useState([])
-    let allFirstLetters = []
-    let selectedLetters = []
+    const [isOpenMenu, setIsOpenMenu] = useState(false)
+    const [isOpenFilters, setIsOpenFilters] = useState(false)
+    const { pathname } = useLocation()
     const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
     const terms = [
         {
@@ -115,11 +121,46 @@ export default function Glossary() {
         },
 
     ]
+    const menuItems = [
+        {
+            title: "Index historique",
+            link: '/historical-index'
+        },
+        {
+            title: "Sources",
+            link: '/sources'
+        },
+        {
+            title: "Institutions de recherche",
+            link: '/research-institutions'
+        },
+        {
+            title: "Glossaire",
+            link: '/glossary'
+        },
+        {
+            title: "Bibliographie",
+            link: '/bibliography'
+        },
+    ]
+    let allFirstLetters = []
+    let selectedLetters = []
+
     terms.map(term => {
         allFirstLetters.push(term.title.substring(0, 1))
         selectedLetters = [...new Set(allFirstLetters)]
     })
 
+
+    const handleMenu = (element) => {
+        if (element === 'menu') {
+            setIsOpenFilters(false)
+            setIsOpenMenu(!isOpenMenu)
+        } else {
+            setIsOpenMenu(false)
+            setIsOpenFilters(!isOpenFilters)
+        }
+    }
 
     useEffect(() => {
         if (filter) {
@@ -131,9 +172,9 @@ export default function Glossary() {
     },[filter])
 
     return (
-        <LayoutHistorianWorkshop pageTitle={'Glossaire'}>
+        <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
 
-            <HeaderHistorianWorkshop/>
+            <HeaderHistorianWorkshop items={ menuItems }/>
 
             {/** Filters */}
             <div className="hidden lg:block mt-[40px]">
@@ -147,13 +188,55 @@ export default function Glossary() {
             </div>
             
             {/** Content */}
-            <div className="overflow-scroll">
+            <div className="lg:overflow-scroll">
                 <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
                     { filteredTerms.map((term, index) => {
                         return <CardText key={index} title={term.title} text={term.text} />
                     })}
                 </div>
             </div>
+
+            {/* MOBILE: BTN MENU / BTN FILTERS */}
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full bg-red-200 flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
+                <div 
+                    onClick={() => handleMenu('menu')}
+                    className={classNames("flex items-center justify-center", {
+                        "border-r border-black w-1/2": allFirstLetters,
+                        "w-full": !allFirstLetters
+                    })} 
+                >
+                    <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
+                </div>
+
+                {allFirstLetters &&                
+                    <div className="w-1/2 flex items-center justify-center" onClick={() => handleMenu('filter')}>
+                        <span className='uppercase text-[24px] cursor-pointer'>Filtres</span>
+                    </div>
+                }
+            </div>
+
+            {/* MOBILE: MENU - FILTERS */}
+            <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {
+                "translate-y-[100%]": !isOpenMenu
+            })}>
+                <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
+                    {menuItems.map((item, index) => 
+                        <li key={index}>
+                            <Link key={index} to={item.link} className={classNames('navbar-title', {'active' : pathname === `${item.link}`})}>{item.title}</Link>
+                        </li>
+                   )}
+                </ul>
+            </div>
+
+            { allFirstLetters &&
+                <div className={classNames('lg:hidden py-[50px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] flex justify-center items-center', {
+                    "translate-y-[100%]": !isOpenFilters
+                })}>
+                    <div className='flex flex-wrap justify-center gap-2'>
+                        <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} />
+                    </div>
+                </div>
+            }
 
         </LayoutHistorianWorkshop>
     )
@@ -172,7 +255,7 @@ const LetterFilters = ({itemsSelected, filter, handleClick}) => {
         alphabet.map((letter, index) => {
             if (itemsSelected.includes(letter)) {
                 return (
-                    <div key={index} className={classNames("border border-black px-[22px] py-[7px] h-[40px] me-5 cursor-pointer group hover:bg-black transition-all duration-500", {
+                    <div key={index} className={classNames("border border-black px-[22px] py-[7px] h-[40px] lg:me-5 cursor-pointer group hover:bg-black transition-all duration-500", {
                         'bg-black': letter === filter
                     })}
                         onClick={() => { handleClick(letter) }}
@@ -184,7 +267,7 @@ const LetterFilters = ({itemsSelected, filter, handleClick}) => {
                 )
             } else {
                 return (
-                    <div key={index} className="border border-black opacity-20 px-[22px] py-[7px] h-[40px] me-5 pointer-events-none">
+                    <div key={index} className="border border-black opacity-20 px-[22px] py-[7px] h-[40px] lg:me-5 pointer-events-none">
                         <span className="text-[24px] leading-none">{letter}</span>
                     </div>
                 )

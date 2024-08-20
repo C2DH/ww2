@@ -1,5 +1,6 @@
 {
-    "sound": "Sound",
+    "sound_on": "Sound on",
+    "sound_off": "Sound off",
     "menu": "Menu",
     "close": "Close",
     "about": "About",
@@ -14,7 +15,12 @@
     "learn_more": "Learn More",
     "filter_by_period": "Filter by period",
     "back": "Back map",
-    "sources": "Sources",
-    "historical-index": "Historical Index"
-
+    "menuItems": {
+        "historical_index": "Historical index",
+        "historian_workshop": "Historian's workshop",
+        "glossary": "Glossary",
+        "bibliography": "Bibliography",
+        "sources": "Sources",
+        "research_institutions": "Research Institutions"
+    }
 }

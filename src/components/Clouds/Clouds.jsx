@@ -8,6 +8,7 @@ import siteConfig from '../../../site.config'
 export default function Clouds() {
     return (
         <>
+            {/** BG GRAY */}
             <motion.div
                 className='fixed inset-0 bg-gray-100'
                 initial={{ opacity: 0 }}
