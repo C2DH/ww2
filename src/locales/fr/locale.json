@@ -12,5 +12,8 @@
     "references": "References",
     "links": "Liens",
     "learn_more": "En savoir plus",
-    "filter_by_period": "Filtrer par période"
+    "filter_by_period": "Filtrer par période",
+    "back": "Retour carte",
+    "sources": "Sources",
+    "historical-index": "Index historique"
 }

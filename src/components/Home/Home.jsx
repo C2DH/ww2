@@ -4,8 +4,12 @@ import { useMediaQuery } from 'react-responsive'
 import { useSharedState } from "../../contexts/SharedStateProvider"
 
 import pinMarker from '../../assets/images/common/marker.svg'
-import longLeftArrow from '../../assets/images/common/longLeftArrow.png'
 import smallLeftArrow from '../../assets/images/common/smallLeftArrow.png'
+import smallRightArrow from '../../assets/images/common/smallRightArrow.png'
+import UKArrowLong from '../../assets/images/common/ukArrowLong.png'
+import russiaArrowLong from '../../assets/images/common/russiaArrowLong.png'
+import polskaArrowLong from '../../assets/images/common/polskaArrowLong.png'
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faXmark } from "@fortawesome/free-solid-svg-icons"
 
@@ -17,6 +21,7 @@ import * as maptilerClient from "@maptiler/client"
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next"
 
 
 const apiKeyMapbox = import.meta.env.VITE_API_KEY_MAPBOX
@@ -25,27 +30,46 @@ maptilerClient.config.apiKey = import.meta.env.VITE_API_MAPTILER
 
 
 export default function Home() {
-    const [sharedState, setSharedState] = useSharedState();
+    const [sharedState, setSharedState] = useSharedState()
+    const { t } = useTranslation()
 
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         setSharedState({ ...sharedState, showClouds: false })
+    //     }, 5000)
+    // })
     useEffect(() => {
-        setSharedState({ ...sharedState, showCurtains: false });
+            setSharedState({ ...sharedState, showClouds: false })
+        
     })
 
-    const isMobile = useMediaQuery({
-        query: '(max-width: 640px)'
+    const isSmall = useMediaQuery({
+        query: '(max-width: 1024px)'
     })
 
     const [isLoading, setIsLoading] = useState(false)
-    const [arrowMarker, setArrowMarker] = useState(longLeftArrow)
+    const [dataMarker, setDataMarker] = useState([
+        {ukArrow: UKArrowLong, ukLng: "", ukLat: "" },
+        {russiaArrow: russiaArrowLong, russiaLng: "", russiaLat: "" },
+        {polskaArrow: polskaArrowLong, polskaLng: "", polskaLat: "" }
+    ])
     const [showIntro, setShowIntro] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false); 
     const [data, setData] = useState(null)
 
     useEffect(() => {
-        if (isMobile) {
-            setArrowMarker(smallLeftArrow)
+        if (isSmall) {
+            setDataMarker([
+                {ukArrow: smallLeftArrow, ukLng: 5.6591201603317075, ukLat: 50.40793013795516 },
+                {russiaArrow: smallRightArrow, russiaLng: 6.467898325775285, russiaLat: 50.24406234423884 },
+                {polskaArrow: smallRightArrow, polskaLng: 6.532067821847243, polskaLat: 50.40793013795516 }
+            ])
         } else {
-            setArrowMarker(longLeftArrow)
+            setDataMarker([
+                {ukArrow: UKArrowLong, ukLng: 5.377067446744771, ukLat: 50.477084096989245 },
+                {russiaArrow: russiaArrowLong, russiaLng: 7.104207203884845, russiaLat: 50.03469691527637 },
+                {polskaArrow: polskaArrowLong, polskaLng: 6.815322417081631, polskaLat: 50.347060676591056 }
+            ])
         }
 
         const lastVisited = localStorage.getItem('lastVisited')
@@ -60,9 +84,7 @@ export default function Home() {
         }
 
         setIsLoaded(true)
-    }, [isMobile])
-
-
+    }, [isSmall])
 
 
     
@@ -83,12 +105,12 @@ export default function Home() {
     return isLoaded && data && data.results && (
         <>      
             {/* <Intro /> */}
-            <MapBox items={data.results} arrow={arrowMarker}/>
+            <MapBox items={data.results} markers={dataMarker}/>
         </>
     )
 }
 
-const MapBox = ({ items, arrow }) => {
+const MapBox = ({ items, markers }) => {
     const mapRef = useRef(null);
     const [lng, setLng] = useState(6.131514);
     const [lat, setLat] = useState(49.815764);
@@ -97,7 +119,6 @@ const MapBox = ({ items, arrow }) => {
     const [convertedItems, setConvertedItems] = useState([]);
     
     useEffect(() => {
-
         Promise.all(items.filter(item => item.covers.filter(item => item.data?.type == 'place').length > 0).map(async (item, index) =>  {      
             try {
                 const place = item.covers.filter(item => item.data?.type == 'place').shift();
@@ -117,7 +138,7 @@ const MapBox = ({ items, arrow }) => {
     
     return (
         <>
-            <div className='mask h-[calc(100vh-80px)] overflow-hidden relative'>
+            <div className='mask h-[calc(100vh-80px)] overflow-hidden'>
                 <Map
                     ref={mapRef}
                     style={{ width: '100%', height: '100%' }}
@@ -178,12 +199,48 @@ const MapBox = ({ items, arrow }) => {
                                             }
                                         </AnimatePresence>
                                         :
-                                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] sm:top-0 -translate-y-[50%] left-[100%] sm:right-[100%] sm:left-auto mx-[10px] sm:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
+                                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] sm:top-0 -translate-y-[50%] left-[100%] sm:right-[105%] sm:left-auto mx-[10px] sm:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
                                     }
                                 </div>
                             </Marker>
-                        );
-                    })}
+                        )
+                    })}                   
+
+                    <Marker
+                        key={"great-britain"}
+                        longitude={markers[0].ukLng}
+                        latitude={markers[0].ukLat}
+                        anchor={"center"}
+                    >   
+                        <div className='relative z-[9999]'>
+                            <img src={markers[0].ukArrow} alt="marker" className="cursor-pointer" />
+                            <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] left-[100%] lg:right-[105%] lg:left-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }}>Grande Bretagne</div>
+                        </div>
+                    </Marker>
+
+                    <Marker
+                        key={"russia"}
+                        longitude={markers[1].russiaLng}
+                        latitude={markers[1].russiaLat}
+                        anchor={"center"}
+                    >   
+                        <div className='relative z-[9999]'>
+                            <img src={markers[1].russiaArrow} alt="marker" className="cursor-pointer" />
+                            <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >Russie</div>
+                        </div>
+                    </Marker>
+
+                    <Marker
+                        key={"polska"}
+                        longitude={markers[2].polskaLng}
+                        latitude={markers[2].polskaLat}
+                        anchor={"center"}
+                    >   
+                        <div className='relative z-[9999]'>
+                            <img src={markers[2].polskaArrow} alt="marker" className="cursor-pointer" />
+                            <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >Pologne</div>
+                        </div>
+                    </Marker>
                 </Map>
             </div>
         </>

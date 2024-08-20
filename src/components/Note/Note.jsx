@@ -1,6 +1,7 @@
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLongToLine } from '@fortawesome/pro-regular-svg-icons'
+import { faImage } from '@fortawesome/pro-thin-svg-icons'
 import { Link, useParams } from 'react-router-dom'
 import Source from '../Source/Source'
 import { AnimatePresence, motion } from "framer-motion"
@@ -8,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { t } from 'i18next'
 import { convertToHtml } from '../../lib/utils'
+
 
 
 export default function Note() {
@@ -102,47 +104,83 @@ export default function Note() {
                             <div className="lg:w-1/2 lg:ml-[50px] py-[40px] lg:overflow-y-auto flex-grow border-t lg:border-none border-black">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="grid gap-6">
-                                        <div>
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg" alt="" onClick={() => handleSourcePopup() }/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
-                                        <div>
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-1.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
-                                        <div>
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-2.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="grid gap-4">
-                                        <div>
+                                    <div className="grid gap-6">
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-3.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
-                                        <div>
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-4.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
-                                        <div>
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-5.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="grid gap-4">
-                                        <div>
+                                    <div className="grid gap-6">
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-6.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
-                                        <div>
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-7.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
-                                        <div>
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-8.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="grid gap-4">
-                                        <div>
+                                    <div className="grid gap-6">
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-9.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
-                                        <div>
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-10.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
-                                        <div>
+                                        <div className='relative cursor-pointer'>
                                             <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-11.jpg" alt=""/>
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

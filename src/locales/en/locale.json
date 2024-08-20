@@ -12,5 +12,9 @@
     "references": "References",
     "links": "Links",
     "learn_more": "Learn More",
-    "filter_by_period": "Filter by period"
+    "filter_by_period": "Filter by period",
+    "back": "Back map",
+    "sources": "Sources",
+    "historical-index": "Historical Index"
+
 }

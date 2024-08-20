@@ -1,9 +1,11 @@
 import classNames from "classnames"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
-export default function IconMapBack({ text }) {
+export default function IconMapBack() {
 
     const [isHover, setIsHover] = useState(false)
+    const { t } = useTranslation()
 
     return (
         <div className="relative iconMapBack" onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
@@ -12,7 +14,7 @@ export default function IconMapBack({ text }) {
             <span className={classNames("uppercase absolute top-[50%] left-[50%] -translate-y-[50%] -translate-x-[50%] text-[24px] transition-all duration-[750ms]", { 
                 'text-white': !isHover,
                 'text-[#6EDFFB]': isHover
-            })}>{ text }</span>
+            })}>{ t('back') }</span>
         </div>
     )
 }

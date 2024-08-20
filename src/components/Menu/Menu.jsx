@@ -3,7 +3,6 @@ import bgBlack from '../../assets/images/common/bg-black.jpg'
 import logo from '../../assets/images/common/logo.png'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
-import cloud from '../../assets/images/common/cloud.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faVolume } from '@fortawesome/pro-light-svg-icons'
 
@@ -34,10 +33,17 @@ export default function Menu() {
     const [isLoading, setIsLoading] = useState(false)
     const { pathname } = useLocation()
     const test = useLocation()
-    // const locations = ['/catalogue', '/historian-workshop', '/historical-index', '/research-institutions', '/bibliography', '/glossary','/sources', '/note']
-    // (pathname === '/' || pathname === '/spacetime-map' || pathname.includes('/notice/'))
-    
     const locations = ['/', '/spacetime-map', '/^\/notice\/[a-zA-Z0-9_-]+$/']
+
+    const isMatch = locations.some(location => {
+        if (location.startsWith('/^') && location.endsWith('$/')) {
+            const regex = new RegExp(location.slice(1, -1))
+            return regex.test(pathname)
+        }
+        return location === pathname
+    })
+
+
     const {language, changeLanguage } = useLanguageContext()
 
     // API DATA
@@ -78,27 +84,24 @@ export default function Menu() {
         <>
             {isLoading &&            
                 <header 
-                    initial={{ opacity: 0}}
-                    animate={{ opacity: 1}}
-                    transition={{ duration: 1500 }}
                     style={{ background: `url(${bgBlack}) 50% / cover no-repeat`}}
                     className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[50px] text-white', {
-                        'max-h-[120vh] h-[100vh]': openMenu,
-                        'max-h-[120px] h-[120px]': (!openMenu && !locations.includes(pathname)),
-                        'max-h-[140px] h-[140px]': (!openMenu && locations.includes(pathname))
+                        'max-h-[100vh] h-[100vh]': openMenu,
+                        'max-h-[140px] h-[140px]': (!openMenu && isMatch),
+                        'max-h-[120px] h-[120px]': (!openMenu && !isMatch),
                     })} 
                 >
 
                     {/** HEADER */}
-                    <div className="flex justify-between px-[30px] sm:px-[90px] pt-[140px] md:pt-[20px]">
+                    <div className="flex justify-between px-[30px] sm:px-[90px] pt-[140px] sm:pt-[120px] md:pt-[20px]">
                         <Sound translate={t}/>
                         <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
                         <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>
                     </div>
 
                     {/** ITEMS */}
-                    <div className='flex justify-center mt-[60px] sm:mt-[160px]'>
-                        <ul className={classNames('w-2/3 lg:w-1/3 text-center transition-all duration-[750ms]', {
+                    <div className='flex justify-center mt-[60px] sm:mt-[20px] md:mt-[120px]'>
+                        <ul className={classNames('sm:w-[80%] lg:w-2/3 2xl:w-1/3 text-center transition-all duration-[1000ms]', {
                             'opacity-1': openMenu,
                             'opacity-0': !openMenu 
                         })}>
@@ -166,7 +169,7 @@ export function CustomLink(props) {
 export function MenuItem({path, title = "", text = "", handleMenuItemClick}) {
     return (
         <CustomLink to={path} onClick={handleMenuItemClick}>
-            <h3 className='mb-[40px] sm:mb-0 text-[40px] leading-none blue abril'>{title}</h3>
+            <h3 className='mb-[40px] sm:mb-0 text-[34px] md:text-[40px] leading-none blue abril'>{title}</h3>
             <p className="hidden sm:block pt-[14px] text-[20px] leading-none mb-[30px]">{text}</p>
         </CustomLink>
     )

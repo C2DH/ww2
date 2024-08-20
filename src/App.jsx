@@ -31,9 +31,12 @@ export default function App() {
     const [sharedState, setSharedState] = useSharedState();
     const [firstLaunch, setFirstLaunch] = useState(true);
 
+    // console.log('from', location )
+    // console.log('inclu notice',location.pathname.includes('notice'))
+
     useEffect(() => {
         if (!firstLaunch) {
-            if ((location.state?.from == '/' && location.pathname.includes('notice')) || (location.state?.from.includes('notice') && location.pathname == '/')) {
+            if ((location.state?.from == null && location.pathname.includes('notice')) || (location.state?.from.includes('notice') && location.pathname == '/')) {
                 setSharedState({ ...sharedState, showClouds: true });
             } else if(location.state) {
                 setSharedState({ ...sharedState, showCurtains: true });
@@ -41,6 +44,13 @@ export default function App() {
         }
         setFirstLaunch(false);
     }, [location.pathname]);
+
+
+    useEffect(() => {
+        console.log(sharedState)
+    }, [sharedState])
+
+
 
     return (
         <>
@@ -69,13 +79,13 @@ export default function App() {
                             </Route>
                         </Routes>
                     </AnimatePresence>
-
-                    <AnimatePresence>
-                        {sharedState.showClouds && <Clouds />}
-                        {sharedState.showCurtains && <Curtains />}
-                    </AnimatePresence>
                 </MenuProvider>
             </LanguageProvider>
+
+            <AnimatePresence mode="wait">
+                {sharedState.showClouds && <Clouds />}
+                {sharedState.showCurtains && <Curtains />}
+            </AnimatePresence>
         </>
     )
 }

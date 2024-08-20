@@ -6,7 +6,7 @@ import pinMarker from '../../assets/images/spaceTimeMap/marker-red.svg'
 import {useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/sharp-thin-svg-icons'
-import { faArrowRight, faArrowRightLong } from '@fortawesome/pro-light-svg-icons'
+// import { faArrowRight, faArrowRightLong } from '@fortawesome/pro-light-svg-icons'
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 
 // MAPBOX
@@ -22,6 +22,7 @@ import classNames from 'classnames'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import { t } from 'i18next'
 import { useTranslation } from 'react-i18next'
+import { useMediaQuery } from 'react-responsive'
 
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const styleBlueprint = import.meta.env.VITE_API_STYLE_MAPBOX_BLUEPRINT
@@ -174,7 +175,6 @@ export default function SpaceTimeMap() {
     const { t } = useTranslation()
     const [sharedState, setSharedState] = useSharedState()
     const mapRef = useRef(null);
-    const [openFilter, setOpenFilter] = useState(false)
     const [ viewState, setViewState ] = useState({
         longitude: 6.1243943,
         latitude: 49.6099615,
@@ -205,11 +205,12 @@ export default function SpaceTimeMap() {
 
 
     return (
-        <>
-            <div className='mask w-full h-[calc(100vh-120px)]'>
-                <MapBox items={geojson.features} state={viewState} mapRef={mapRef}/>
-                                {/** Map style and zoom */}
-                                <div className='absolute top-[40px] right-[20px]'>
+    
+            <>
+                <MapBox items={geojson.features} state={viewState} reference={mapRef}/>
+                
+                {/** Map style and zoom */}
+                <div className='absolute top-[40px] right-[20px]'>
                     <div className='flex gap-2 lg:gap-5'>
 
                         { viewState.style !== styleGeo &&     
@@ -248,44 +249,34 @@ export default function SpaceTimeMap() {
                         </div>
                     </div>
                 </div>
-            </div>
 
 
 
-
-            <span className='hidden lg:block absolute z-[100] bottom-[15px] right-[15px] text-[13px] text-white antonio'>© MAPBOX 2024</span>
+            <span className='hidden xl:block absolute z-[100] bottom-[15px] right-[15px] text-[13px] text-white antonio'>© MAPBOX 2024</span>
 
             {/** Gradient Bottom */}
-            <div className="hidden sm:block bottom-gradient absolute bottom-0"></div>
+            <div className="hidden md:block bottom-gradient absolute bottom-0"></div>
         
             {/** Filter period Desktop */}
-            <div className="hidden sm:block container mx-auto fixed bottom-[20px] left-0 right-0">
+            <div className="hidden md:block container mx-auto fixed bottom-[20px] left-0 right-0">
                 <div className="grid grid-cols-12">
-                    <div className="col-span-12">
+                    <div className="col-span-10 col-start-2">
                         <MultiRangeSelector/>
                     </div>
                 </div>
-            </div>
-
-            {/** Filter period Mobile Tablet */}
-            <div className='sm:hidden bg-[#475DA9] h-[70px] fixed z-[100] bottom-0 left-0 right-0 flex justify-center items-center border-t border-white' onClick={() => setOpenFilter(!openFilter)}>
-                <span className='uppercase text-white text-[24px]'>{ t('filter_by_period') }</span>
-            </div>
-
-            <div className={classNames('sm:hidden bg-[#475DA9] h-[150px] fixed bottom-[70px] left-0 right-0 flex justify-center items-center border-t border-white transition-all duration-[750ms]', {
-                "translate-y-full": !openFilter,
-                "translate-y-0": openFilter
-            })}>
             </div>
         </>
     )
 }
 
 
-const MapBox = ({ items, state, mapRef }) => {
-    const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
-    const [openLocation, setOpenLocation] = useState(false);
-    const [btnHover, setBtnHover] = useState(false);
+const MapBox = ({ items, state, reference }) => {
+    const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null })
+    const [openLocation, setOpenLocation] = useState(false)
+    const [btnHover, setBtnHover] = useState(false)
+    const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
+    const [openFilter, setOpenFilter] = useState(false)
+
 
     const sourceStyle = {
         id: 'geoportail',
@@ -294,130 +285,216 @@ const MapBox = ({ items, state, mapRef }) => {
         tiles: [
             'https://wms.geoportail.lu/public_map_layers/service/220?service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=220&bbox={bbox-epsg-3857}&format=image/png&styles'
         ]
-    };
+    }
 
     const layerStyle = {
         id: "geoportail-layer",
         type: "raster",
         source: "geoportail"
-    };
+    }
 
-    return (
-        <>
-            <Map
-                ref={mapRef}
-                style={{ width: '100%', height: '100%' }}
-                mapboxAccessToken={state.token}
-                mapStyle={state.style}
-                initialViewState={{
-                    longitude: state.longitude,
-                    latitude: state.latitude,
-                    zoom: state.zoom,
-                    pitch: 30 // Inclinaison en degrés
-                }}
-                minZoom={8} // Ne peut pas dézoomer en dessous de x8
-                dragRotate={true} // 3D Relief : désactiver
-                scrollZoom={true} // Désactiver Zoom scroll
-            >
-                {state.style === 'geoportail' && (
-                    <Source {...sourceStyle}>
-                        <Layer {...layerStyle} />
-                    </Source>
-                )}
-
-                {items.map((marker) => (
-                    <Marker
-                        key={marker.id}
-                        longitude={marker.geometry.coordinates[1]}
-                        latitude={marker.geometry.coordinates[0]}
-                        anchor={marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom"}
+    if (isSmall) {
+        return (
+            <>
+                <div className='mask w-full h-[calc(100vh-80px)]'>
+                    <Map
+                        ref={reference}
+                        style={{ width: '100%', height: '100%' }}
+                        mapboxAccessToken={state.token}
+                        mapStyle={state.style}
+                        initialViewState={{
+                            longitude: state.longitude,
+                            latitude: state.latitude,
+                            zoom: state.zoom,
+                            pitch: 30 // Inclinaison en degrés
+                        }}
+                        minZoom={8} // Ne peut pas dézoomer en dessous de x8
+                        dragRotate={true} // 3D Relief : désactiver
+                        scrollZoom={true} // Désactiver Zoom scroll
                     >
-                        <div className='relative'>
-                            <img
-                                src={pinMarker}
-                                alt="marker"
-                                className="cursor-pointer"
-                                onMouseOver={() => setSelectedMarker({ id: marker.id, data: marker })}
-                                onClick={() => setSelectedMarker({ id: marker.id, data: marker })}
+                        {state.style === 'geoportail' && (
+                            <Source {...sourceStyle}>
+                                <Layer {...layerStyle} />
+                            </Source>
+                        )}
+
+                        {items.map((marker) => (
+                            <Marker
+                                key={marker.id}
+                                longitude={marker.geometry.coordinates[1]}
+                                latitude={marker.geometry.coordinates[0]}
+                                anchor={marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom"}
+                            >
+                                <div className='relative'>
+                                    <img
+                                        src={pinMarker}
+                                        alt="marker"
+                                        className="cursor-pointer"
+                                        // onMouseOver={() => setSelectedMarker({ id: marker.id, data: marker })}
+                                        onClick={() => {
+                                            setOpenLocation(true)
+                                            setSelectedMarker({ id: marker.id, data: marker })}
+                                        }
+                                    />
+                                </div>
+                            </Marker>
+                        ))}
+                    </Map>
+
+                    {/** Filter period Mobile Tablet */}
+                    <div className="fixed bottom-0 left-0 right-0">
+                        <div className='bg-[#475DA9] h-[70px] flex justify-center items-center border-t border-white relative z-[100]' onClick={() => setOpenFilter(!openFilter)}>
+                            <span className='uppercase text-white text-[24px] cursor-pointer'>{ t('filter_by_period') }</span>
+                        </div>
+
+                        <div className={classNames('bg-[#475DA9] h-[150px] absolute bottom-[70px] left-0 right-0 flex justify-center items-center border-t border-white transition-all duration-[750ms]', {
+                            "translate-y-full": !openFilter,
+                            "translate-y-0": openFilter
+                        })}>
+                            <FontAwesomeIcon
+                                icon={faXmark}
+                                className='absolute right-[10px] top-[10px] cursor-pointer text-white'
+                                onClick={() => setOpenFilter(!openFilter)}
                             />
 
-                            <AnimatePresence>
-                                {selectedMarker && selectedMarker.id === marker.id && (
-                                    <motion.div
-                                        key={selectedMarker.id}
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.8 }}
-                                        transition={{ duration: 0.4, ease: 'easeInOut' }}
-                                        className='w-[300px] h-[110px] absolute z-[9999] left-0 top-0 bg-white flex items-center justify-center cursor-pointer p-[6px] rounded-[6px]'
-                                        style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)' }}
-                                        onMouseLeave={() => !openLocation && setSelectedMarker({ id: null, data: null })}
-                                        onClick={() => setOpenLocation(true)}
-                                    >
-                                        <div className='border border-black rounded-[6px] h-full w-full overflow-scroll'>
-                                            <div className='flex py-[12px]'>
-                                                <span className='abril block px-3'>{marker.id < 10 ? '0' + marker.id : marker.id}</span>
-                                                <div className='pr-3'>
-                                                    <h3 className='abril text-[20px] pb-[8px]'>{selectedMarker.data.properties.location}</h3>
-                                                    <p className='sofia uppercase text-[20px]'>{selectedMarker.data.properties.description}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </Marker>
-                ))}
-            </Map>
+                            <div className='w-full mx-[20px]'>
+                                <MultiRangeSelector/>
+                            </div>
 
-            <AnimatePresence>
-                {openLocation &&
-                    <motion.div
-                        key="location-panel"
-                        initial={{ x: '-100%' }}
-                        animate={{ x: 0 }}
-                        exit={{ x: '-100%' }}
-                        transition={{ duration: 0.8, ease: 'easeInOut' }}
-                        className='md:w-[70%] lg:w-[60%] xl:w-[40%] h-full bg-white absolute z-[9999] top-0 md:pt-[100px] md:pl-[80px] md:pr-[40px]'
-                    >
-                        <FontAwesomeIcon
-                            icon={faXmark}
-                            className='absolute right-[40px] top-[60px] cursor-pointer'
-                            style={{ fontSize: '40px' }}
-                            onClick={() => {
-                                setOpenLocation(false);
-                                setSelectedMarker({ id: null, data: null });
-                            }}
-                        />
-
-                        <div 
-                            className="md:hidden bg-black h-[160px] flex justify-center items-center" 
-                            onClick={() => {
-                                setOpenLocation(false);
-                                setSelectedMarker({ id: null, data: null });
-                            }}>
-                                <span className='cursor-pointer text-[24px] uppercase text-white'>{ t('close') }</span>
                         </div>
+                    </div>
+                </div>
+    
+                {/** POPUP */}
+                <AnimatePresence>
+                    {openLocation &&
+                        <motion.div
+                            key="location-panel"
+                            initial={{ x: '-100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '-100%' }}
+                            transition={{ duration: 0.8, ease: 'easeInOut' }}
+                            className='absolute inset-0 -top-[80px] z-[9999] md:pt-[100px] md:pl-[80px] md:pr-[40px]'
+                        >
+                            <div 
+                                className="md:hidden bg-[rgba(0,0,0,0.9)] h-[120px] flex justify-center items-center" 
+                                onClick={() => {
+                                    setOpenLocation(false);
+                                    setSelectedMarker({ id: null, data: null });
+                                }}>
+                                    <span className='cursor-pointer text-[24px] uppercase text-white'>{ t('close') }</span>
+                            </div>
+    
+                            <div className='px-[20px] md:px-0 bg-white'>
+                                <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.properties.location}</h2>
+                                <span className='text-[28px] block pb-[40px] md:pb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
+                                <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' />
+                                <Link
+                                    className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
+                                    onMouseOver={() => setBtnHover(true)}
+                                    onMouseLeave={() => setBtnHover(false)}
+                                >
+                                    <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
+                                    <span className='block icon-arrow'></span>
+                                </Link>
+                            </div>
+                        </motion.div>
+                    }
+                </AnimatePresence>
 
-                        <div className='px-[20px] md:px-0'>
-                            <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.properties.location}</h2>
-                            <span className='text-[28px] block pb-[40px] md:pb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
-                            <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' />
-                            <Link
-                                className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
-                                onMouseOver={() => setBtnHover(true)}
-                                onMouseLeave={() => setBtnHover(false)}
-                            >
-                                <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
-                                <span className='block icon-arrow'></span>
-                            </Link>
-                        </div>
-                    </motion.div>
-                }
-            </AnimatePresence>
-        </>
-    )
+                
+            </>
+        )
+    } else {
+        return (
+            <div className='mask w-full h-[calc(100vh-80px)]'>
+                <Map
+                    ref={reference}
+                    style={{ width: '100%', height: '100%' }}
+                    mapboxAccessToken={state.token}
+                    mapStyle={state.style}
+                    initialViewState={{
+                        longitude: state.longitude,
+                        latitude: state.latitude,
+                        zoom: state.zoom,
+                        pitch: 30 // Inclinaison en degrés
+                    }}
+                    minZoom={8} // Ne peut pas dézoomer en dessous de x8
+                    dragRotate={true} // 3D Relief : désactiver
+                    scrollZoom={true} // Désactiver Zoom scroll
+                >
+                    {state.style === 'geoportail' && (
+                        <Source {...sourceStyle}>
+                            <Layer {...layerStyle} />
+                        </Source>
+                    )}
+
+                    {items.map((marker) => (
+                        <Marker
+                            key={marker.id}
+                            longitude={marker.geometry.coordinates[1]}
+                            latitude={marker.geometry.coordinates[0]}
+                            anchor={marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom"}
+                        >
+                            <div className='relative'>
+                                <img
+                                    src={pinMarker}
+                                    alt="marker"
+                                    className="cursor-pointer"
+                                    // onMouseOver={() => setSelectedMarker({ id: marker.id, data: marker })}
+                                    onClick={() => {
+                                        setOpenLocation(true)
+                                        setSelectedMarker({ id: marker.id, data: marker })}
+                                    }
+                                />
+                            </div>
+                        </Marker>
+                    ))}
+                </Map>
+    
+                {/** POPUP */}
+                <AnimatePresence>
+                    {openLocation &&
+                        <motion.div
+                            key="location-panel"
+                            initial={{ x: '-100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '-100%' }}
+                            transition={{ duration: 0.8, ease: 'easeInOut' }}
+                            className='md:w-[70%] lg:w-[60%] xl:w-[40%] h-full bg-white absolute z-[9999] top-0 sm:pt-[100px] sm:pl-[80px] sm:pr-[40px]'
+                        >
+                            <FontAwesomeIcon
+                                icon={faXmark}
+                                className='absolute right-[40px] top-[60px] cursor-pointer'
+                                style={{ fontSize: '40px' }}
+                                onClick={() => {
+                                    setOpenLocation(false);
+                                    setSelectedMarker({ id: null, data: null });
+                                }}
+                            />
+    
+
+    
+                            <div className='px-[20px] md:px-0'>
+                                <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.properties.location}</h2>
+                                <span className='text-[28px] block pb-[40px] md:pb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
+                                <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' />
+                                <Link
+                                    className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
+                                    onMouseOver={() => setBtnHover(true)}
+                                    onMouseLeave={() => setBtnHover(false)}
+                                >
+                                    <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
+                                    <span className='block icon-arrow'></span>
+                                </Link>
+                            </div>
+                        </motion.div>
+                    }
+                </AnimatePresence>
+            </div>
+        )
+    }
+   
 }
 
 
@@ -426,22 +503,8 @@ const MapBox = ({ items, state, mapRef }) => {
 const MultiRangeSelector = () => {
 
     const monthNames = ["Jan", "Apr", "Jul", "Oct"]
-    const labels = ["1939", "", "", "", "1940", "", "", "", "1941", "", "", "", "1942", "", "", "", "1943", "", "", "", "1944", "", "", "", "1945", "", "", "", "1946"]
+    const labels = ["1939", "1939-1", "1939-2", "1939-3", "1940", "1940-1", "1940-2", "1940-3", "1941", "1941-1", "1941-2", "1941-3", "1942", "1942-1", "1942-2", "1942-3", "1943", "1943-1", "1943-2", "1943-3", "1944", "1944-1", "1944-2", "1944-3", "1945", "1945-1", "1945-2", "1945-3", "1946"]
     
-
-    // const labels = [
-    //     { label: "1939", key: "1939-0" }, { label: "", key: "1939-1" }, { label: "", key: "1939-2" }, { label: "", key: "1939-3" },
-    //     { label: "1940", key: "1940-0" }, { label: "", key: "1940-1" }, { label: "", key: "1940-2" }, { label: "", key: "1940-3" },
-    //     { label: "1941", key: "1941-0" }, { label: "", key: "1941-1" }, { label: "", key: "1941-2" }, { label: "", key: "1941-3" },
-    //     { label: "1942", key: "1942-0" }, { label: "", key: "1942-1" }, { label: "", key: "1942-2" }, { label: "", key: "1942-3" },
-    //     { label: "1943", key: "1943-0" }, { label: "", key: "1943-1" }, { label: "", key: "1943-2" }, { label: "", key: "1943-3" },
-    //     { label: "1944", key: "1944-0" }, { label: "", key: "1944-1" }, { label: "", key: "1944-2" }, { label: "", key: "1944-3" },
-    //     { label: "1945", key: "1945-0" }, { label: "", key: "1945-1" }, { label: "", key: "1945-2" }, { label: "", key: "1945-3" },
-    //     { label: "1946", key: "1946-0" }
-    // ]
-
-
-
     const generateDateLabels = (startYear, endYear) => {
         let dates = []
         
@@ -471,9 +534,9 @@ const MultiRangeSelector = () => {
         setMaxValue(e.maxValue)
     }
 
- 
     return (
         <MultiRangeSlider
+            label
             labels={labels}
             min={0}
             max={dateGenerated.length - 1}
@@ -483,7 +546,6 @@ const MultiRangeSelector = () => {
             minCaption={minDateCaption}
             maxCaption={maxDateCaption}
             onInput={handleDateChange}
-            // onChange={(e) => console.log(e)}
         />
     )
 }

@@ -13,14 +13,19 @@ import { motion } from "framer-motion"
 import '../../assets/scss/app.scss'
 import next from '../../assets/images/notices/next.png'
 import prev from '../../assets/images/notices/prev.png'
+import { useSharedState } from '../../contexts/SharedStateProvider';
+import { useTranslation } from 'react-i18next';
 
 
 export default function Notice() {
 
+    const { t } = useTranslation()
     const { slug } = useParams()
     const [isLoaded, setIsLoaded] = useState(false)
     const [results, setResults] = useState(null)
     const [image, setImage] = useState()
+    const [sharedState, setSharedState] = useSharedState()
+
 
     useEffect(() => {
         fetch(`https://ww2-lu.netlify.app/api/story/${ slug }`, {
@@ -35,11 +40,22 @@ export default function Notice() {
         .catch((error) => console.log(error))
     }, [isLoaded])
 
+
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         setSharedState({ ...sharedState, showClouds: false })
+    //     }, 5000)
+    // })
+
+    useEffect(() => {
+        setSharedState({ ...sharedState, showClouds: false })
+    })
+
     
     if (isLoaded) {
         return (
             <>
-                <motion.div className='mask overflow-hidden' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}} >
+                <motion.div className='mask overflow-hidden relative' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0, transition: {duration: 1}}} >
                     {/* <div className='h-full relative' style={{ background: `url(${}) 50% / cover no-repeat` }}> */}
                     <div className='h-full relative' style={{ background: `url(${'https://images.unsplash.com/photo-1571840615922-50fb24649d4b?q=80&w=4515&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}) 50% / cover no-repeat` }}>
                         <div className='notice-filter absolute inset-0'></div>
@@ -47,7 +63,7 @@ export default function Notice() {
                         <div className="container mx-auto relative px-[30px] lg:px-0">
                             <div className='pt-[30px] lg:pt-[55px] flex flex-col items-center'>
                                 <Link to={'/'} className='lg:hidden block text-[20px] lg:text-[24px] text-white uppercase mb-[15px]'>
-                                    Retour Carte
+                                    { t('back') }
                                 </Link>
                                 <span className='text-[27px] abril blue underline underline-offset-[8px] decoration-1 block'>{ results.documents[0].data.geojson.geometry.properties.city.fr_FR}</span>
                                 <div className='relative text-center'>
@@ -62,11 +78,11 @@ export default function Notice() {
                                 <p className='text-[18px] lg:text-[24px] text-center sofia uppercase text-white border border-white px-[15px] py-[5px] mt-[30px] sm:mt-[10px]'>{ results.documents[0].data.description.fr_FR}</p>
                             </div>
     
-                            <Link to={'/'} className='hidden lg:block absolute top-[70px] left-0'>
-                                <IconMapBack text={'Retour Carte'}/>
+                            <Link to={'/'} className='hidden lg:block absolute top-[70px] left-0' state={{ from: location.pathname }}>
+                                <IconMapBack />
                             </Link>
     
-                            <div className="grid grid-cols-12 mt-[30px] lg:mt-[70px] lg:gap-x-[40px]">Ò
+                            <div className="grid grid-cols-12 mt-[30px] lg:mt-[70px] lg:gap-x-[40px]">
                                 <div className="col-span-12 lg:col-span-2 pt-[20px] order-3 lg:order-1">
                                     { results.stories.map((note, index) => {
                                         return (
@@ -82,8 +98,8 @@ export default function Notice() {
                                 </div>
     
                                 <div className="col-span-12 lg:col-span-2 lg:col-start-11 pt-[30px] lg:pt-[20px] order-2 lg:order-3">
-                                    <Link to={'/sources'} className='block uppercase abril text-[22px] text-white'>sources</Link>
-                                    <Link to={'/historical-index'} className='block uppercase abril text-[22px] text-white pt-[22px]'>index historique</Link>
+                                    <Link to={'/sources'} className='block uppercase abril text-[22px] text-white'>{ t('sources') }</Link>
+                                    <Link to={'/historical-index'} className='block uppercase abril text-[22px] text-white pt-[22px]'>{ t('historical-index')}</Link>
                                 </div>
                             </div>
                         </div>
