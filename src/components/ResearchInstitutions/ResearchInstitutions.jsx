@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import CardLink from '../Cards/CardLink'
 import HeaderHistorianWorkshop from '../HeaderHistorianWorkshop/HeaderHistorianWorkshop'
@@ -6,9 +6,11 @@ import LayoutHistorianWorkshop from '../LayoutHistorianWorkshop/LayoutHistorianW
 import classNames from 'classnames'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useSharedState } from '../../contexts/SharedStateProvider'
 
 export default function ResearchInstitutions() {
 
+    const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const { pathname } = useLocation()
@@ -34,6 +36,10 @@ export default function ResearchInstitutions() {
             link: '/bibliography'
         },
     ]
+
+    useEffect(() => {
+        setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
+    }, [])
 
     return (
         

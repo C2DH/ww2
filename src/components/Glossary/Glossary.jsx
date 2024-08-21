@@ -8,9 +8,11 @@ import bgPaper from '../../assets/images/common/bg-paper.png'
 import classNames from 'classnames'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from "react-i18next";
+import { useSharedState } from "../../contexts/SharedStateProvider";
 
 export default function Glossary() {
-
+    
+    const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
     const [filter, setFilter] = useState('')
     const [filteredTerms, setFilteredTerms] = useState([])
@@ -161,6 +163,10 @@ export default function Glossary() {
             setIsOpenFilters(!isOpenFilters)
         }
     }
+
+    useEffect(() => {
+        setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
+    }, [])
 
     useEffect(() => {
         if (filter) {

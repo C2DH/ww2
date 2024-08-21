@@ -3,14 +3,16 @@ import CardLink from "../Cards/CardLink"
 import Dropdown from "../Dropdown/Dropdown"
 import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop"
 import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import classNames from "classnames"
 import { useTranslation } from "react-i18next"
+import { useSharedState } from "../../contexts/SharedStateProvider"
 
 
 export default function Bibliography() {
 
+    const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
     const authors = ['a', 'b', 'c', 'd', 'e'] 
     const notes = ['a', 'b', 'c', 'd', 'e'] 
@@ -39,9 +41,13 @@ export default function Bibliography() {
         },
     ]
 
+    useEffect(() => {
+        console.log(sharedState)
+        setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
+    }, [])
 
     return (
-        <LayoutHistorianWorkshop  pageTitle={ t('menuItems.glossary')}>
+        <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
         
             <HeaderHistorianWorkshop items={ menuItems } />
 

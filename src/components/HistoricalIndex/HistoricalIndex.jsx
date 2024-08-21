@@ -3,16 +3,17 @@ import CardImageText from '../Cards/CardImageText'
 import Dropdown from '../Dropdown/Dropdown'
 import ButtonFilter from '../ButtonFilter/ButtonFilter'
 import LayoutHistorianWorkshop from '../LayoutHistorianWorkshop/LayoutHistorianWorkshop'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import classNames from 'classnames'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useSharedState } from '../../contexts/SharedStateProvider'
 
 
 
 export default function HistoricalIndex() {
-
+    const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
     const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus', 'Test', 'Bunker', 'ww2']
     const menuItems = [
@@ -59,6 +60,10 @@ export default function HistoricalIndex() {
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenFilters, setIsOpenFilters] = useState(false)
     const [ filters, setFilters ] = useState({ types: [], tags: [] })
+
+    useEffect(() => {
+        setSharedState({ ...sharedState, showCurtains: false });
+    }, [])
  
     const handleMenu = (element) => {
         if (element === 'menu') {
@@ -116,7 +121,7 @@ export default function HistoricalIndex() {
             <HeaderHistorianWorkshop items={ menuItems } />
             
             {/** Filters */}
-            <div className="hidden lg:block mt-[40px]">
+            <div className="hidden lg:block mt-[40px]" >
                 <div className="grid grid-cols-12 gap-5 border-b border-black">
                     <div className="col-span-5 relative">
                         <Dropdown items={tags} text={'Recherche par #tag'} />

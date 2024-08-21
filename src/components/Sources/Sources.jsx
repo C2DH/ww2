@@ -4,13 +4,15 @@ import CardImageText from '../Cards/CardImageText';
 import Dropdown from '../Dropdown/Dropdown';
 import ButtonFilter from '../ButtonFilter/ButtonFilter';
 import LayoutHistorianWorkshop from '../LayoutHistorianWorkshop/LayoutHistorianWorkshop';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useSharedState } from '../../contexts/SharedStateProvider';
 
 
 export default function Sources() {
+    const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
     const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
     const types = [
@@ -61,6 +63,10 @@ export default function Sources() {
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenFilters, setIsOpenFilters] = useState(false)
     const [ filters, setFilters ] = useState({types: [], tags: []})
+    
+    useEffect(() => {
+        setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
+    }, [])
 
     const handleMenu = (element) => {
         if (element === 'menu') {
