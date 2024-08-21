@@ -55,10 +55,12 @@ export default function Player({ url, className, controls })  {
         )
     } else {
         return (
-            <div className='flex items-center'>
-                <span className='text-[24px] uppercase whitespace-nowrap me-3'>{ isPlaying ? t('sound_on') : t('sound_off') }</span>
-                <ReactPlayer url={ sound } width={ '100%' } height={ '100%' } controls={controls} className={ className } playing={isPlaying} ref={playerRef} />
-                <FontAwesomeIcon icon={isPlaying ? faVolume : faVolumeXmark} style={{ fontSize: '26px', cursor: 'pointer' }} onClick={() => setIsPlaying(!isPlaying)} />
+            <div>
+                <div className='flex items-center'>
+                    <span className='text-[24px] uppercase whitespace-nowrap me-3'>{ isPlaying ? t('sound_on') : t('sound_off') }</span>
+                    <ReactPlayer url={ sound } width={ '100%' } height={ '100%' } controls={controls} className={ className } playing={isPlaying} ref={playerRef} />
+                    <FontAwesomeIcon icon={isPlaying ? faVolume : faVolumeXmark} style={{ fontSize: '26px', cursor: 'pointer' }} onClick={() => setIsPlaying(!isPlaying)} />
+                </div>
             </div>
         )
     }

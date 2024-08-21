@@ -84,7 +84,7 @@ export default function Menu() {
                 >
 
                     {/** HEADER */}
-                    <div className="flex justify-between px-[30px] sm:px-[90px] pt-[140px] sm:pt-[120px] md:pt-[20px] h-[120px]">
+                    <div className="flex justify-between px-[30px] sm:px-[90px] pt-[140px] sm:pt-[120px] md:pt-[20px] ">
                         <Player/>
                         <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
                         <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>

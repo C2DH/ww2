@@ -27,43 +27,58 @@ export default function HistorianWorkshop() {
     }, [])
 
     return (
-        <motion.div exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
+        <motion.div exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}} >
             <div style={{ backgroundImage: `url(${bgBlack})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='hidden md:block w-full h-[calc(100vh-120px)] overflow-hidden'>
-                <div className="container mx-auto">
-                    <motion.div className='absolute' initial={{ y: '150%'}} animate={{ y: '-3%' }} transition={{ duration: 0.75, delay: 1 }}>
-                        <img src={img1} alt=""/>
+                <div className="container mx-auto relative h-full 2xl:mt-[40px]">
+                    
+                    <motion.div className='absolute inset-0' initial={{ y: '150%'}} animate={{ y: '-3%' }} transition={{ duration: 0.75, delay: 1 }}>
+                        <div className='flex justify-center'>
+                            <img src={img1} alt="" className='h-[70vh]'  />
+                        </div>
                     </motion.div>
 
-                    <motion.div className="absolute flex justify-center" initial={{ y: '150%'}} animate={{ y: 0 }} transition={{ duration: 0.75, delay: 2 }}>
-                        <img src={img2} alt=""/>
+                    <motion.div className="absolute inset-0" initial={{ y: '150%'}} animate={{ y: 0 }} transition={{ duration: 0.75, delay: 2 }}>
+                        <div className='flex justify-center'>
+                            <img src={img2} alt="" className='h-[70vh]' />
+                        </div>
                     </motion.div>
 
-                    <motion.div className="absolute flex justify-center" initial={{ x: '150%' }} animate={{ x: '5%' }} transition={{ duration: 0.75, delay: 3 }}>
-                        <img src={img3} alt=""/>
+                    <motion.div className="absolute inset-0" initial={{ x: '150%' }} animate={{ x: '5%' }} transition={{ duration: 0.75, delay: 3 }}>
+                        <div className='flex justify-center'>
+                            <img src={img3} alt="" className='h-[70vh]' />
+                        </div>
                     </motion.div>
 
-                    <motion.div className="absolute flex justify-center" initial={{ x: '-150%' }} animate={{ x: '3%' }} transition={{ duration: 0.75, delay: 4 }}>
-                        <img src={img4} alt=""/>
+                    <motion.div className="absolute inset-0" initial={{ x: '-150%' }} animate={{ x: '3%' }} transition={{ duration: 0.75, delay: 4 }}>
+                        <div className='flex justify-center'>
+                            <img src={img4} alt="" className='h-[70vh]' />
+                        </div>                    
                     </motion.div>
 
-                    <motion.div className="absolute" initial={{ x: '-150%', y: '150%' }} animate={{ x: '-4%', y: 0 }} transition={{ duration: 0.75, delay: 5 }}>
-                        <img src={img5} alt=""/>
+                    <motion.div className="absolute inset-0" initial={{ x: '-150%', y: '150%' }} animate={{ x: '-4%', y: 0 }} transition={{ duration: 0.75, delay: 5 }}>
+                        <div className='flex justify-center'>
+                            <img src={img5} alt="" className='h-[70vh]' />
+                        </div>                    
                     </motion.div>
 
-                    <motion.div className="absolute" initial={{ x: '150%', y: '150%' }} animate={{ x: '-3%', y: '5%' }} transition={{ duration: 0.75, delay: 6 }}>
-                        <img src={img6} alt=""/>
+                    <motion.div className="absolute inset-0" initial={{ x: '150%', y: '150%' }} animate={{ x: '-3%', y: '5%' }} transition={{ duration: 0.75, delay: 6 }}>
+                        <div className='flex justify-center'>
+                            <img src={img6} alt="" className='h-[70vh]' />
+                        </div>
                     </motion.div>
 
-                    <motion.div className="absolute" initial={{ x: '-150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 7 }}>
-                        <img src={img7} alt=""/>
+                    <motion.div className="absolute inset-0" initial={{ x: '-150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 7 }}>
+                        <div className='flex justify-center'>
+                            <img src={img7} alt="" className='h-[70vh]' />
+                        </div>
                     </motion.div>
 
-                    <motion.div className="absolute" initial={{ x: '150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 8 }}>
-                        <div className='relative'>
-                            <img src={img8} alt="" onLoad={() => setImgLoaded(true)}/>
+                    <motion.div className="absolute inset-0" initial={{ x: '150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 8 }}>
+                        <div className='relative flex justify-center'>
+                            <img src={img8} className='h-[70vh]' alt="" onLoad={() => setImgLoaded(true)}/>
                             
                             <div className='absolute inset-0'>
-                                <svg viewBox="0 0 1432 946" fill="none" xmlns="http://www.w3.org/2000/svg" className='relative'>
+                                <svg viewBox="0 0 1432 946" fill="none" xmlns="http://www.w3.org/2000/svg" className='relative w-full h-[70vh]'>
 
                                     {/* Livre Bureau */}   
                                     <Link to={"/historical-index"} className='block group transition-all duration-[750ms]'>
@@ -107,15 +122,19 @@ export default function HistorianWorkshop() {
                                         <circle cx="1347" cy="302" r="6" fill="white" className='animate-pulseSmall' style={{ transformOrigin: '1347px 302px' }} />
                                         <text x="1150" y="302" fill="transparent" className='transition-all duration-[750ms] text-[36px] group-hover:opacity-1 group-hover:fill-[#6EDFFB] uppercase'>Bibliographie</text> 
                                     </Link>
+
+
                                 </svg>
+
+                                { imgLoaded &&                            
+                                         <div className='absolute bottom-[20px] lg:bottom-[40px] xl:bottom-[100px] right-[20px] lg:right-[60px] xl:right-[100px] w-1/2 lg:w-1/3'>
+                                            <h2 className='text-blue font-abril text-[40px] leading-none'>Atelier de l'historien</h2>
+                                            <p className='text-white pt-[10px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
+                                        </div>
+                                    }
                             </div>
 
-                            { imgLoaded &&                            
-                                <div className='absolute bottom-[20px] lg:bottom-[40px] xl:bottom-[100px] right-[20px] lg:right-[60px] xl:right-[100px] w-1/2 lg:w-1/3'>
-                                    <h2 className='text-blue font-abril text-[40px] leading-none'>Atelier de l'historien</h2>
-                                    <p className='text-white pt-[10px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
-                                </div>
-                            }
+
                         </div>
                     </motion.div>
 
