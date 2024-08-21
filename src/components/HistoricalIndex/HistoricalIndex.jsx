@@ -72,7 +72,7 @@ export default function HistoricalIndex() {
 
     const generateContent = () => {
         const arrayContent = []
-        for(let i = 0; i < 60; i++) {
+        for(let i = 0; i < 1; i++) {
             arrayContent.push({
                 img: 'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?q=80&w=1839&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 tag: tags[Math.floor(Math.random() * tags.length)],
@@ -152,7 +152,7 @@ export default function HistoricalIndex() {
 
 
             {/* MOBILE: BTN MENU / BTN FILTERS */}
-            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full bg-red-200 flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
                 <div 
                     onClick={() => handleMenu('menu')}
                     className={classNames("flex items-center justify-center", {

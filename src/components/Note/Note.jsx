@@ -9,11 +9,12 @@ import { useEffect, useState } from 'react'
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { t } from 'i18next'
 import { convertToHtml } from '../../lib/utils'
-
+import { useSharedState } from '../../contexts/SharedStateProvider'
+import siteConfig from '../../../site.config'
 
 
 export default function Note() {
-
+    const [sharedState, setSharedState] = useSharedState()
     const { slug } = useParams()
     const { language } = useLanguageContext()
     const [sourcePopup, setSourcePopup] = useState({ open: false, src: null })
@@ -33,6 +34,9 @@ export default function Note() {
         .catch((error) => console.log(error))
     }, [isLoaded])
 
+    useEffect(() => {
+        setSharedState({ ...sharedState, showCurtains: false })
+    }, [])
 
     const handleSourcePopup = () => {
         if (!sourcePopup.open) {
@@ -53,7 +57,7 @@ export default function Note() {
     if (isLoaded) {
         return (
             <>
-                <div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} className='note'>
+                <motion.div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} className='note' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
                     <div className="container mx-auto relative h-[calc(100vh-120px)] flex flex-col px-[30px] lg:px-0">
     
                         <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[80px] text-[20px] lg:text-[30px] pt-[20px] 2xl:pt-0'>
@@ -63,7 +67,7 @@ export default function Note() {
                         <div className="flex lg:justify-between lg:border-b border-black pt-[20px] 2xl:pt-[60px]">
                             <div className="uppercase">
                                 <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">{ data.data.title.fr_FR.split('(')[1]?.replace(')',"") }</span>
-                                <span className="hidden lg:inline-block text-[40px] abril pl-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
+                                <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
                             </div>
     
                             <div className='text-[22px] lg:text-[24px] uppercase flex items-center lg:items-end lg:leading-[48px] cursor-pointer pl-[20px] lg:pl-0'>   
@@ -72,7 +76,7 @@ export default function Note() {
                             </div>
                         </div>
 
-                        <span className="block lg:hidden uppercase text-[35px] leading-none abril border-b border-black pb-[20px] pt-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
+                        <span className="block lg:hidden uppercase text-[35px] leading-none font-abril border-b border-black pb-[20px] pt-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
     
                         <div className="flex flex-col lg:flex-row overflow-scroll" id="text">
                             <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
@@ -91,11 +95,11 @@ export default function Note() {
 
                                 {/** RELATED NOTES */}
                                 <div className='ml-[20px] mt-[30px] pb-[10px]'>
-                                    <span className='uppercase abril text-[20px] border-b border-black block pb-[10px]'>{ t('links')} :</span>
+                                    <span className='uppercase font-abril text-[20px] border-b border-black block pb-[10px]'>{ t('links')} :</span>
                                     <div className='text-[24px] pt-[15px]'>
                                         <Link className=' uppercase'>
                                             <span className='font-normal'>{ data.data.title[language]?.split('(')[1]?.replace(')',"") }</span> 
-                                            <span className='abril pl-[10px]'>{ data.data.title[language]?.split('(')[0] }</span>
+                                            <span className='font-abril pl-[10px]'>{ data.data.title[language]?.split('(')[0] }</span>
                                         </Link>
                                     </div>
                                 </div>
@@ -187,7 +191,7 @@ export default function Note() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </motion.div>
     
                 <AnimatePresence>
                     { sourcePopup.open && 

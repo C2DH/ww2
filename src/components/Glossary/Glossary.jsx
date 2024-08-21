@@ -197,7 +197,7 @@ export default function Glossary() {
             </div>
 
             {/* MOBILE: BTN MENU / BTN FILTERS */}
-            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full bg-red-200 flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
                 <div 
                     onClick={() => handleMenu('menu')}
                     className={classNames("flex items-center justify-center", {

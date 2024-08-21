@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { useSharedState } from '../../contexts/SharedStateProvider'
+import siteConfig from '../../../site.config'
+
 
 export default function Catalogue() {
 
@@ -46,13 +48,13 @@ export default function Catalogue() {
 
     if (isLoaded) {
         return (
-            <div style={{ background: `url(${ bgPaper }) center / cover no-repeat`}} className="px-[20px] sm:px-0">
+            <motion.div style={{ background: `url(${ bgPaper }) center / cover no-repeat`}} className="px-[20px] sm:px-0" exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
                 <div className='container mx-auto h-[calc(100vh-120px)] flex flex-col overflow-scroll'>
     
                      {/** Headers */}
                     <div className='grid grid-cols-12 pt-[20px]'>
                         <div className="col-span-12 lg:col-span-8 pt-[15px]">
-                            <h1 className='abril text-[40px] sm:text-[70px]'>Catalogue</h1>
+                            <h1 className='font-abril text-[40px] sm:text-[70px]'>Catalogue</h1>
                             <p className='pt-[15px] pr-[15px] text-[28px] mb-[20px]'>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.</p>                    
                         </div>
     
@@ -87,7 +89,7 @@ export default function Catalogue() {
                         <Accordion items={ theme } />
                     </div>
                 </div>
-            </div>
+            </motion.div>
         )
     }
 }

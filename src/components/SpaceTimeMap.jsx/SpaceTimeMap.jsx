@@ -6,7 +6,6 @@ import pinMarker from '../../assets/images/spaceTimeMap/marker-red.svg'
 import {useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/sharp-thin-svg-icons'
-// import { faArrowRight, faArrowRightLong } from '@fortawesome/pro-light-svg-icons'
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 
 // MAPBOX
@@ -23,12 +22,13 @@ import { useSharedState } from '../../contexts/SharedStateProvider'
 import { t } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { useMediaQuery } from 'react-responsive'
+import siteConfig from '../../../site.config'
+
 
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const styleBlueprint = import.meta.env.VITE_API_STYLE_MAPBOX_BLUEPRINT
 const styleMSF = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
 const styleGeo = import.meta.env.VITE_API_STYLE_MAPBOX_GEO
-
 
 const geojson = {
     features: [
@@ -171,7 +171,6 @@ const geojson = {
 };
 
 export default function SpaceTimeMap() {
-    
     const { t } = useTranslation()
     const [sharedState, setSharedState] = useSharedState()
     const mapRef = useRef(null);
@@ -187,7 +186,7 @@ export default function SpaceTimeMap() {
 
     useEffect(() => {
         setSharedState({ ...sharedState, showCurtains: false })
-    })
+    }, [])
 
 
     const handleMap = (element) => {
@@ -205,8 +204,8 @@ export default function SpaceTimeMap() {
 
 
     return (
-    
-            <>
+        
+        <motion.div className='h-full w-full' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
                 <MapBox items={geojson.features} state={viewState} reference={mapRef}/>
                 
                 {/** Map style and zoom */}
@@ -252,7 +251,7 @@ export default function SpaceTimeMap() {
 
 
 
-            <span className='hidden xl:block absolute z-[100] bottom-[15px] right-[15px] text-[13px] text-white antonio'>© MAPBOX 2024</span>
+            <span className='hidden xl:block absolute z-[100] bottom-[15px] right-[15px] text-[13px] text-white font-antonio'>© MAPBOX 2024</span>
 
             {/** Gradient Bottom */}
             <div className="hidden md:block bottom-gradient absolute bottom-0"></div>
@@ -265,7 +264,7 @@ export default function SpaceTimeMap() {
                     </div>
                 </div>
             </div>
-        </>
+        </motion.div>
     )
 }
 

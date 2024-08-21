@@ -63,9 +63,9 @@ export default function Notice() {
                             <Link to={'/'} className='lg:hidden block text-[20px] lg:text-[24px] text-white uppercase mb-[15px]'>
                                 { t('back') }
                             </Link>
-                            <span className='text-[27px] abril blue underline underline-offset-[8px] decoration-1 block'>{ results.documents[0].data.geojson.geometry.properties.city.fr_FR}</span>
+                            <span className='text-[27px] font-abril text-blue underline underline-offset-[8px] decoration-1 block'>{ results.documents[0].data.geojson.geometry.properties.city.fr_FR}</span>
                             <div className='relative text-center'>
-                                <h1 className='text-[34px] lg:text-[48px] blue abril pt-[12px] leading-none'>{ results.data.title.fr_FR }</h1>
+                                <h1 className='text-[34px] lg:text-[48px] text-blue font-abril pt-[12px] leading-none'>{ results.data.title.fr_FR }</h1>
                                 <Link to={""} className='hidden lg:block absolute top-[50%] -translate-[50%] -left-[100px]'>
                                     <img src={ prev } alt="previous" />
                                 </Link>
@@ -73,7 +73,7 @@ export default function Notice() {
                                     <img src={ next } alt="next" /> 
                                 </Link>
                             </div>
-                            <p className='text-[18px] lg:text-[24px] text-center sofia uppercase text-white border border-white px-[15px] py-[5px] mt-[30px] sm:mt-[10px]'>{ results.documents[0].data.description.fr_FR}</p>
+                            <p className='text-[18px] lg:text-[24px] text-center font-sofia uppercase text-white border border-white px-[15px] py-[5px] mt-[30px] sm:mt-[10px]'>{ results.documents[0].data.description.fr_FR}</p>
                         </div>
 
                         <Link to={'/'} className='hidden lg:block absolute top-[70px] left-0' state={{ from: location.pathname }}>
@@ -85,19 +85,19 @@ export default function Notice() {
                                 { results.stories.map((note, index) => {
                                     return (
                                         <Link key={ index } to={ `/note/${note.slug}` } className='block mb-[20px] lg:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white lg:border-transparent lg:hover:border-white hover:bg-[#000000]/[0.2]'>
-                                            <h3 className='abril text-[22px] text-white uppercase'>{ note.title }</h3>
+                                            <h3 className='font-abril text-[22px] text-white uppercase'>{ note.title }</h3>
                                         </Link>
                                     )
                                 })}
                             </div>
 
-                            <div className="col-span-12 lg:col-span-6 lg:col-start-4 order-1 lg:order-2">
-                                <Player url={ results.covers[0].data.videoResolutions.sd360p.url} controls={ true }/>
+                            <div className="col-span-12 lg:col-span-6 lg:px-[50px] lg:col-start-4 order-1 lg:order-2 rounded-[6px]">
+                                <Player url={ results.covers[0].data.videoResolutions.sd360p.url} controls={ true } className={'rounded-[6px]'} style={{ borderRadius: '6px' }}/>
                             </div>
 
                             <div className="col-span-12 lg:col-span-2 lg:col-start-11 pt-[30px] lg:pt-[20px] order-2 lg:order-3">
-                                <Link to={'/sources'} className='block uppercase abril text-[22px] text-white'>{ t('sources') }</Link>
-                                <Link to={'/historical-index'} className='block uppercase abril text-[22px] text-white pt-[22px]'>{ t('historical-index')}</Link>
+                                <Link to={'/sources'} className='block uppercase font-abril text-[22px] text-white'>{ t('sources') }</Link>
+                                <Link to={'/historical-index'} className='block uppercase font-abril text-[22px] text-white pt-[22px]'>{ t('historical-index')}</Link>
                             </div>
                         </div>
                     </div>

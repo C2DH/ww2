@@ -90,10 +90,10 @@ export default function MapBox({ token, style, items }) {
                                                         <Link to={`/notice/${selectedMarker.data.id}`}>
 
                                                             <div className='flex py-[12px]'>
-                                                                <span className='abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
+                                                                <span className='font-abril block px-3'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
                                                                 <div>                                                
-                                                                    <h3 className='abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
-                                                                    <p className='sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
+                                                                    <h3 className='font-abril text-[20px] pb-[8px]'>{ selectedMarker.data.properties.location }</h3>
+                                                                    <p className='font-sofia uppercase text-[20px]'>{ selectedMarker.data.properties.description }</p>
                                                                 </div>
                                                             </div>
                                                         </Link>
@@ -102,7 +102,7 @@ export default function MapBox({ token, style, items }) {
                                             }
                                         </AnimatePresence>
                                         :
-                                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-0 -translate-y-[50%] right-[100%] flex justify-center items-center uppercase text-[20px] sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
+                                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-0 -translate-y-[50%] right-[100%] flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
                                     }
                                 </div>
                             </Marker>

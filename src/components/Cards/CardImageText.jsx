@@ -16,7 +16,7 @@ export default function CardImageText({ img, tag = "", title = "", text, type = 
                     {type}
 
                     { title &&
-                        <h2 className='uppercase py-[5px] abril text-[18px]'>{ title }</h2>
+                        <h2 className='uppercase py-[5px] font-abril text-[18px]'>{ title }</h2>
                     }
                     <p className='text-[20px] sm:text-[24px] pb-0'>{ truncateText(text, truncate) }</p>
                 </div>

@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -24,37 +23,10 @@ p {
 }
 
 
-
-// FONTS
-.abril {
-    font-family: "Abril Fatface", serif;
-}
-
-.antonio {
-    font-family: "Antonio", sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-}
-
-.sofia {
-    font-family: "Sofia Sans Extra Condensed", sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    letter-spacing: 0.4px;
-}
-
 .bg-paper {
     background-image: url('../images/common/bg-paper.png');
     background-size: cover;
     background-repeat: no-repeat;
-}
-
-
-// COLORS
-.blue {
-    color: #6EDFFB;
 }
 
 
@@ -66,22 +38,18 @@ p {
     mask-size: cover;
 }
 
-@media screen and (min-width: 768px) {
-    .mask-spacetime {
-        width: 100%;
-        -webkit-mask-image: url('../../assets/images/common/mask.svg');
-        mask-image: url('../../assets/images/common/mask.svg');
-        -webkit-mask-size: cover;
-        mask-size: cover;
-    }
+.container {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
 }
-
+::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
 
 
 .boxShadow {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
 }
-
 
 
 // CATALOGUE
@@ -143,7 +111,7 @@ p {
 }
 
 video {
-    border-radius: 6px;
+    // border-radius: 6px;
 }
 
 .notice-filter {
@@ -202,44 +170,10 @@ video {
 
 
 
-.btn-filter {
-    transition: all 0.4s ease-in-out;
-
-    &:hover {
-        background-color: black;
-        color: white;
-    }
-
-    span {
-        font-size: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        right: -15px;
-        border: 1px solid black;
-        background-color: white;
-        width: 27px;
-        height: 27px;
-        border-radius: 50%;
-        color: black;
-    }
-}
-
-
-
-
-
-
-
 // CARTE SPATIO-TEMPORELLE
-
 .mapboxgl-ctrl-attrib-inner, .mapboxgl-ctrl-logo, .mapboxgl-ctrl {
     display: none!important;
 }
-
 
 .multi-range-slider {
     border: none;
@@ -483,19 +417,6 @@ video {
         }
     }
 }
-
-
-
-
-.container {
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
-}
-::-webkit-scrollbar { 
-    display: none;  /* Safari and Chrome */
-}
-
-
 
 
 

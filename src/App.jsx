@@ -31,15 +31,12 @@ export default function App() {
     const [sharedState, setSharedState] = useSharedState();
     const [firstLaunch, setFirstLaunch] = useState(true);
 
-    // console.log('from', location )
-    // console.log('inclu notice',location.pathname.includes('notice'))
-
     useEffect(() => {
         if (!firstLaunch) {
             if ((location.state?.from == null && location.pathname.includes('notice')) || (location.state?.from.includes('notice') && location.pathname == '/')) {
                 console.log('showClouds');
                 setSharedState({ ...sharedState, showClouds: true });
-            } else if (location.state) {
+            } else {
                 console.log('showCurtains');
                 setSharedState({ ...sharedState, showCurtains: true });
             }

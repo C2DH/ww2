@@ -9,7 +9,7 @@ export default function HeaderHistorianWorkshop({items}) {
         <>
             <div className="hidden lg:grid grid-cols-12 lg:pt-[20px] xl:pt-[50px]">
                 <div className="col-span-12 xl:col-span-9">
-                    <h1 className='text-[50px] xl:text-[70px] abril leading-none pb-[20px] xl:pb-[50px]'>L'atelier de l'historien</h1>
+                    <h1 className='text-[50px] xl:text-[70px] font-abril leading-none pb-[20px] xl:pb-[50px]'>L'atelier de l'historien</h1>
                 </div>
 
                 <div className="col-span-12 xl:col-span-3 text-[20px] xl:pt-[20px]">
