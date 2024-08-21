@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next"
 
 export default function Terms() {
 
-    const { t } = useTranslation
+    const { t } = useTranslation()
     const [sharedState, setSharedState] = useSharedState()
 
     useEffect(() => {

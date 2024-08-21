@@ -1,53 +1,46 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom"
 import Home from './components/Home/Home'
 import Catalogue from './components/Catalogue/Catalogue'
 import HistorianWorkshop from './components/HistorianWorkshop/HistorianWorkshop'
-import SpaceTimeMap from "./components/SpaceTimeMap.jsx/SpaceTimeMap";
-import About from "./components/About/About";
-import Contact from "./components/Contact/Contact";
-import Credits from "./components/Credits/Credits";
-import Notice from "./components/Notice/Notice";
-import Menu from "./components/Menu/Menu";
-import Terms from "./components/Terms/Terms";
+import SpaceTimeMap from "./components/SpaceTimeMap.jsx/SpaceTimeMap"
+import About from "./components/About/About"
+import Contact from "./components/Contact/Contact"
+import Credits from "./components/Credits/Credits"
+import Notice from "./components/Notice/Notice"
+import Menu from "./components/Menu/Menu"
+import Terms from "./components/Terms/Terms"
 import { AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useSharedState } from './contexts/SharedStateProvider'
 import Clouds from './components/Clouds/Clouds'
 import Curtains from './components/Curtains/Curtains'
-import Note from "./components/Note/Note";
-import Source from "./components/Source/Source";
-import Sources from "./components/Sources/Sources";
-import HistoricalIndex from "./components/HistoricalIndex/HistoricalIndex";
-import Layout from "./components/Layout/Layout";
-import ResearchInstitutions from "./components/ResearchInstitutions/ResearchInstitutions";
+import Note from "./components/Note/Note"
+import Source from "./components/Source/Source"
+import Sources from "./components/Sources/Sources"
+import HistoricalIndex from "./components/HistoricalIndex/HistoricalIndex"
+import Layout from "./components/Layout/Layout"
+import ResearchInstitutions from "./components/ResearchInstitutions/ResearchInstitutions"
 import Bibliography from './components/Bibliography/Bibliography'
-import Glossary from "./components/Glossary/Glossary";
-import { MenuProvider } from "./contexts/MenuProvider";
+import Glossary from "./components/Glossary/Glossary"
+import { MenuProvider } from "./contexts/MenuProvider"
 import { LanguageProvider } from "./contexts/LanguageProvider"
 
 export default function App() {
 
-    const location = useLocation();
-    const [sharedState, setSharedState] = useSharedState();
-    const [firstLaunch, setFirstLaunch] = useState(true);
+    const location = useLocation()
+    const [sharedState, setSharedState] = useSharedState()
+    const [firstLaunch, setFirstLaunch] = useState(true)
 
     useEffect(() => {
         if (!firstLaunch) {
             if ((location.state?.from == null && location.pathname.includes('notice')) || (location.state?.from.includes('notice') && location.pathname == '/')) {
-                console.log('showClouds');
-                setSharedState({ ...sharedState, showClouds: true });
+                setSharedState({ ...sharedState, showClouds: true })
             } else {
-                console.log('showCurtains');
-                setSharedState({ ...sharedState, showCurtains: true });
+                setSharedState({ ...sharedState, showCurtains: true })
             }
         }
         setFirstLaunch(false);
     }, [location.pathname]);
-
-
-    useEffect(() => {
-        console.log(sharedState)
-    }, [sharedState])
 
     return (
         <>

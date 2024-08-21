@@ -39,17 +39,9 @@ export default function Notice() {
         .catch((error) => console.log(error))
     }, [isLoaded])
 
-
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setSharedState({ ...sharedState, showClouds: false })
-    //     }, 5000)
-    // })
-
     useEffect(() => {
-        console.log('hideClouds');
         setSharedState({ ...sharedState, showClouds: false })
-    }, []);
+    }, [])
     
     if (isLoaded) {
         return (

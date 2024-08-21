@@ -7,11 +7,11 @@ import { SharedStateProvider } from './contexts/SharedStateProvider.jsx';
 import i18n from '../i18n.js';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
+    // <React.StrictMode>
         <SharedStateProvider>
             <BrowserRouter>
                 <App/>
             </BrowserRouter>
         </SharedStateProvider>
-    </React.StrictMode>
+    // </React.StrictMode>
 )

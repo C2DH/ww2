@@ -2,28 +2,27 @@ import Intro from "../Intro/Intro"
 import { useEffect, useRef, useState } from "react"
 import { useMediaQuery } from 'react-responsive'
 import { useSharedState } from "../../contexts/SharedStateProvider"
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next"
+import siteConfig from '../../../site.config'
 
+// ASSETS
 import pinMarker from '../../assets/images/common/marker.svg'
 import smallLeftArrow from '../../assets/images/common/smallLeftArrow.png'
 import smallRightArrow from '../../assets/images/common/smallRightArrow.png'
 import UKArrowLong from '../../assets/images/common/ukArrowLong.png'
 import russiaArrowLong from '../../assets/images/common/russiaArrowLong.png'
 import polskaArrowLong from '../../assets/images/common/polskaArrowLong.png'
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faXmark } from "@fortawesome/free-solid-svg-icons"
+
+// FRAMER
+import { AnimatePresence, motion } from "framer-motion"
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Map, { Marker, Source, Layer } from 'react-map-gl';
 import * as maptilerClient from "@maptiler/client"
-
-// FRAMER
-import { AnimatePresence, motion } from "framer-motion"
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next"
-import siteConfig from '../../../site.config'
-
 const apiKeyMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const apiStyleMapbox = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
 maptilerClient.config.apiKey = import.meta.env.VITE_API_MAPTILER
@@ -31,15 +30,7 @@ maptilerClient.config.apiKey = import.meta.env.VITE_API_MAPTILER
 
 export default function Home() {
     const [sharedState, setSharedState] = useSharedState()
-
-    useEffect(() => {
-        setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
-    }, []);
-
-    const isSmall = useMediaQuery({
-        query: '(max-width: 1024px)'
-    })
-
+    const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
     const [isLoading, setIsLoading] = useState(false)
     const [dataMarker, setDataMarker] = useState([
         {ukArrow: UKArrowLong, ukLng: "", ukLat: "" },
@@ -49,6 +40,10 @@ export default function Home() {
     const [showIntro, setShowIntro] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false); 
     const [data, setData] = useState(null)
+
+    useEffect(() => {
+        setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
+    }, [])
 
     useEffect(() => {
         if (isSmall) {
@@ -80,7 +75,6 @@ export default function Home() {
     }, [isSmall])
 
 
-    
     useEffect(() => {
         fetch("https://ww2-lu.netlify.app/api/story/?filters=%7B%22mentioned_to__slug%22%3A%22level-01-journeys%22%2C%22covers__data__type%22%3A%22place%22%7D&limit=100&h=4a75fb8cbf80d23b000166e1dbc06eb397d542efaa28a7f89ceb914fb95c051b", {
             method: "GET",
@@ -133,6 +127,7 @@ const MapBox = ({ items, markers }) => {
     
     return (
         <motion.div className='mask h-[calc(100vh-80px)] overflow-hidden' exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}}>
+
             <Map
                 ref={mapRef}
                 style={{ width: '100%', height: '100%' }}

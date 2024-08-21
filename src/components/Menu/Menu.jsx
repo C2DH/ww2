@@ -1,21 +1,18 @@
+import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from 'react'
+import classNames from 'classnames'
+import Player from '../Player/Player'
+
 // ASSETS
 import bgBlack from '../../assets/images/common/bg-black.jpg'
 import logo from '../../assets/images/common/logo.png'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faVolume, faVolumeXmark } from '@fortawesome/sharp-thin-svg-icons'
 
 // CONTEXT
 import { useSharedState } from "../../contexts/SharedStateProvider";
 import { useMenuContext } from '../../contexts/MenuProvider'
 import { useLanguageContext } from '../../contexts/LanguageProvider'
-
-
-// REACT
-import { Link, useLocation } from "react-router-dom";
-import { useState, useEffect } from 'react'
-import classNames from 'classnames'
 
 // TRANSLATION
 import { useTranslation } from 'react-i18next'
@@ -29,8 +26,8 @@ export default function Menu() {
     const [results, setResults] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const { pathname } = useLocation()
+    const {language, changeLanguage } = useLanguageContext()
     const locations = ['/', '/spacetime-map', '/^\/notice\/[a-zA-Z0-9_-]+$/']
-
     const isMatch = locations.some(location => {
         if (location.startsWith('/^') && location.endsWith('$/')) {
             const regex = new RegExp(location.slice(1, -1))
@@ -39,8 +36,6 @@ export default function Menu() {
         return location === pathname
     })
 
-
-    const {language, changeLanguage } = useLanguageContext()
 
     // API DATA
     useEffect(() => {
@@ -90,7 +85,7 @@ export default function Menu() {
 
                     {/** HEADER */}
                     <div className="flex justify-between px-[30px] sm:px-[90px] pt-[140px] sm:pt-[120px] md:pt-[20px] h-[120px]">
-                        <Sound translate={t}/>
+                        <Player/>
                         <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
                         <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>
                     </div>
@@ -193,24 +188,3 @@ const LanguageSwitcher = ({ switchLanguage, lang }) => {
     )
 }
 
-const Sound = ({ translate }) => {
-    const [sound, setSound] = useState({logo: faVolume, text: 'sound_on'})
-
-    const handleSound = () => {
-        if (sound.logo === faVolume) {
-            setSound({...sound, logo: faVolumeXmark, text: 'sound_off' })
-        } else {
-            setSound({...sound, logo: faVolume, text: 'sound_on' })
-        }
-    }
-
-    return (
-        <div onClick={() => handleSound()} className='flex items-center'>
-            <span className="block text-[24px] uppercase">{ translate(sound.text) }</span>
-            <FontAwesomeIcon 
-                icon={ sound.logo } 
-                style={{ fontSize: '26px', marginLeft: '10px', cursor: 'pointer' }}
-            />
-        </div>
-    )
-}
