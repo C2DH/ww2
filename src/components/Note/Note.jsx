@@ -58,25 +58,33 @@ export default function Note() {
         return (
             <>
                 <motion.div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} className='note' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                    <div className="container mx-auto relative h-[calc(100vh-120px)] flex flex-col px-[30px] lg:px-0">
+                    <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] flex flex-col px-[30px]">
     
-                        <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[80px] text-[20px] lg:text-[30px] pt-[10px] md:pt-[20px] 2xl:pt-0'>
-                            <FontAwesomeIcon icon={faArrowLeftLongToLine} />
-                        </Link>
+                        <div className='flex items-center justify-between pt-[10px]'>
+                            <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[80px] text-[20px] lg:text-[30px]'>
+                                <FontAwesomeIcon icon={faArrowLeftLongToLine} />
+                            </Link>
+                            <div className='lg:hidden text-[20px] md:text-[24px] uppercase flex items-center cursor-pointer pl-[20px]'>   
+                                <span className='pr-[10px] lg:pr-[20px]' onClick={() => console.log('previous')}>{ t('prev') }</span>
+                                <span className='pl-[10px] lg:pl-[20px] relative before:content-[""] before:absolute before:left-[0px] before:bottom-[50%] lg:before:bottom-0 before:translate-y-[50%] lg:before:translate-y-0 before:h-[30px] lg:before:h-[60px] before:w-[1px] before:bg-black' onClick={() => console.log('next')}>{ t('next') }</span>
+                            </div>
+                        </div>
     
                         <div className="flex lg:justify-between lg:border-b border-black pt-[10px] md:pt-[20px] 2xl:pt-[60px]">
-                            <div className="uppercase">
+                            <div className="hidden lg:block uppercase">
                                 <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">{ data.data.title.fr_FR.split('(')[1]?.replace(')',"") }</span>
                                 <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
                             </div>
-    
-                            <div className='text-[22px] lg:text-[24px] uppercase flex items-center lg:items-end lg:leading-[48px] cursor-pointer pl-[20px] lg:pl-0'>   
+                            <div className='hidden lg:flex items-center lg:items-end text-[22px] lg:text-[24px] uppercase lg:leading-[48px] cursor-pointer pl-[20px] lg:pl-0'>   
                                 <span className='pr-[10px] lg:pr-[20px]' onClick={() => console.log('previous')}>{ t('prev') }</span>
                                 <span className='pl-[10px] lg:pl-[20px] relative before:content-[""] before:absolute before:left-[0px] before:bottom-[50%] lg:before:bottom-0 before:translate-y-[50%] lg:before:translate-y-0 before:h-[30px] lg:before:h-[60px] before:w-[1px] before:bg-black' onClick={() => console.log('next')}>{ t('next') }</span>
                             </div>
                         </div>
 
-                        <span className="block lg:hidden uppercase text-[30px] md:text-[35px] leading-none font-abril border-b border-black pb-[20px] pt-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
+                        <div className='lg:hidden border-b border-black pb-[20px] pt-[10px] text-[24px] md:text-[38px] uppercase'>
+                            <span className="relative after:content-[''] after:absolute after:left-[35px] md:after:left-[50px] after:bottom-[50%] after:translate-y-[50%] after:h-[30px] after:w-[1px] after:bg-black pr-[10px] font-thin">{ data.data.title.fr_FR.split('(')[1]?.replace(')',"") }</span>
+                            <span className="leading-none font-abril pl-[10px] md:pl-[15px]">{ data.data.title[language]?.split('(')[0] }</span>
+                        </div>
     
                         <div className="flex flex-col lg:flex-row overflow-scroll" id="text">
                             <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   

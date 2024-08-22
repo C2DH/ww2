@@ -133,7 +133,7 @@ const MapBox = ({ items, markers }) => {
                 style={{ width: '100%', height: '100%' }}
                 mapboxAccessToken={apiKeyMapbox}
                 mapStyle={apiStyleMapbox}
-                dragPan={false}
+                dragPan={true}
                 initialViewState={{
                     longitude: lng,
                     latitude: lat,
