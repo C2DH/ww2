@@ -295,7 +295,7 @@ const MapBox = ({ items, state, reference }) => {
     if (isSmall) {
         return (
             <>
-                <div className='mask w-full h-[calc(100vh-80px)]'>
+                <div className='mask w-full h-[calc(100dvh-80px)] sm:h-[calc(100vh-80px)]'>
                     <Map
                         ref={reference}
                         style={{ width: '100%', height: '100%' }}

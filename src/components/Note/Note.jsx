@@ -60,11 +60,11 @@ export default function Note() {
                 <motion.div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} className='note' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
                     <div className="container mx-auto relative h-[calc(100vh-120px)] flex flex-col px-[30px] lg:px-0">
     
-                        <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[80px] text-[20px] lg:text-[30px] pt-[20px] 2xl:pt-0'>
+                        <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[80px] text-[20px] lg:text-[30px] pt-[10px] md:pt-[20px] 2xl:pt-0'>
                             <FontAwesomeIcon icon={faArrowLeftLongToLine} />
                         </Link>
     
-                        <div className="flex lg:justify-between lg:border-b border-black pt-[20px] 2xl:pt-[60px]">
+                        <div className="flex lg:justify-between lg:border-b border-black pt-[10px] md:pt-[20px] 2xl:pt-[60px]">
                             <div className="uppercase">
                                 <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">{ data.data.title.fr_FR.split('(')[1]?.replace(')',"") }</span>
                                 <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
@@ -76,7 +76,7 @@ export default function Note() {
                             </div>
                         </div>
 
-                        <span className="block lg:hidden uppercase text-[35px] leading-none font-abril border-b border-black pb-[20px] pt-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
+                        <span className="block lg:hidden uppercase text-[30px] md:text-[35px] leading-none font-abril border-b border-black pb-[20px] pt-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
     
                         <div className="flex flex-col lg:flex-row overflow-scroll" id="text">
                             <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
