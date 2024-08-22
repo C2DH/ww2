@@ -103,9 +103,13 @@ const MapBox = ({ items, markers }) => {
     const navigate = useNavigate();
     const [lng, setLng] = useState(6.131514);
     const [lat, setLat] = useState(49.815764);
-    const [zoom, setZoom] = useState(8);
+    const [zoom, setZoom] = useState(4);
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
     const [convertedItems, setConvertedItems] = useState([]);
+    const bounds = [
+        [6.00879198072713, 48.723978056319766], // Southwest coordinates
+        [10.687717331004215, 58.723978056319766] // Northeast coordinates
+    ];
     
     useEffect(() => {
         Promise.all(items.filter(item => item.covers.filter(item => item.data?.type == 'place').length > 0).map(async (item, index) =>  {      
@@ -140,62 +144,66 @@ const MapBox = ({ items, markers }) => {
                     zoom: zoom,
                     pitch: 30 // Inclinaison en degrés
                 }}
+                // center={[6.090742202904814, 49.7627550671219]}
                 minZoom={8} // Ne peut pas dézoomer en dessous de x8
                 dragRotate={false} // 3D Relief : désactiver
                 scrollZoom={true} // Désactiver Zoom scroll
+                // maxBounds={bounds} // Bloquer le panning
             >
 
                 {convertedItems.map((marker, index) => {
-                    return (
-                        <Marker
-                            key={index}
-                            longitude={marker.convertedCoordinates.x}
-                            latitude={marker.convertedCoordinates.y}
-                            anchor={marker.country === 'Grande-Bretagne' ? "center" : "bottom"}
-                        >
-                            <div className='relative z-[9999]'>
-                                <img
-                                    src={marker.country === 'Grande-Bretagne' ? arrow : pinMarker}
-                                    alt="marker"
-                                    className="cursor-pointer"
-                                    onClick={() => { setSelectedMarker({ id: index, data: marker }) }}
-                                />
+                    if (marker.slug !== "l01-s02-somewhere-in-metz") {
+                        return (
+                            <Marker
+                                key={index}
+                                longitude={marker.convertedCoordinates.x}
+                                latitude={marker.convertedCoordinates.y}
+                                anchor={marker.country === 'Grande-Bretagne' ? "center" : "bottom"}
+                            >
+                                <div className='relative z-[9999]'>
+                                    <img
+                                        src={marker.country === 'Grande-Bretagne' ? arrow : pinMarker}
+                                        alt="marker"
+                                        className="cursor-pointer"
+                                        onClick={() => { setSelectedMarker({ id: index, data: marker }) }}
+                                    />
 
-                                { marker.country !== 'Grande-Bretagne' ?
-                                    <AnimatePresence>
-                                        { selectedMarker && selectedMarker.id == index &&
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.8 }}
-                                                transition={{ duration: 0.4, ease: 'easeInOut'}}
-                                                className='flex w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
-                                                style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
-                                            >
-                                                <div className='border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative'>
-                                                    <div onClick={() => {
-                                                        mapRef.current.flyTo({ zoom: zoom + 2, speed: 0.2, curve: 1 });
-                                                        navigate(`/notice/${marker.slug}`);
-                                                    }}>
-                                                        <div className='flex'>
-                                                            <span className='font-abril block pr-[10px]'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                                                            <div>                                                
-                                                                <h3 className='font-abril text-[18px] pb-[8px]'>{ marker.title.fr_FR }</h3>
-                                                                <p className='text-[18px] font-sofia leading-none uppercase'>{ marker.description.fr_FR }</p>
+                                    { marker.country !== 'Grande-Bretagne' ?
+                                        <AnimatePresence>
+                                            { selectedMarker && selectedMarker.id == index &&
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0.8 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 0.8 }}
+                                                    transition={{ duration: 0.4, ease: 'easeInOut'}}
+                                                    className='flex w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
+                                                    style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
+                                                >
+                                                    <div className='border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative'>
+                                                        <div onClick={() => {
+                                                            mapRef.current.flyTo({ zoom: zoom + 2, speed: 0.2, curve: 1 });
+                                                            navigate(`/notice/${marker.slug}`);
+                                                        }}>
+                                                            <div className='flex'>
+                                                                <span className='font-abril block pr-[10px]'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
+                                                                <div>                                                
+                                                                    <h3 className='font-abril text-[18px] pb-[8px]'>{ marker.title.fr_FR }</h3>
+                                                                    <p className='text-[18px] font-sofia leading-none uppercase'>{ marker.description.fr_FR }</p>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                        <FontAwesomeIcon icon={faXmark} className="absolute top-[2px] right-[4px]" onClick={() => setSelectedMarker({ id: null, data: null })} />
                                                     </div>
-                                                    <FontAwesomeIcon icon={faXmark} className="absolute top-[2px] right-[4px]" onClick={() => setSelectedMarker({ id: null, data: null })} />
-                                                </div>
-                                            </motion.div>
-                                        }
-                                    </AnimatePresence>
-                                    :
-                                    <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] sm:top-0 -translate-y-[50%] left-[100%] sm:right-[105%] sm:left-auto mx-[10px] sm:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
-                                }
-                            </div>
-                        </Marker>
-                    )
+                                                </motion.div>
+                                            }
+                                        </AnimatePresence>
+                                        :
+                                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] sm:top-0 -translate-y-[50%] left-[100%] sm:right-[105%] sm:left-auto mx-[10px] sm:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ marker.properties.place }</div>
+                                    }
+                                </div>
+                            </Marker>
+                        )
+                    }
                 })}                   
 
                 <Marker

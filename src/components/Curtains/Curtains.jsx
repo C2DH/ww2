@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import siteConfig from '../../../site.config'
+import logo from '../../assets/images/common/logo.png'
 
 export default function Curtains() {
   return (
@@ -13,12 +14,14 @@ export default function Curtains() {
 			transition={{ ease: 'easeInOut', duration: siteConfig.cloudsTransitionDuration }}
 		/>
 
-		<motion.div className='fixed inset-0 pointer-events-none bg-green z-[10]'
+		<motion.div className='fixed inset-0 pointer-events-none bg-green z-[10] flex justify-center items-center'
 			initial={{ y: '100%' }}
 			animate={{ y: '0%' }}
 			exit={{ y: '-100%' }}
 			transition={{ ease: 'easeInOut', duration: siteConfig.curtainsTransitionDuration }}
-		/>
+		>
+			<img src={ logo } alt="Logo WW2" />
+		</motion.div>
 	</>
 
   )

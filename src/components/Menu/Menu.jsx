@@ -84,16 +84,16 @@ export default function Menu() {
                 >
 
                     {/** HEADER */}
-                    <div className="flex justify-between px-[30px] sm:px-[90px] pt-[120px] md:pt-[20px] ">
+                    <div className="flex justify-between px-[30px] sm:px-[90px] pt-[120px] md:pt-[40px] lg:mt-[80px]">
                         <Player/>
                         <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
                         <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>
                     </div>
 
                     {/** ITEMS */}
-                    <div className='overflow-scroll'>
+                    <div className='overflow-scroll mt-[30px]'>
 
-                        <div className='flex justify-center mt-[20px] md:mt-[70px]'>
+                        <div className='flex justify-center mt-[20px]'>
                             <ul className={classNames('sm:w-[80%] lg:w-2/3 2xl:w-1/3 text-center transition-all duration-[1000ms]', {
                                 'opacity-1': openMenu,
                                 'opacity-0': !openMenu 

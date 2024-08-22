@@ -373,7 +373,7 @@ const MapBox = ({ items, state, reference }) => {
                             animate={{ x: 0 }}
                             exit={{ x: '-100%' }}
                             transition={{ duration: 0.8, ease: 'easeInOut' }}
-                            className='absolute inset-0 -top-[80px] z-[9999] md:pt-[100px] md:pl-[80px] md:pr-[40px]'
+                            className='absolute inset-0 -top-[80px] z-[9999] md:pt-[100px] md:pl-[80px] md:pr-[40px] flex flex-col'
                         >
                             <div 
                                 className="md:hidden bg-[rgba(0,0,0,0.9)] h-[120px] flex justify-center items-center" 
@@ -384,7 +384,7 @@ const MapBox = ({ items, state, reference }) => {
                                     <span className='cursor-pointer text-[24px] uppercase text-white'>{ t('close') }</span>
                             </div>
     
-                            <div className='px-[20px] md:px-0 bg-white'>
+                            <div className='px-[20px] md:px-0 bg-white flex-grow'>
                                 <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.properties.location}</h2>
                                 <span className='text-[28px] block pb-[40px] md:pb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
                                 <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' />
