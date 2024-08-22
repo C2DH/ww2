@@ -52,10 +52,10 @@ export default function Catalogue() {
                 <div className='container mx-auto h-[calc(100vh-120px)] flex flex-col overflow-scroll'>
     
                      {/** Headers */}
-                    <div className='grid grid-cols-12 pt-[20px]'>
-                        <div className="col-span-12 lg:col-span-8 pt-[15px]">
-                            <h1 className='font-abril text-[40px] sm:text-[70px]'>Catalogue</h1>
-                            <p className='pt-[15px] pr-[15px] text-[28px] mb-[20px]'>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.</p>                    
+                    <div className='grid grid-cols-12 pt-[20px] 2xl:pt-[35px]'>
+                        <div className="col-span-12 lg:col-span-8">
+                            <h1 className='font-abril text-[40px] sm:text-[50px] 2xl:text-[70px]'>Catalogue</h1>
+                            <p className='pt-[15px] pr-[15px] text-[20px] md:text-[24px] 2xl:text-[28px] mb-[20px]'>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.</p>                    
                         </div>
     
                         <div className="hidden lg:flex col-span-4 border-l border-black mt-[70px] mb-[45px] pl-[20px] flex-col justify-between">
@@ -70,11 +70,11 @@ export default function Catalogue() {
                             </div>
     
                             <div className='flex items-center'> 
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')}  3</span>   
+                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')} 3</span>   
                                 <ProgressBar progress={readTheme3} />   
                             </div>
                             <div className='flex items-center'>
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')}  4</span>   
+                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')} 4</span>   
                                 <ProgressBar progress={readTheme4} />
                             </div>
 

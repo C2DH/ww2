@@ -54,7 +54,7 @@ export default function Home() {
             ])
         } else {
             setDataMarker([
-                {ukArrow: UKArrowLong, ukLng: 5.377067446744771, ukLat: 50.477084096989245 },
+                {ukArrow: UKArrowLong, ukLng: 5.377067446744771, ukLat: 50.177084096989245 },
                 {russiaArrow: russiaArrowLong, russiaLng: 7.104207203884845, russiaLat: 50.03469691527637 },
                 {polskaArrow: polskaArrowLong, polskaLng: 6.815322417081631, polskaLat: 50.347060676591056 }
             ])
