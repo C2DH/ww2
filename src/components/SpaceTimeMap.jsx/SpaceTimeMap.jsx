@@ -346,9 +346,9 @@ const MapBox = ({ items, state, reference }) => {
                             <span className='uppercase text-white text-[24px] cursor-pointer'>{ t('filter_by_period') }</span>
                         </div>
 
-                        <div className={classNames('bg-[#475DA9] h-[150px] absolute bottom-[70px] left-0 right-0 flex justify-center items-center border-t border-white transition-all duration-[750ms]', {
-                            "translate-y-full": !openFilter,
-                            "translate-y-0": openFilter
+                        <div className={classNames('bg-[#475DA9] absolute bottom-[70px] left-0 right-0 flex justify-center items-center border-t border-white transition-all duration-[750ms]', {
+                            "translate-y-full h-[70px]": !openFilter,
+                            "translate-y-0 h-[150px]": openFilter
                         })}>
                             <FontAwesomeIcon
                                 icon={faXmark}
