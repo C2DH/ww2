@@ -122,31 +122,26 @@ export default function HistorianWorkshop() {
                                         <circle cx="1347" cy="302" r="6" fill="white" className='animate-pulseSmall' style={{ transformOrigin: '1347px 302px' }} />
                                         <text x="1150" y="302" fill="transparent" className='transition-all duration-[750ms] text-[36px] group-hover:opacity-1 group-hover:fill-[#6EDFFB] uppercase'>Bibliographie</text> 
                                     </Link>
-
-
                                 </svg>
 
                                 { imgLoaded &&                            
-                                         <div className='absolute bottom-[20px] lg:bottom-[40px] xl:bottom-[100px] right-[20px] lg:right-[60px] xl:right-[100px] w-1/2 lg:w-1/3'>
-                                            <h2 className='text-blue font-abril text-[40px] leading-none'>Atelier de l'historien</h2>
-                                            <p className='text-white pt-[10px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
-                                        </div>
-                                    }
+                                    <div className='absolute bottom-[20px] lg:bottom-[40px] xl:bottom-[100px] right-[20px] lg:right-[60px] xl:right-[100px] w-1/2 lg:w-1/3'>
+                                        <h2 className='text-blue font-abril text-[40px] leading-none'>Atelier de l'historien</h2>
+                                        <p className='text-white pt-[10px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
+                                    </div>
+                                }
                             </div>
-
-
                         </div>
                     </motion.div>
-
                 </div>
             </div>
 
-            <div className='md:hidden flex min-h-[calc(100vh-120px)] lg:min-h-0 relative'>
-                <div className='px-[20px] sm:px-0 flex-grow' style={{ backgroundImage: `url(${img8})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
+            <div className='md:hidden flex relative'>
+                <div className='px-[20px] sm:px-0 h-[calc(100vh-120px)] overflow-scroll' style={{ backgroundImage: `url(${img8})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
                     <div className="container mx-auto relative z-[2]">
                         <h1 className='text-[40px] font-abril text-blue pt-[40px] w-[80%] leading-none'>Atelier de l'historien</h1>
                         <p className='text-white text-[24px] pt-[15px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
-                        <div className='pt-[20px] pb-[80px] text-white text-[38px]'>
+                        <div className='pt-[20px] text-white text-[38px]'>
                             <Link to={'/historical-index'} className='uppercase block pt-[10px]'>Index historique</Link>
                             <Link to={'/sources'} className='uppercase block pt-[10px]'>Sources</Link>
                             <Link to={'/research-institutions'} className='uppercase block pt-[10px]'>Institutions de recherche</Link>
@@ -155,7 +150,7 @@ export default function HistorianWorkshop() {
                         </div>
                     </div>
                 </div>
-                <div className='lg:hidden absolute bg-gradient-to-t from-neutral-900 inset-0'></div>
+                <div className='md:hidden absolute bg-gradient-to-t from-neutral-800 inset-0'></div>
             </div>
         </motion.div>
     )

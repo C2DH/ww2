@@ -1,7 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom"
 import { useMenuContext } from '../../contexts/MenuProvider'
 import classNames from "classnames"
-import { useMediaQuery } from "react-responsive"
 
 
 export default function Layout() {

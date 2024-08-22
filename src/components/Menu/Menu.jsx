@@ -76,7 +76,7 @@ export default function Menu() {
             {isLoading &&            
                 <header 
                     style={{ background: `url(${bgBlack}) 50% / cover no-repeat`}}
-                    className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[50px] text-white flex flex-col', {
+                    className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[60px] text-white flex flex-col', {
                         'max-h-[100vh] h-[100vh]': openMenu,
                         'max-h-[140px] h-[140px]': (!openMenu && isMatch),
                         'max-h-[120px] h-[120px]': (!openMenu && !isMatch),
@@ -84,7 +84,7 @@ export default function Menu() {
                 >
 
                     {/** HEADER */}
-                    <div className="flex justify-between px-[30px] sm:px-[90px] pt-[140px] sm:pt-[120px] md:pt-[20px] ">
+                    <div className="flex justify-between px-[30px] sm:px-[90px] pt-[120px] md:pt-[20px] ">
                         <Player/>
                         <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
                         <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>
@@ -99,19 +99,19 @@ export default function Menu() {
                                 'opacity-0': !openMenu 
                             })}>
                                 <li>
-                                    <MenuItem path={'/'} title={"Parcours"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} className='text-[34px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
+                                    <MenuItem path={'/'} title={"Parcours"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
                                 </li>
                                 <li>
-                                    <MenuItem path={'/catalogue'} title={"Catalogue"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} className='text-[34px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) } />
+                                    <MenuItem path={'/catalogue'} title={"Catalogue"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) } />
                                 </li>
                                 <li>
-                                    <MenuItem path={'/historian-workshop'} title={"Atelier de l'historien"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} className='text-[34px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
+                                    <MenuItem path={'/historian-workshop'} title={"Atelier de l'historien"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
                                 </li>
                                 <li>
-                                    <MenuItem path={'/spacetime-map'} title={"Carte spatio-temporelle"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} className='text-[34px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
+                                    <MenuItem path={'/spacetime-map'} title={"Carte spatio-temporelle"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
                                 </li>
                                 <li>
-                                    <MenuItem path={'/credits'} title={"Générique"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} className='text-[34px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
+                                    <MenuItem path={'/credits'} title={"Générique"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
                                 </li>
                             </ul>
                         </div>
@@ -180,7 +180,7 @@ const MenuLogo = ({ isOpenMenu, setIsOpenMenu, translate }) => {
 
 const LanguageSwitcher = ({ switchLanguage, lang }) => {
     return (
-        <div className='text-[24px]'>   
+        <div className='text-[20px] sm:text-[24px]'>   
             <span className={classNames('cursor-pointer mr-[5px]', {'text-blue': lang === 'en_EN'})} onClick={() => switchLanguage('en_EN') }>EN</span>
             <span className={classNames('cursor-pointer mr-[5px]', {'text-blue': lang === 'de_DE'})}  onClick={() => switchLanguage('de_DE') }>DE</span>
             <span className={classNames('cursor-pointer', {'text-blue': lang === 'fr_FR'})}  onClick={() => switchLanguage('fr_FR') }>FR</span>
