@@ -122,8 +122,8 @@ export default function Sources() {
             <HeaderHistorianWorkshop items={ menuItems } />
 
             {/** Filters */}
-            <div className="hidden lg:block mt-[40px]">
-                <div className="grid grid-cols-12 gap-5 border-b border-black pb-[40px]">
+            <div className="hidden lg:block mt-[30px] 2xl:mt-[40px]">
+                <div className="grid grid-cols-12 gap-5 border-b border-black pb-[30px] 2xl:pb-[40px]">
                     <div className="col-span-5 relative">
                         <Dropdown items={tags} text={'Recherche par #tag'}/>
                     </div>
