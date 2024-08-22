@@ -49,7 +49,7 @@ export default function Catalogue() {
     if (isLoaded) {
         return (
             <motion.div style={{ background: `url(${ bgPaper }) center / cover no-repeat`}} className="px-[20px] sm:px-0" exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                <div className='container mx-auto h-[calc(100vh-120px)] flex flex-col overflow-scroll'>
+                <div className='container mx-auto h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] flex flex-col overflow-scroll'>
     
                      {/** Headers */}
                     <div className='grid grid-cols-12 pt-[20px] 2xl:pt-[35px]'>
