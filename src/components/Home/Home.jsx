@@ -126,7 +126,7 @@ const MapBox = ({ items, markers }) => {
 
     
     return (
-        <motion.div className='mask h-[calc(100vh-80px)] overflow-hidden' exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}}>
+        <motion.div className='mask h-[calc(100dvh-80px)] sm:h-[calc(100vh-80px)] overflow-hidden' exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}}>
 
             <Map
                 ref={mapRef}
