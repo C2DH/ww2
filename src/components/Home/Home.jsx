@@ -107,9 +107,9 @@ const MapBox = ({ items, markers }) => {
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
     const [convertedItems, setConvertedItems] = useState([]);
     const bounds = [
-        [6.00879198072713, 48.723978056319766], // Southwest coordinates
-        [10.687717331004215, 58.723978056319766] // Northeast coordinates
-    ];
+        [4.635609906406312, 49.24474658911654], // Southeast coordinate
+        [7.7936412937252015, 50.38780761708563] // Northeast coordinate
+    ]
     
     useEffect(() => {
         Promise.all(items.filter(item => item.covers.filter(item => item.data?.type == 'place').length > 0).map(async (item, index) =>  {      
@@ -148,7 +148,7 @@ const MapBox = ({ items, markers }) => {
                 minZoom={8} // Ne peut pas dézoomer en dessous de x8
                 dragRotate={false} // 3D Relief : désactiver
                 scrollZoom={true} // Désactiver Zoom scroll
-                // maxBounds={bounds} // Bloquer le panning
+                maxBounds={bounds} // Bloquer le panning
             >
 
                 {convertedItems.map((marker, index) => {

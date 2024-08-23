@@ -76,7 +76,7 @@ export default function Menu() {
             {isLoading &&            
                 <header 
                     style={{ background: `url(${bgBlack}) 50% / cover no-repeat`}}
-                    className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[60px] text-white flex flex-col', {
+                    className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[60px] text-white flex flex-col relative z-[100]', {
                         'max-h-[100vh] h-[100vh]': openMenu,
                         'max-h-[140px] h-[140px]': (!openMenu && isMatch),
                         'max-h-[120px] h-[120px]': (!openMenu && !isMatch),

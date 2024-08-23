@@ -9,7 +9,7 @@ export default function Layout() {
 
     if (pathname === '/' || pathname === '/spacetime-map' || pathname.includes('/notice/')) {
         return (
-            <div className={classNames('absolute inset-0 top-[80px] transition-all duration-[2000ms] flex', {
+            <div className={classNames('absolute inset-0 top-[80px] transition-all duration-[2000ms] flex z-[200]', {
                 'translate-y-0': !openMenu,
                 'translate-y-full': openMenu
             })}>

@@ -10,7 +10,7 @@ export default function Clouds() {
         <>
             {/** BG GRAY */}
             <motion.div
-                className='fixed inset-0 bg-gray-100'
+                className='fixed inset-0 bg-gray-100 z-[1000]'
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, transition: { delay: siteConfig.cloudsTransitionDuration * 0.5, duration: siteConfig.cloudsTransitionDuration * 0.5 } }}
                 exit={{ opacity: 0, transition: {duration: siteConfig.cloudsTransitionDuration * 0.5, delay: siteConfig.cloudsTransitionDelay} } }
@@ -19,7 +19,7 @@ export default function Clouds() {
             </motion.div>
 
             {/** LEFT TOP */}
-            <motion.div className='fixed top-0 left-0 w-full h-full pointer-events-none'
+            <motion.div className='fixed top-0 left-0 w-full h-full pointer-events-none z-[1000]'
                 initial={{ x: '-100%', y: '-10%' }}
                 animate={{ x: '0%', y: '0%' }}
                 exit={{ x: '-100%', y: '-10%', transition: {ease: 'easeInOut', duration: siteConfig.cloudsTransitionDuration, delay: siteConfig.cloudsTransitionDelay } }}
@@ -29,7 +29,7 @@ export default function Clouds() {
             </motion.div>
 
             {/** LEFT BOTTOM */}
-            <motion.div className='fixed bottom-0 left-0 w-full h-full pointer-events-none'
+            <motion.div className='fixed bottom-0 left-0 w-full h-full pointer-events-none z-[1000]'
                 initial={{ x: '-100%', y: '10%' }}
                 animate={{ x: '0%', y: '0%' }}
                 exit={{ x: '-100%', y: '10%', transition: {ease: 'easeInOut', duration: siteConfig.cloudsTransitionDuration * (0.5 + (Math.random() * 0.5)), delay: siteConfig.cloudsTransitionDelay } }}
@@ -40,7 +40,7 @@ export default function Clouds() {
 
 
             {/** RIGHT TOP */}
-            <motion.div className='fixed top-0 right-0 w-full h-full pointer-events-none'
+            <motion.div className='fixed top-0 right-0 w-full h-full pointer-events-none z-[1000]'
                 initial={{ x: '100%', y: '-10%' }}
                 animate={{ x: '0%', y: '0%' }}
                 exit={{ x: '100%', y: '-10%', transition: {ease: 'easeInOut', duration: siteConfig.cloudsTransitionDuration * (0.5 + (Math.random() * 0.5)) , delay: siteConfig.cloudsTransitionDelay } }}
@@ -50,7 +50,7 @@ export default function Clouds() {
             </motion.div>
 
             {/** RIGHT BOTTOM */}
-            <motion.div className='fixed bottom-0 right-0 w-full h-full pointer-events-none'
+            <motion.div className='fixed bottom-0 right-0 w-full h-full pointer-events-none z-[1000]'
                 initial={{ x: '100%', y: '10%' }}
                 animate={{ x: '0%', y: '0%' }}
                 exit={{ x: '100%', y: '10%', transition: {ease: 'easeInOut', duration: siteConfig.cloudsTransitionDuration * (0.5 + (Math.random() * 0.5)), delay: siteConfig.cloudsTransitionDelay} }}
