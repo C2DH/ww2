@@ -87,7 +87,7 @@ export default function Notice() {
                                 <Player url={ results.covers[0].data.videoResolutions.sd360p.url} controls={ true } className={'rounded-[6px]'} style={{ borderRadius: '6px' }}/>
                             </div>
 
-                            <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3 xl:flex xl:items-end xl:flex-col">
+                            <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3">
                                 <Link to={'/sources'} className='block uppercase font-abril text-[22px] text-white'>{ t('sources') }</Link>
                                 <Link to={'/historical-index'} className='block uppercase font-abril text-[22px] text-white pt-[22px]'>{ t('historical-index')}</Link>
                             </div>
