@@ -37,7 +37,34 @@ export default {
 				pulseBig: 'big 1.5s ease-in-out infinite',
 				pulseSmall: 'small 1.5s ease-in-out infinite',
 			}
-    	}
+    	},
+
+		screens: {
+			'sm': '640px',
+			// => @media (min-width: 640px) { ... }
+	  
+			'md': '768px',
+			// => @media (min-width: 768px) { ... }
+	  
+			'lg': '1024px',
+			// => @media (min-width: 1024px) { ... }
+	  
+			'xl': '1280px',
+			// => @media (min-width: 1280px) { ... }
+	  
+			'2xl': '1536px',
+			// => @media (min-width: 1536px) { ... }
+
+			'3x': '2000px',
+			// => @media (min-width: 2000px) { ... }
+
+			'ipad': {'raw': '(min-height: 768px),(min-width: 1024px)'},
+
+			'ipadBig': {'raw': '(min-height: 1366px),(min-width: 1024px)'}
+
+
+		}
+
   	},
   	plugins: [
     	require('flowbite/plugin')

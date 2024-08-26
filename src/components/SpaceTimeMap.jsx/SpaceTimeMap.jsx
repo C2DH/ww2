@@ -472,8 +472,6 @@ const MapBox = ({ items, state, reference }) => {
                                 }}
                             />
     
-
-    
                             <div className='px-[20px] md:px-0'>
                                 <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.properties.location}</h2>
                                 <span className='text-[28px] block pb-[40px] md:pb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
