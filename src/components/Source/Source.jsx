@@ -1,16 +1,23 @@
 import patternBG from '../../assets/images/source/squarePattern.png'
+import { useState } from "react";
+import { useTranslation } from 'react-i18next'
+import classNames from "classnames";
+import { useLanguageContext } from '../../contexts/LanguageProvider'
+import Player from '../Player/Player'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLongToLine } from '@fortawesome/pro-regular-svg-icons'
 import { faMagnifyingGlassMinus , faMagnifyingGlassPlus } from '@fortawesome/pro-regular-svg-icons'
+
 import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
-import { useState } from "react";
-import classNames from "classnames";
-import { useTranslation } from 'react-i18next'
 
-
-export default function Source({ src, handleSourcePopup }) {
+export default function Source({ data, handleSourcePopup }) {
 
     const { t } = useTranslation()
+    const root = import.meta.env.VITE_ROOT
+    const { language } = useLanguageContext()
+
+    console.log(data.url)
 
     return (
         <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='w-full lg:relative lg:top-0 absolute -top-[120px]'>
@@ -22,44 +29,37 @@ export default function Source({ src, handleSourcePopup }) {
                 <span className='text-white uppercase text-[24px] cursor-pointer' onClick={ handleSourcePopup }>{ t('close') }</span>
             </div>
 
-            <div className="container mx-auto relative flex h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] px-[20px]">
-                <div className="grid grid-cols-12 pt-[20px] lg:pt-[40px]">
-                    <div className="col-span-12 sm:col-span-6 sm:col-start-4 lg:col-span-7 lg:col-start-2">
-                        <div className="grid grid-cols-9">
+            <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] px-[20px]">
+                <div className="grid grid-cols-12 pt-[20px] lg:pt-[40px] h-full">
+                    <div className="col-span-12 lg:col-span-7 lg:col-start-2 2xl:col-span-8 2xl:col-start-1">
+                        {/* <div className="grid grid-cols-9"> */}
 
-                            {/** IMAGE ZOOM DESKTOP */}
-                            <div className="col-span-9 pb-[20px] 2xl:pb-[40px] ipad:pt-[80px] 2xl:pt-[80px]">
-                                <ImageZoom image={ src }/>
-                            </div>
+                            {/** IMAGE */}
+                            { data.type === 'picture' &&                            
+                                <div className="pb-[20px] 2xl:pb-[40px] ipad:pt-[80px] 2xl:pt-[80px]">
+                                    <ImageZoom image={ root + data.attachment }/>
+                                </div>
+                            }
 
-                            {/** SLIDER MOBILE */}
+                            {/** VIDEO */}
+                            { data.type === 'video' &&
+                                <div className="pb-[20px]">
+                                    <Player url={ data.data.videoResolutions.hsl.url } controls={true} />
+                                </div>
+                            }
+
+                            {/** GALLERY */}
+                            {/* TODO : Faire un slider pour la galerie */}
                             {/* <div className="lg:hidden col-span-9 pb-[20px]">
                                 <img src={ src }/>
                             </div> */}
-                        </div>
+
+                        {/* </div> */}
                     </div>
 
                     <div className="col-span-12 lg:col-span-3 lg:col-start-10 lg:border-l text-white overflow-scroll lg:pr-[30px]">
-                        <p className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Private vehicle passing a roadblock of the “Schuster Line” between Echternach and Lauterborn.</p>
+                        <p className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>{ data.data.description[language] }</p>
                         <hr className='w-1/2'/>
-                        <p className='lg:pl-[25px] text-[28px] pt-[30px] pb-[30px]'>A private vehicle passes a roadblock of the “Schuster line” between Echternachand Lauterborn, guarded by a Luxembourg customs officer posing. A lever is used to close the barrier.</p>
-                        <hr className='w-1/2'/>
-                        <p className='lg:pl-[25px] text-[20px] pt-[30px] pb-[30px]'>Photograph by Tony Krier, black and white, April 1940. ©Photothèque de la Ville de Luxembourg. Tony Krier 1940-0021-12.</p>
-                        <p className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Private vehicle passing a roadblock of the “Schuster Line” between Echternach and Lauterborn.</p>
-                        <hr className='w-1/2'/>
-                        <p className='lg:pl-[25px] text-[28px] pt-[30px] pb-[30px]'>A private vehicle passes a roadblock of the “Schuster line” between Echternachand Lauterborn, guarded by a Luxembourg customs officer posing. A lever is used to close the barrier.</p>
-                        <hr className='w-1/2'/>
-                        <p className='lg:pl-[25px] text-[20px] pt-[30px] pb-[30px]'>Photograph by Tony Krier, black and white, April 1940. ©Photothèque de la Ville de Luxembourg. Tony Krier 1940-0021-12.</p>
-                        <p className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Private vehicle passing a roadblock of the “Schuster Line” between Echternach and Lauterborn.</p>
-                        <hr className='w-1/2'/>
-                        <p className='lg:pl-[25px] text-[28px] pt-[30px] pb-[30px]'>A private vehicle passes a roadblock of the “Schuster line” between Echternachand Lauterborn, guarded by a Luxembourg customs officer posing. A lever is used to close the barrier.</p>
-                        <hr className='w-1/2'/>
-                        <p className='lg:pl-[25px] text-[20px] pt-[30px] pb-[30px]'>Photograph by Tony Krier, black and white, April 1940. ©Photothèque de la Ville de Luxembourg. Tony Krier 1940-0021-12.</p>
-                        <p className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Private vehicle passing a roadblock of the “Schuster Line” between Echternach and Lauterborn.</p>
-                        <hr className='w-1/2'/>
-                        <p className='lg:pl-[25px] text-[28px] pt-[30px] pb-[30px]'>A private vehicle passes a roadblock of the “Schuster line” between Echternachand Lauterborn, guarded by a Luxembourg customs officer posing. A lever is used to close the barrier.</p>
-                        <hr className='w-1/2'/>
-                        <p className='lg:pl-[25px] text-[20px] pt-[30px] pb-[30px]'>Photograph by Tony Krier, black and white, April 1940. ©Photothèque de la Ville de Luxembourg. Tony Krier 1940-0021-12.</p>
                     </div>
                 </div>
             </div>

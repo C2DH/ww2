@@ -1,15 +1,19 @@
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { useSharedState } from '../../contexts/SharedStateProvider'
+import Source from '../Source/Source'
+
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLongToLine } from '@fortawesome/pro-regular-svg-icons'
-import { faImage } from '@fortawesome/pro-thin-svg-icons'
-import { Link, useParams } from 'react-router-dom'
-import Source from '../Source/Source'
+import { faImage, faVideo } from '@fortawesome/pro-thin-svg-icons'
+
 import { AnimatePresence, motion } from "framer-motion"
-import { useEffect, useState } from 'react'
+
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { t } from 'i18next'
+
 import { convertToHtml } from '../../lib/utils'
-import { useSharedState } from '../../contexts/SharedStateProvider'
 import siteConfig from '../../../site.config'
 
 
@@ -17,10 +21,12 @@ export default function Note() {
     const [sharedState, setSharedState] = useSharedState()
     const { slug } = useParams()
     const { language } = useLanguageContext()
-    const [sourcePopup, setSourcePopup] = useState({ open: false, src: null })
+    const [dataPopup, setDataPopup] = useState({ open: false, data: null })
     const [data, setData] = useState(null)
     const [isLoaded, setIsLoaded] = useState(false)
+    const rootPath = import.meta.env.VITE_ROOT
 
+    // DETAILS NOTE
     useEffect(() => {
         fetch(`https://ww2-lu.netlify.app/api/story/${ slug }`, {
             method: "GET",
@@ -34,22 +40,26 @@ export default function Note() {
         .catch((error) => console.log(error))
     }, [isLoaded])
 
+
+
+    // ANIMATION CURTAINS
     useEffect(() => {
         setSharedState({ ...sharedState, showCurtains: false })
     }, [])
 
-    const handleSourcePopup = () => {
-        if (!sourcePopup.open) {
-            setSourcePopup(prevSource => ({
+    const handleSourcePopup = (document) => {
+        
+        if (!dataPopup.open) {
+            setDataPopup(prevSource => ({
                 ...prevSource, 
                 open: true, 
-                src: "https://images.unsplash.com/photo-1692981226516-f76bcc8945b3?q=80&w=4000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                data: document
             }))
         } else {
-            setSourcePopup(prevSource => ({
+            setDataPopup(prevSource => ({
                 ...prevSource, 
                 open: false, 
-                src: null
+                data: null
             }))
         }
     }
@@ -112,89 +122,25 @@ export default function Note() {
                                     </div>
                                 </div>
                             </div>
-    
+                            
+                            {/** MEDIAS */}
                             <div className="lg:w-1/2 lg:ml-[50px] py-[40px] lg:overflow-y-auto flex-grow border-t lg:border-none border-black">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div className="grid gap-6">
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg" alt="" onClick={() => handleSourcePopup() }/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
+                                    { data.documents.map(document => 
+                                        <div className="grid gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
+                                            
+                                            {/* TODO : Traiter Galerie et Document */}
+                                            { document.type === 'picture' ? (
+                                                <img className="h-auto max-w-full cursor-pointer" src={ rootPath + document.attachment } alt={ document.data.title[language]}/>
+                                            ) :
+                                                <img className="h-auto max-w-full cursor-pointer" src={ document.data.resolutions.preview.url } alt={ document.data.title[language]}/>
+                                            }
+
+                                                <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                    <FontAwesomeIcon icon={ document.type === 'picture' ? faImage : faVideo } className='text-white text-[40px]' />
+                                                </div>
                                         </div>
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-1.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-2.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="grid gap-6">
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-3.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-4.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-5.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="grid gap-6">
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-6.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-7.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-8.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="grid gap-6">
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-9.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-10.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                        <div className='relative cursor-pointer' onClick={handleSourcePopup}>
-                                            <img className="h-auto max-w-full cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-11.jpg" alt=""/>
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={faImage} className='text-white text-[40px]' />
-                                            </div>
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -202,7 +148,7 @@ export default function Note() {
                 </motion.div>
     
                 <AnimatePresence>
-                    { sourcePopup.open && 
+                    { dataPopup.open && 
                         <motion.div 
                             className='absolute w-full top-0'
                             initial={{ top: '100%' }}
@@ -210,9 +156,9 @@ export default function Note() {
                             exit={{ top: '100%'}}
                             transition={{ duration: 0.8, ease: 'easeInOut'}}
                         >
-                            <Source src={ sourcePopup.src } handleSourcePopup={ handleSourcePopup }/>
+                            <Source data={ dataPopup.data } handleSourcePopup={ handleSourcePopup }/>
                         </motion.div>
-                        }
+                    }
                 </AnimatePresence>
             </>
         )

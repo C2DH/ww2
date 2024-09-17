@@ -1,6 +1,11 @@
 // REACT 
 import { Link, useParams} from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useLanguageContext } from '../../contexts/LanguageProvider';
+import { useSharedState } from '../../contexts/SharedStateProvider';
+import { useTranslation } from 'react-i18next';
+import siteConfig from '../../../site.config'
+import classNames from 'classnames';
 
 // COMPONENTS
 import Player from '../Player/Player'
@@ -12,18 +17,14 @@ import { motion } from "framer-motion"
 import '../../assets/scss/app.scss'
 import next from '../../assets/images/notices/next.png'
 import prev from '../../assets/images/notices/prev.png'
-import { useSharedState } from '../../contexts/SharedStateProvider';
-import { useTranslation } from 'react-i18next';
-import siteConfig from '../../../site.config'
-import classNames from 'classnames';
 
 export default function Notice() {
 
     const { t } = useTranslation()
+    const { language } = useLanguageContext()
     const { slug } = useParams()
     const [isLoaded, setIsLoaded] = useState(false)
     const [results, setResults] = useState(null)
-    const [image, setImage] = useState()
     const [sharedState, setSharedState] = useSharedState()
 
     useEffect(() => {
@@ -46,7 +47,6 @@ export default function Notice() {
     if (isLoaded) {
         return (
             <motion.div className='mask overflow-hidden relative' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}} >
-                {/* <div className='h-full relative' style={{ background: `url(${}) 50% / cover no-repeat` }}> */}
                 <div className='h-full relative flex' style={{ background: `url(${'https://images.unsplash.com/photo-1571840615922-50fb24649d4b?q=80&w=4515&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}) 50% / cover no-repeat` }}>
                     <div className='notice-filter absolute inset-0'></div>
 
@@ -74,9 +74,11 @@ export default function Notice() {
 
                         <div className="grid grid-cols-12 mt-[30px] xl:mt-[50px] 2xl:mt-[70px]">
                             <div className="col-span-12 xl:col-span-3 2xl:col-span-2 pt-[20px] order-3 xl:order-1">
+                                <span className='block uppercase font-abril text-[22px] text-white pb-[20px]'>{ results.stories.length > 1 ? t('related_notes') : t('related_note') }</span>
                                 { results.stories.map((note, index) => {
                                     return (
                                         <Link key={ index } to={ `/note/${note.slug}` } className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2]'>
+                                            {/* TODO : Mettre juste le titre enelver note */}
                                             <h3 className='font-abril text-[22px] text-white uppercase'>{ note.title }</h3>
                                         </Link>
                                     )
@@ -88,8 +90,12 @@ export default function Notice() {
                             </div>
 
                             <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3">
+
+                                {/* TODO: Ajouter le tag ppur filtrer sur la page sources */}
                                 <Link to={'/sources'} className='block uppercase font-abril text-[22px] text-white'>{ t('sources') }</Link>
-                                <Link to={'/historical-index'} className='block uppercase font-abril text-[22px] text-white pt-[22px]'>{ t('historical-index')}</Link>
+
+                                {/* TODO: Ajouter le tag ppur filtrer sur la page index historique */}
+                                <Link to={'/historical-index'} className='block uppercase font-abril text-[22px] text-white pt-[20px]'>{ t('menuItems.glossary')}</Link>
                             </div>
                         </div>
                     </div>

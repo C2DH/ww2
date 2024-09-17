@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import siteConfig from '../../../site.config'
 import logo from '../../assets/images/common/logo.png'
+import bg from '../../assets/images/common/bg-black.jpg'
 
 export default function Curtains() {
   return (
@@ -14,7 +15,8 @@ export default function Curtains() {
 			transition={{ ease: 'easeInOut', duration: siteConfig.cloudsTransitionDuration }}
 		/>
 
-		<motion.div className='fixed inset-0 pointer-events-none bg-green z-[1000] flex justify-center items-center px-[30px]'
+		<motion.div className='fixed inset-0 pointer-events-none z-[1000] flex justify-center items-center px-[30px]'
+			style={{ background: `url(${bg})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}
 			initial={{ y: '100%' }}
 			animate={{ y: '0%' }}
 			exit={{ y: '-100%' }}

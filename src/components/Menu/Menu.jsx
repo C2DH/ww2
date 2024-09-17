@@ -36,7 +36,6 @@ export default function Menu() {
         return location === pathname
     })
 
-
     // API DATA
     useEffect(() => {
         fetch("https://ww2-lu.netlify.app/api/story/?filters=%7B%22tags__slug%22%3A%22menu%22%7D&order_by=slug&limit=10&h=d159095c9a67b4a002ed8a5c522df27440e74f0f58af01bd93b7d38de7ad7bfa", {
@@ -50,7 +49,7 @@ export default function Menu() {
         })
         .catch((error) => console.log(error))
 
-    }, [isLoading])
+    }, [isLoading, language])
 
 
     // ANIMATION MENU 
@@ -69,7 +68,6 @@ export default function Menu() {
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false });
     }, [])
-
 
     return (
         <>
@@ -90,7 +88,7 @@ export default function Menu() {
                         <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>
                     </div>
 
-                    {/** ITEMS */}
+                    {/** MENU ITEMS */}
                     <div className='overflow-scroll mt-[30px] lg:mt-[70px]'>
 
                         <div className='flex justify-center mt-[20px]'>
@@ -98,20 +96,16 @@ export default function Menu() {
                                 'opacity-1': openMenu,
                                 'opacity-0': !openMenu 
                             })}>
-                                <li>
-                                    <MenuItem path={'/'} title={"Parcours"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
-                                </li>
-                                <li>
-                                    <MenuItem path={'/catalogue'} title={"Catalogue"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) } />
-                                </li>
-                                <li>
-                                    <MenuItem path={'/historian-workshop'} title={"Atelier de l'historien"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
-                                </li>
-                                <li>
-                                    <MenuItem path={'/spacetime-map'} title={"Carte spatio-temporelle"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
-                                </li>
-                                <li>
-                                    <MenuItem path={'/credits'} title={"Générique"} text={"Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit."} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
+
+                                { results.results.slice(1, 5).map((item, index) => 
+                                    <li key={ item.id } className="mb-[40px]">
+                                        <MenuItem path={'/'} title={item.data.title[language]} text={item.data.subtitle ? item.data.subtitle[language] : ""} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
+                                    </li>
+                                )}
+
+                                {/** CREDITS */}
+                                <li className="mb-[40px]">
+                                    <MenuItem path={'/'} title={ results.results[6].data.title[language] } text={ results.results[6].data.subtitle ? results.results[6].data.subtitle[language] : "" } className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
                                 </li>
                             </ul>
                         </div>
@@ -119,7 +113,7 @@ export default function Menu() {
 
                         {/** PARTNERS LOGOS */}
                         <div className='flex justify-center items-center mt-[30px] mx-[30px]'>
-                            <div className=''>
+                            <div>
                                 <Link to='https://www.c2dh.uni.lu/' target='_blank'>
                                     <img src={ logoUni } alt="Logo Université" />
                                 </Link>
@@ -156,9 +150,9 @@ const CustomLink = (props) => {
 const MenuItem = ({path, title = "", text = "", className = "", handleMenuItemClick}) => {
     return (
         <CustomLink to={path} onClick={handleMenuItemClick}>
-            <h3 className={`mb-[40px] sm:mb-0 ${className}`}>{title}</h3>
+            <h3 className={`${className}`}>{title}</h3>
             { text !== "" &&
-                <p className="hidden sm:block pt-[14px] text-[20px] leading-none mb-[30px]">{text}</p>
+                <p className="hidden sm:block pt-[15px] pb-0 text-[20px] leading-none">{text}</p>
             }
         </CustomLink>
     )
@@ -181,7 +175,7 @@ const MenuLogo = ({ isOpenMenu, setIsOpenMenu, translate }) => {
 const LanguageSwitcher = ({ switchLanguage, lang }) => {
     return (
         <div className='text-[20px] sm:text-[24px]'>   
-            <span className={classNames('cursor-pointer mr-[5px]', {'text-blue': lang === 'en_EN'})} onClick={() => switchLanguage('en_EN') }>EN</span>
+            <span className={classNames('cursor-pointer mr-[5px]', {'text-blue': lang === 'en_GB'})} onClick={() => switchLanguage('en_GB') }>EN</span>
             <span className={classNames('cursor-pointer mr-[5px]', {'text-blue': lang === 'de_DE'})}  onClick={() => switchLanguage('de_DE') }>DE</span>
             <span className={classNames('cursor-pointer', {'text-blue': lang === 'fr_FR'})}  onClick={() => switchLanguage('fr_FR') }>FR</span>
         </div>

@@ -3,7 +3,7 @@
     "sound_off": "Klang aus",
     "menu": "Menü",
     "close": "Schließen",
-    "about": "Über",
+    "about": "Über uns",
     "contact": "Kontakt",
     "conditions": "Bedingungen",
     "theme": "Thema",
@@ -27,5 +27,7 @@
     "polska": "Polen",
     "russia": "Russland",
     "terms": "Bedingungen",
-    "credits": "Vorspann"
+    "credits": "Vorspann",
+    "related_note": "verknüpfte Note",
+    "related_notes": "verknüpfte Notizen"
 }
