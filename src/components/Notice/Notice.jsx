@@ -36,6 +36,8 @@ export default function Notice() {
         .then((data) => {
             setResults(data)
             setIsLoaded(true)
+
+            console.log(data)
         })
         .catch((error) => console.log(error))
     }, [isLoaded])
@@ -55,9 +57,9 @@ export default function Notice() {
                             <Link to={'/'} className='xl:hidden block text-[20px] xl:text-[24px] text-white uppercase mb-[15px]'>
                                 { t('back') }
                             </Link>
-                            <span className='text-[27px] font-abril text-blue underline underline-offset-[8px] decoration-1 block'>{ results.documents[0].data.geojson.geometry.properties.city.fr_FR}</span>
+                            <span className='text-[27px] font-abril text-blue underline underline-offset-[8px] decoration-1 block'>{ results.documents[0].data.geojson.geometry.properties.city[language]}</span>
                             <div className='relative text-center'>
-                                <h1 className='text-[34px] xl:text-[48px] text-blue font-abril pt-[12px] leading-none'>{ results.data.title.fr_FR }</h1>
+                                <h1 className='text-[34px] xl:text-[48px] text-blue font-abril pt-[12px] leading-none'>{ results.data.title[language] }</h1>
                                 <Link to={""} className='hidden xl:block absolute top-[50%] -translate-[50%] -left-[100px]'>
                                     <img src={ prev } alt="previous" />
                                 </Link>
@@ -65,7 +67,7 @@ export default function Notice() {
                                     <img src={ next } alt="next" /> 
                                 </Link>
                             </div>
-                            <p className='text-[18px] xl:text-[24px] text-center font-sofia uppercase text-white border border-white px-[15px] py-[5px] mt-[30px] sm:mt-[10px]'>{ results.documents[0].data.description.fr_FR}</p>
+                            <p className='text-[18px] xl:text-[24px] text-center font-sofia uppercase text-white border border-white px-[15px] py-[5px] mt-[30px] sm:mt-[10px]'>{ results.documents[0].data.description[language]}</p>
                         </div>
 
                         <Link to={'/'} className='hidden xl:block absolute top-[70px] left-0' state={{ from: location.pathname }}>
@@ -74,11 +76,11 @@ export default function Notice() {
 
                         <div className="grid grid-cols-12 mt-[30px] xl:mt-[50px] 2xl:mt-[70px]">
                             <div className="col-span-12 xl:col-span-3 2xl:col-span-2 pt-[20px] order-3 xl:order-1">
-                                <span className='block uppercase font-abril text-[22px] text-white pb-[20px]'>{ results.stories.length > 1 ? t('related_notes') : t('related_note') }</span>
+                                <span className='block uppercase font-abril text-[22px] text-white mb-[20px] xl:mb-[30px]'>{ results.stories.length > 1 ? t('related_notes') : t('related_note') }</span>
                                 { results.stories.map((note, index) => {
                                     return (
                                         <Link key={ index } to={ `/note/${note.slug}` } className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2]'>
-                                            {/* TODO : Mettre juste le titre enelver note */}
+                                            {/* TODO : Mettre juste le titre enlever note */}
                                             <h3 className='font-abril text-[22px] text-white uppercase'>{ note.title }</h3>
                                         </Link>
                                     )
@@ -92,10 +94,10 @@ export default function Notice() {
                             <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3">
 
                                 {/* TODO: Ajouter le tag ppur filtrer sur la page sources */}
-                                <Link to={'/sources'} className='block uppercase font-abril text-[22px] text-white'>{ t('sources') }</Link>
+                                <Link to={'/historical-index'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('about') }</Link>
 
                                 {/* TODO: Ajouter le tag ppur filtrer sur la page index historique */}
-                                <Link to={'/historical-index'} className='block uppercase font-abril text-[22px] text-white pt-[20px]'>{ t('menuItems.glossary')}</Link>
+                                <Link to={'/historical-index'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('menuItems.glossary')}</Link>
                             </div>
                         </div>
                     </div>

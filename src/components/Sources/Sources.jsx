@@ -37,28 +37,26 @@ export default function Sources() {
             number: 19
         }
     ]
+
     const menuItems = [
-        {
-            title: "Index historique",
-            link: '/historical-index'
-        },
         {
             title: "Sources",
             link: '/sources'
-        },
-        {
-            title: "Institutions de recherche",
-            link: '/research-institutions'
         },
         {
             title: "Glossaire",
             link: '/glossary'
         },
         {
+            title: "Institutions de recherche",
+            link: '/research-institutions'
+        },
+        {
             title: "Bibliographie",
             link: '/bibliography'
         },
     ]
+    
     const { pathname } = useLocation()
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenFilters, setIsOpenFilters] = useState(false)

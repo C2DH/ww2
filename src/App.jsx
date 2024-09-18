@@ -24,6 +24,7 @@ import Bibliography from './components/Bibliography/Bibliography'
 import Glossary from "./components/Glossary/Glossary"
 import { MenuProvider } from "./contexts/MenuProvider"
 import { LanguageProvider } from "./contexts/LanguageProvider"
+import NotFound from "./components/NotFound/NotFound"
 
 export default function App() {
 
@@ -53,7 +54,7 @@ export default function App() {
                                 <Route index element={ <Home /> }/>
                                 <Route path='/catalogue' element={ <Catalogue /> }/>
                                 <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
-                                <Route path='/historical-index' element={ <HistoricalIndex /> }/>
+                                {/* <Route path='/historical-index' element={ <HistoricalIndex /> }/> */}
                                 <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
                                 <Route path='/bibliography' element={ <Bibliography /> }/>
                                 <Route path='/glossary' element={ <Glossary /> }/>
@@ -66,6 +67,7 @@ export default function App() {
                                 <Route path='/about' element={ <About /> }/>
                                 <Route path='/terms' element={ <Terms /> }/>
                                 <Route path='/contact' element={ <Contact /> }/>
+                                <Route path="*" element={ <NotFound /> }/>
                             </Route>
                         </Routes>
                     </AnimatePresence>

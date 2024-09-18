@@ -16,20 +16,16 @@ export default function ResearchInstitutions() {
     const { pathname } = useLocation()
     const menuItems = [
         {
-            title: "Index historique",
-            link: '/historical-index'
-        },
-        {
             title: "Sources",
             link: '/sources'
         },
         {
-            title: "Institutions de recherche",
-            link: '/research-institutions'
-        },
-        {
             title: "Glossaire",
             link: '/glossary'
+        },
+        {
+            title: "Institutions de recherche",
+            link: '/research-institutions'
         },
         {
             title: "Bibliographie",

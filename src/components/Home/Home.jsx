@@ -74,7 +74,6 @@ export default function Home() {
         setIsLoaded(true)
     }, [isSmall])
 
-
     useEffect(() => {
         fetch("https://ww2-lu.netlify.app/api/story/?filters=%7B%22mentioned_to__slug%22%3A%22level-01-journeys%22%2C%22covers__data__type%22%3A%22place%22%7D&limit=100&h=4a75fb8cbf80d23b000166e1dbc06eb397d542efaa28a7f89ceb914fb95c051b", {
             method: "GET",

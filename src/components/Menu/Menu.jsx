@@ -83,7 +83,7 @@ export default function Menu() {
 
                     {/** HEADER */}
                     <div className="flex justify-between px-[30px] pt-[120px] sm:px-[90px] md:pt-[40px] lg:pt-[20px]">
-                        <Player/>
+                        <Player />
                         <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
                         <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>
                     </div>
@@ -97,7 +97,7 @@ export default function Menu() {
                                 'opacity-0': !openMenu 
                             })}>
 
-                                { results.results.slice(1, 5).map((item, index) => 
+                                { results.results.slice(1, 5).map(item => 
                                     <li key={ item.id } className="mb-[40px]">
                                         <MenuItem path={'/'} title={item.data.title[language]} text={item.data.subtitle ? item.data.subtitle[language] : ""} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
                                     </li>
@@ -126,7 +126,7 @@ export default function Menu() {
                         </div>
 
 
-                        {/** ITEMS SUITE */}
+                        {/** MENU ITEMS */}
                         <div className='flex justify-center items-center mt-[20px]'>
                             <div className='flex text-[24px]'>
                                 <MenuItem path={'/about'} title={ t('about')} className={'tiret'} handleMenuItemClick={() => setOpenMenu(false) } />

@@ -1,39 +1,91 @@
 import { Link, useLocation } from "react-router-dom"
-import CardLink from "../Cards/CardLink"
+import Error from '../Error/Error'
 import Dropdown from "../Dropdown/Dropdown"
 import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop"
 import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import classNames from "classnames"
 import { useTranslation } from "react-i18next"
 import { useSharedState } from "../../contexts/SharedStateProvider"
+import { useLanguageContext } from '../../contexts/LanguageProvider'
+import axios from "axios"
 
 
 export default function Bibliography() {
 
-    const [sharedState, setSharedState] = useSharedState()
-    const { t } = useTranslation()
-    const authors = ['a', 'b', 'c', 'd', 'e'] 
+    const authors = ['a', 'b', 'c', 'd', 'e']
     const notes = ['a', 'b', 'c', 'd', 'e'] 
+
+    const { t } = useTranslation()
+    const { language } = useLanguageContext()
+    const [sharedState, setSharedState] = useSharedState()
     const { pathname } = useLocation()
     const [isOpenMenu, setIsOpenMenu] = useState(false)
+    const [books, setBooks] = useState([])
+    const [offset, setOffset] = useState(0)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+
+    const fetchBooks = async (offset = 0, limit = 10) => {
+        try {
+            const response = await axios.get(
+                `api/document/?filters=%7B%22type__in%22:%5B%22reference%22,%22book%22,%22manuscript%22%5D%7D&facets=data__type&limit=${limit}&offset=${offset}&h=d5e2e995b3db151bf2ed6ed27ffa19713a0dd8bacd529494021ae0ff6b3f0185`
+            )
+            return response.data.results
+        } catch (error) {
+            setError(error)
+            return []
+        }
+    };
+    
+    const loadMoreBooks = async () => {
+        setLoading(true)
+        const newBooks = await fetchBooks(offset, 10)
+        setBooks((prevBooks) => [...prevBooks, ...newBooks])
+        setLoading(false)
+    };
+
+
+    const observer = useRef()
+
+    const lastBookRef = useCallback(
+        (node) => {
+            if (loading) return;
+            
+            if (observer.current) {
+                observer.current.disconnect()
+            } 
+    
+            observer.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    setOffset((prevOffset) => prevOffset + 10)
+                }
+            })
+    
+            if (node) {
+                observer.current.observe(node)
+            } 
+        },[loading]
+    )
+
+    useEffect(() => {
+        loadMoreBooks()
+    }, [offset])
+
+
     const menuItems = [
-        {
-            title: "Index historique",
-            link: '/historical-index'
-        },
         {
             title: "Sources",
             link: '/sources'
         },
         {
-            title: "Institutions de recherche",
-            link: '/research-institutions'
-        },
-        {
             title: "Glossaire",
             link: '/glossary'
+        },
+        {
+            title: "Institutions de recherche",
+            link: '/research-institutions'
         },
         {
             title: "Bibliographie",
@@ -41,63 +93,80 @@ export default function Bibliography() {
         },
     ]
 
+
     useEffect(() => {
-        console.log(sharedState)
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, [])
 
-    return (
-        <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
-        
-            <HeaderHistorianWorkshop items={ menuItems } />
-
-            {/** Filters */}
-            <div className="hidden lg:block mt-[30px] xl:mt-[40px]">
-                <div className="grid grid-cols-12 gap-5 border-b border-black pb-[80px]">
-                    <div className="col-span-5 relative">
-                        <Dropdown items={authors} text={'Auteur'} />
+    if (error) {
+        return <Error />
+    } else {
+        return (
+            <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
+            
+                <HeaderHistorianWorkshop items={ menuItems } />
+    
+                {/** FILTERS */}
+                <div className="hidden lg:block mt-[30px] xl:mt-[40px]">
+                    <div className="grid grid-cols-12 gap-5 border-b border-black pb-[80px]">
+                        <div className="col-span-5 relative">
+                            <Dropdown items={authors} text={'Auteur'} />
+                        </div>
+                        <div className="col-span-5 relative">
+                            <Dropdown items={notes} text={'Notes'} />
+                        </div>
                     </div>
-                    <div className="col-span-5 relative">
-                        <Dropdown items={notes} text={'Notes'} />
+                </div>
+    
+                {/** CONTENT */}
+                <div className="lg:overflow-scroll">
+                    <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
+                        { books.map((item, index) => 
+    
+                            <Link className="block col-span-12 md:col-span-6 border border-black rounded-[5px] p-[10px] h-[240px] lg:h-[140px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow cursor-pointer"
+                                key={item.id} 
+                                ref={books.length === index + 1 ? lastBookRef : null} 
+                                to={item.data.zotero.url}
+                                target="_blank" >
+                                <div className="col-span-6 lg:col-span-4">
+                                    <h2 className='text-[24px] lg:text-[30px] pt-[10px] md:pt-0'>{ item.data.zotero.title }</h2>
+                                    <hr className="border-black"/>
+                                    {/* <p className='text-[20px] pt-[10px] md:text-[24px] pb-0'>{ truncateText('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. sit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscing Pellentesque sit amet sapien.', 80) }</p> */}
+                                </div>
+                            </Link>
+                        )}
                     </div>
                 </div>
-            </div>
-
-            {/** Content */}
-            <div className="lg:overflow-scroll">
-                <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                    {[...Array(50)].map((item, index) => {
-                        return (
-                            <CardLink key={index} link={ 'https://www.zotero.org/' }/>
-                        )
-                    })}
+    
+    
+                {/* MOBILE: BTN MENU */}
+                <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
+                    <div 
+                        onClick={() => setIsOpenMenu(!isOpenMenu)}
+                        className="flex items-center justify-center w-full"
+                    >
+                        <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
+                    </div>
                 </div>
-            </div>
-
-
-            {/* MOBILE: BTN MENU */}
-            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
-                <div 
-                    onClick={() => setIsOpenMenu(!isOpenMenu)}
-                    className="flex items-center justify-center w-full"
-                >
-                    <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
+    
+                {/* MOBILE: MENU - FILTERS */}
+                <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {
+                    "translate-y-[100%]": !isOpenMenu
+                })}>
+                    <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
+                        {menuItems.map((item, index) => 
+                            <li key={index}>
+                                <Link key={index} to={item.link} className={classNames('navbar-title', {'active' : pathname === `${item.link}`})}>{item.title}</Link>
+                            </li>
+                       )}
+                    </ul>
                 </div>
-            </div>
+    
+            </LayoutHistorianWorkshop>
+        )
+    }
 
-            {/* MOBILE: MENU - FILTERS */}
-            <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {
-                "translate-y-[100%]": !isOpenMenu
-            })}>
-                <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
-                    {menuItems.map((item, index) => 
-                        <li key={index}>
-                            <Link key={index} to={item.link} className={classNames('navbar-title', {'active' : pathname === `${item.link}`})}>{item.title}</Link>
-                        </li>
-                   )}
-                </ul>
-            </div>
-
-        </LayoutHistorianWorkshop>
-    )
 }
+
+
+

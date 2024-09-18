@@ -58,7 +58,7 @@ export default function Player({ url, className, controls })  {
             <div>
                 <div className='flex items-center'>
                     <span className='text-[20px] sm:text-[24px] uppercase whitespace-nowrap me-3'>{ isPlaying ? t('sound_on') : t('sound_off') }</span>
-                    <ReactPlayer url={ sound } width={ '100%' } height={ '100%' } controls={controls} className={ className } playing={isPlaying} ref={playerRef} />
+                    <ReactPlayer url={ sound } width={ '100%' } height={ '100%' } className={ className } playing={isPlaying} ref={playerRef} loop={ true } />
                     <FontAwesomeIcon icon={isPlaying ? faVolume : faVolumeXmark} className='text-[22px] sm:text-[24px] cursor-pointer' onClick={() => setIsPlaying(!isPlaying)} />
                 </div>
             </div>

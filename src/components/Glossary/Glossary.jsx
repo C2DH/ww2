@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CardText from "../Cards/CardText";
 import Dropdown from "../Dropdown/Dropdown";
 import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop";
@@ -9,150 +9,106 @@ import classNames from 'classnames'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from "react-i18next";
 import { useSharedState } from "../../contexts/SharedStateProvider";
+import axios from "axios";
+import { useLanguageContext } from "../../contexts/LanguageProvider";
+import Error from "../Error/Error";
+
 
 export default function Glossary() {
     
     const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
+    const { language } = useLanguageContext()
     const [filter, setFilter] = useState('')
     const [filteredTerms, setFilteredTerms] = useState([])
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenFilters, setIsOpenFilters] = useState(false)
     const { pathname } = useLocation()
-    const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
-    const terms = [
-        {
-            title : 'Aorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amets'
-        },
-        {
-            title : 'Borem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Corem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Dorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor '
-        },
-        {
-            title : 'Eorem ipsum dolor sit amet consectetur',
-            text : ''
-        },
-        {
-            title : 'Forem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Horem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Lorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Lorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Lorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Jorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Lorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Jorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Jorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Porem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Aorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Aorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Aorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Borem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Vorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Xorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Lorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Yorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Zorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
-        {
-            title : 'Lorem ipsum dolor sit amet consectetur',
-            text : 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.'
-        },
+    
+    const [terms, setTerms] = useState([]);
+    const [offset, setOffset] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null)
 
-    ]
+
+
+    const fetchTerms = async (offset = 0, limit = 10) => {
+        try {
+            const response = await axios.get(
+                `api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter&limit=${ limit }&offset=${ offset }&h=3d18dc9b8cf034e6dfccb472839498f014b8ee036d3b37393e3af8022ddadb2b`
+            );
+            console.log(response.data.results)
+            return response.data.results; 
+        } catch (error) {
+            setError(error)
+            return [];
+        }
+    }
+
+
+    const loadMoreTerms = async () => {
+        setLoading(true);
+        const newTerms = await fetchTerms(offset, 10); 
+        setTerms((prevTerms) => [...prevTerms, ...newTerms]);
+        setLoading(false);
+    };
+
+
+    const observer = useRef()
+
+    const lastTermRef = useCallback(
+        (node) => {
+            if (loading) return;
+            
+            if (observer.current) {
+                observer.current.disconnect();
+            } 
+    
+            observer.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    setOffset((prevOffset) => prevOffset + 10)
+                }
+            })
+    
+            if (node) {
+                observer.current.observe(node);
+            } 
+        },[loading]
+    )
+
+    useEffect(() => {
+        loadMoreTerms()
+    }, [offset])
+
+    {/* TODO: Mettre à jour les tags  */}
+    const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
+
     const menuItems = [
-        {
-            title: "Index historique",
-            link: '/historical-index'
-        },
         {
             title: "Sources",
             link: '/sources'
-        },
-        {
-            title: "Institutions de recherche",
-            link: '/research-institutions'
         },
         {
             title: "Glossaire",
             link: '/glossary'
         },
         {
+            title: "Institutions de recherche",
+            link: '/research-institutions'
+        },
+        {
             title: "Bibliographie",
             link: '/bibliography'
         },
     ]
+
     let allFirstLetters = []
     let selectedLetters = []
 
     terms.map(term => {
-        allFirstLetters.push(term.title.substring(0, 1))
+        allFirstLetters.push(term.data.title[language].substring(0, 1))
         selectedLetters = [...new Set(allFirstLetters)]
     })
-
 
     const handleMenu = (element) => {
         if (element === 'menu') {
@@ -170,82 +126,88 @@ export default function Glossary() {
 
     useEffect(() => {
         if (filter) {
-            const selectedTerms = terms.filter(term => term.title[0] == filter)
+            const selectedTerms = terms.filter(term => term.data.title[language][0] == filter)
             setFilteredTerms(selectedTerms)
         } else {
             setFilteredTerms(terms)
         }
-    },[filter])
+    },[filter, terms])
 
-    return (
-        <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
-
-            <HeaderHistorianWorkshop items={ menuItems }/>
-
-            {/** Filters */}
-            <div className="hidden lg:block mt-[40px]">
-                <div className="border-b border-black pb-[40px] w-full flex flex-wrap gap-y-[20px]">
-                    <div className="w-[40%] relative h-[40px] me-5">
-                        <Dropdown items={tags} text={'Lister des termes'} />
-                    </div>
-
-                    <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} />
-                </div>
-            </div>
-            
-            {/** Content */}
-            <div className="lg:overflow-scroll">
-                <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                    { filteredTerms.map((term, index) => {
-                        return <CardText key={index} title={term.title} text={term.text} />
-                    })}
-                </div>
-            </div>
-
-            {/* MOBILE: BTN MENU / BTN FILTERS */}
-            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
-                <div 
-                    onClick={() => handleMenu('menu')}
-                    className={classNames("flex items-center justify-center", {
-                        "border-r border-black w-1/2": allFirstLetters,
-                        "w-full": !allFirstLetters
-                    })} 
-                >
-                    <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
-                </div>
-
-                {allFirstLetters &&                
-                    <div className="w-1/2 flex items-center justify-center" onClick={() => handleMenu('filter')}>
-                        <span className='uppercase text-[24px] cursor-pointer'>Filtres</span>
-                    </div>
-                }
-            </div>
-
-            {/* MOBILE: MENU - FILTERS */}
-            <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {
-                "translate-y-[100%]": !isOpenMenu
-            })}>
-                <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
-                    {menuItems.map((item, index) => 
-                        <li key={index}>
-                            <Link key={index} to={item.link} className={classNames('navbar-title', {'active' : pathname === `${item.link}`})}>{item.title}</Link>
-                        </li>
-                   )}
-                </ul>
-            </div>
-
-            { allFirstLetters &&
-                <div className={classNames('lg:hidden py-[50px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] flex justify-center items-center', {
-                    "translate-y-[100%]": !isOpenFilters
-                })}>
-                    <div className='flex flex-wrap justify-center gap-2'>
+    if (error) {
+        return <Error />
+    } else {
+        return (
+            <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
+    
+                <HeaderHistorianWorkshop items={ menuItems }/>
+    
+                {/** FILTERS */}
+                <div className="hidden lg:block mt-[40px]">
+                    <div className="border-b border-black pb-[40px] w-full flex flex-wrap gap-y-[20px]">
+                        <div className="w-[40%] relative h-[40px] me-5">
+                            <Dropdown items={tags} text={'Tags'} />
+                        </div>
+    
                         <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} />
                     </div>
                 </div>
-            }
+                
+                {/** CONTENT */}
+                <div className="lg:overflow-scroll">
+                    <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
+                        { filteredTerms.map((term, index) => {
+                            return <CardText key={term.id} ref={terms.length === index + 1 ? lastTermRef : null} 
+     title={term.data.title[language]} text={term.data.definition[language]} />
+                        })}
+                    </div>
+                </div>
+    
+                {/* MOBILE: BTN MENU / BTN FILTERS */}
+                <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
+                    <div 
+                        onClick={() => handleMenu('menu')}
+                        className={classNames("flex items-center justify-center", {
+                            "border-r border-black w-1/2": allFirstLetters,
+                            "w-full": !allFirstLetters
+                        })} 
+                    >
+                        <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
+                    </div>
+    
+                    {allFirstLetters &&                
+                        <div className="w-1/2 flex items-center justify-center" onClick={() => handleMenu('filter')}>
+                            <span className='uppercase text-[24px] cursor-pointer'>{t('filters')}</span>
+                        </div>
+                    }
+                </div>
+    
+                {/* MOBILE: MENU - FILTERS */}
+                <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {
+                    "translate-y-[100%]": !isOpenMenu
+                })}>
+                    <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
+                        {menuItems.map((item, index) => 
+                            <li key={index}>
+                                <Link key={index} to={item.link} className={classNames('navbar-title', {'active' : pathname === `${item.link}`})}>{item.title}</Link>
+                            </li>
+                       )}
+                    </ul>
+                </div>
+    
+                { allFirstLetters &&
+                    <div className={classNames('lg:hidden py-[50px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] flex justify-center items-center', {
+                        "translate-y-[100%]": !isOpenFilters
+                    })}>
+                        <div className='flex flex-wrap justify-center gap-2'>
+                            <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} />
+                        </div>
+                    </div>
+                }
+    
+            </LayoutHistorianWorkshop>
+        )
+    }
 
-        </LayoutHistorianWorkshop>
-    )
 }
 
 
