@@ -16,6 +16,7 @@ import { useLanguageContext } from '../../contexts/LanguageProvider'
 
 // TRANSLATION
 import { useTranslation } from 'react-i18next'
+import axios from "axios";
 
 
 export default function Menu() {
@@ -36,22 +37,22 @@ export default function Menu() {
         return location === pathname
     })
 
-    // API DATA
     useEffect(() => {
-        fetch("https://ww2-lu.netlify.app/api/story/?filters=%7B%22tags__slug%22%3A%22menu%22%7D&order_by=slug&limit=10&h=d159095c9a67b4a002ed8a5c522df27440e74f0f58af01bd93b7d38de7ad7bfa", {
-            method: "GET",
-            headers: {}
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            setResults(data)
-            setIsLoading(true)
-        })
-        .catch((error) => console.log(error))
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("https://ww2-lu.netlify.app/api/story/?filters=%7B%22tags__slug%22%3A%22menu%22%7D&order_by=slug&limit=10&h=d159095c9a67b4a002ed8a5c522df27440e74f0f58af01bd93b7d38de7ad7bfa")
+                const data = response.data
+                setResults(data)
+                setIsLoading(true)
+            } catch (error) {
+                setIsLoading(false)
+            }
+        }
+            
+        fetchData(); 
+    }, [])
 
-    }, [isLoading, language])
-
-
+   
     // ANIMATION MENU 
     useEffect(() => {
             if (openMenu) {
