@@ -1,15 +1,18 @@
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import Error from '../Error/Error'
 import Dropdown from "../Dropdown/Dropdown"
 import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop"
 import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop"
-import { useCallback, useEffect, useRef, useState } from "react"
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import classNames from "classnames"
 import { useTranslation } from "react-i18next"
 import { useSharedState } from "../../contexts/SharedStateProvider"
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import axios from "axios"
+import { Cite } from '@citation-js/core'
+import '@citation-js/plugin-csl'
+import { truncateText, cleanText } from '../../lib/utils'
 
 
 export default function Bibliography() {
@@ -69,6 +72,7 @@ export default function Bibliography() {
 
     useEffect(() => {
         loadMoreBooks()
+        console.log(books)
     }, [offset])
 
 
@@ -120,17 +124,19 @@ export default function Bibliography() {
                 <div className="lg:overflow-scroll">
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
                         { books.map((item, index) => 
-                            <Link className="block col-span-12 md:col-span-6 border border-black rounded-[5px] p-[10px] h-[240px] lg:h-[140px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow cursor-pointer"
+                            <div className={`block col-span-12 md:col-span-6 border border-black rounded-[5px] p-[10px] h-[240px] lg:h-[140px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow ${item.data.zotero.url !== "" ? 'cursor-pointer' : '' } overflow-hidden`}
                                 key={item.id} 
                                 ref={books.length === index + 1 ? lastBookRef : null} 
                                 to={item.data.zotero.url}
                                 target="_blank" >
                                 <div className="col-span-6 lg:col-span-4">
-                                    <h2 className='text-[24px] lg:text-[30px] pt-[10px] md:pt-0'>{ item.data.zotero.title }</h2>
+                                    <h2 className='text-[24px] lg:text-[30px] pt-[10px] md:pt-0'>{ cleanText(truncateText(item.data.zotero.title, 100)) }</h2>
                                     <hr className="border-black"/>
+
+                                    <DocumentReference doc={item}/>
                                     {/* <p className='text-[20px] pt-[10px] md:text-[24px] pb-0'>{ truncateText('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. sit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscing Pellentesque sit amet sapien.', 80) }</p> */}
                                 </div>
-                            </Link>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -169,3 +175,32 @@ export default function Bibliography() {
 
 
 
+const DocumentReference = ({ doc = {} }) => {
+    const { i18n } = useTranslation()
+  
+    // if the `data.csljson` field is not present in the doc object, log an error and return null
+    if (!doc.data?.csljson) {
+      console.error('data.csljson field not found in doc:', doc)
+      return null
+    }
+    const cite = new Cite(doc.data.csljson)
+  
+    // format the reference using the `Cite` instance and the specified citation style (APA style in this case)
+    let reference = cite.format('bibliography', {
+      template: 'apa',
+      format: 'html',
+      lang: i18n.language,
+    })
+    if (typeof reference === 'string') {
+      reference = cleanText(reference.replace(
+        /(https?:\/\/[0-9a-zA-Z-./_:?=%&#;]+)/g,
+        (m, link) => `<a href="${link}" target="_blank">${link}</a>`,
+      ))
+    }
+    return (
+      <div>
+        {reference !== null && <p className="text-[22px] leading-none font-light pt-[10px]" dangerouslySetInnerHTML={{ __html: reference }} />}
+      </div>
+    )
+  }
+  

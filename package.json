@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@citation-js/core": "^0.7.14",
+    "@citation-js/plugin-csl": "^0.7.14",
+    "@citation-js/plugin-doi": "^0.7.14",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/pro-light-svg-icons": "^6.5.2",
