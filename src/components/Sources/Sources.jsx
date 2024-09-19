@@ -1,43 +1,34 @@
 import bgPaper from '../../assets/images/common/bg-paper.png'
-import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop";
-import CardImageText from '../Cards/CardImageText';
-import Dropdown from '../Dropdown/Dropdown';
-import ButtonFilter from '../ButtonFilter/ButtonFilter';
-import LayoutHistorianWorkshop from '../LayoutHistorianWorkshop/LayoutHistorianWorkshop';
-import { useEffect, useState } from 'react';
-import classNames from 'classnames';
-import { Link, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useSharedState } from '../../contexts/SharedStateProvider';
+import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop"
+import CardImageText from '../Cards/CardImageText'
+import Dropdown from '../Dropdown/Dropdown'
+import ButtonFilter from '../ButtonFilter/ButtonFilter'
+import LayoutHistorianWorkshop from '../LayoutHistorianWorkshop/LayoutHistorianWorkshop'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import classNames from 'classnames'
+import { Link, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useSharedState } from '../../contexts/SharedStateProvider'
+import axios from 'axios'
+import { useLanguageContext } from '../../contexts/LanguageProvider'
+
 
 
 export default function Sources() {
     const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
-    const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
-    const types = [
-        {
-            category: "Audio",
-            number: 17
-        },
-        {
-            category: "Video",
-            number: 5
-        },
-        {
-            category: "Photo",
-            number: 11
-        },
-        {
-            category: "Livre",
-            number: 4
-        },
-        {
-            category: "Document manuscrit",
-            number: 19
-        }
-    ]
+    const { language } = useLanguageContext()
 
+    const [offset, setOffset] = useState(0)
+    const [loading, setLoading] = useState(false)
+    const [sources, setSources] = useState([])
+    const [types, setTypes] = useState([])
+    const { pathname } = useLocation()
+    const [isOpenMenu, setIsOpenMenu] = useState(false)
+    const [isOpenFilters, setIsOpenFilters] = useState(false)
+    const [filters, setFilters] = useState({types: [], tags: []})
+    const [filteredSources, setFilteredSources] = useState([])
+    const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
     const menuItems = [
         {
             title: "Sources",
@@ -57,14 +48,74 @@ export default function Sources() {
         },
     ]
     
-    const { pathname } = useLocation()
-    const [isOpenMenu, setIsOpenMenu] = useState(false)
-    const [isOpenFilters, setIsOpenFilters] = useState(false)
-    const [ filters, setFilters ] = useState({types: [], tags: []})
+    
+    const fetchSources = async (offset = 0, limit = 20) => {
+        try {
+            const response = await axios.get(`api/document/?filters=%7B%22type__in%22%3A%5B%22audio%22%2C%22video%22%2C%22photo%22%2C%22book%22%2C%22manuscript%22%5D%7D&facets=type&limit=${ limit }&offset=${ offset }&h=7fcfbced29a08130670e1a6aee760896b53846be36792d39833dc9c0550fe56f`)
+            setTypes(response.data.facets.type)
+            return response.data
+        } catch (error) {
+            return []
+        }
+    }
+
+
+    const loadMoreSources = async () => {
+        setLoading(true)
+        const newSources = await fetchSources(offset)
+        setSources((prevSources) => [...prevSources, ...newSources.results])
+        setLoading(false)
+    };
+
+
+    const observer = useRef()
+
+    const lastSourceRef = useCallback(
+        (node) => {
+            if (loading) return;
+            
+            if (observer.current) {
+                observer.current.disconnect();
+            } 
+    
+            observer.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    setOffset((prevOffset) => prevOffset + 20)
+                }
+            })
+    
+            if (node) {
+                observer.current.observe(node);
+            } 
+        },[loading]
+    )
+
+    useEffect(() => {
+        loadMoreSources()
+    }, [offset])
+    
+    
+
+    useEffect(() => {
+        if (filters.types.length > 0) {
+            const filteredSources = sources.filter(source => filters.types.includes(source.type))
+            setFilteredSources(filteredSources)
+        } else {
+            setFilteredSources(sources)
+        }
+
+        console.log(sources)
+    },[sources, filters])
+    
+
+
+
+
     
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, [])
+
 
     const handleMenu = (element) => {
         if (element === 'menu') {
@@ -76,29 +127,6 @@ export default function Sources() {
         }
     }
 
-    const generateContent = () => {
-        const arrayContent = []
-        for(let i = 0; i < 25; i++) {
-            arrayContent.push({
-                img: 'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?q=80&w=1839&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                tag: tags[Math.floor(Math.random() * tags.length)],
-                title: 'Lorem ipsum dolor sit amet',
-                text: 'Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien.',
-                type: types[Math.floor(Math.random() * types.length)].category
-            })
-        }
-        return arrayContent
-    }
-
-    const items = generateContent()
-
-    const filteredItems = items.filter(item => {
-        if (filters.types.length === 0) {
-            return items
-        } else {
-            return filters.types.includes(item.type)
-        }
-    })
 
     const clickButton = (type) => {
         if (!filters.types.includes(type)) {
@@ -114,12 +142,13 @@ export default function Sources() {
         }
     }
 
+
     return (
         <LayoutHistorianWorkshop pageTitle={ t('menuItems.sources')}>
 
             <HeaderHistorianWorkshop items={ menuItems } />
 
-            {/** Filters */}
+            {/** FILTERS */}
             <div className="hidden lg:block mt-[30px] 2xl:mt-[40px]">
                 <div className="grid grid-cols-12 gap-5 border-b border-black pb-[30px] 2xl:pb-[40px]">
                     <div className="col-span-5 relative">
@@ -127,29 +156,42 @@ export default function Sources() {
                     </div>
 
                     <div className="col-span-7">
-                        {types?.map((type, index) => {
-                            return (
-                                <ButtonFilter key={index} title={type.category} number={type.number} types={filters.types} handleClick={() => clickButton(type.category)} />
-                            )
-                        })} 
+                        {types?.map((type, index) => 
+                            <ButtonFilter key={index} title={type.type} number={type.count} types={filters.types} handleClick={() => clickButton(type.type)} /> 
+                        )}
                     </div>
                 </div>
             </div>
                 
-            {/** Content */}   
+            {/** CONTENT */}   
+            {/* TODO: Manque les photos, modèles 3D et audio */}
             <div className='lg:overflow-scroll'>
                 <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                    { filteredItems.map((item, index) => {
-                        return (
-                            <CardImageText 
-                                key={index}
-                                img={item.img} 
-                                tag={item.tag}
-                                title={item.title}
-                                text={item.text}
-                                // type={item.type}
-                            />
-                        )
+                    { filteredSources.map((source, index) => {
+                        if (source.type === 'video') { 
+                            return (
+                                <CardImageText 
+                                    myRef={filteredSources.length === index + 1 ? lastSourceRef : null}
+                                    key={index}
+                                    img={source.data.resolutions.medium.url} 
+                                    title={source.data.title[language]}
+                                    // text={source.text}
+                                    type={source.type}
+                                />
+                            )
+                        } else if (source.type === "book" || source.type === "manuscript") {
+                            return (
+                                <CardImageText 
+                                    myRef={filteredSources.length === index + 1 ? lastSourceRef : null}
+                                    key={index}
+                                    title={source.data.zotero.title}
+                                    // text={source.text}
+                                    type={source.type}
+                                />
+                            )
+                        }
+
+
                     })}
                 </div>
             </div>
@@ -191,14 +233,8 @@ export default function Sources() {
                     "translate-y-[100%]": !isOpenFilters
                 })}>
                     <div className='flex flex-col shrink-0'>
-                        { types.map((item, index) => 
-                            <ButtonFilter 
-                                key={index} 
-                                title={item.category} 
-                                number={item.number} 
-                                types={filters.types}
-                                handleClick={() => clickButton(item.category)}
-                            />
+                        {types?.map((type, index) => 
+                            <ButtonFilter key={index} title={type.type} number={type.count} types={filters.types} handleClick={() => clickButton(type.category)} /> 
                         )}
                     </div>
                 </div>

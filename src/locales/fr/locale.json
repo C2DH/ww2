@@ -30,5 +30,7 @@
     "credits": "Générique",
     "related_note": "note liée",
     "related_notes": "notes liées",
-    "filters": "filtres"
+    "filters": "filtres",
+    "book": "Livre",
+    "manuscript": "Manuscrit"
 }

@@ -29,9 +29,7 @@ export default function Bibliography() {
 
     const fetchBooks = async (offset = 0, limit = 10) => {
         try {
-            const response = await axios.get(
-                `api/document/?filters=%7B%22type__in%22:%5B%22reference%22,%22book%22,%22manuscript%22%5D%7D&facets=data__type&limit=${limit}&offset=${offset}&h=d5e2e995b3db151bf2ed6ed27ffa19713a0dd8bacd529494021ae0ff6b3f0185`
-            )
+            const response = await axios.get(`api/document/?filters=%7B%22type__in%22:%5B%22reference%22,%22book%22,%22manuscript%22%5D%7D&facets=data__type&limit=${limit}&offset=${offset}&h=d5e2e995b3db151bf2ed6ed27ffa19713a0dd8bacd529494021ae0ff6b3f0185`)
             return response.data.results
         } catch (error) {
             setError(error)
@@ -122,7 +120,6 @@ export default function Bibliography() {
                 <div className="lg:overflow-scroll">
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
                         { books.map((item, index) => 
-    
                             <Link className="block col-span-12 md:col-span-6 border border-black rounded-[5px] p-[10px] h-[240px] lg:h-[140px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow cursor-pointer"
                                 key={item.id} 
                                 ref={books.length === index + 1 ? lastBookRef : null} 
@@ -167,6 +164,8 @@ export default function Bibliography() {
     }
 
 }
+
+
 
 
 

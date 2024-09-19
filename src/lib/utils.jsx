@@ -2,15 +2,15 @@ import { all } from "axios";
 import { marked } from "marked";
 
 
-export function truncateText(text, maxLegth) {
-    if (text.length > maxLegth) {
-        return text.substring(0, maxLegth) + '...';
+export function truncateText(text, maxLength) {
+    if (text && text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
     }
     return text;
 }
 
 
-export function convertToHtml(text, index) {
+export function convertToHtml(text) {
     
     if (containsMarkdown(text)) {
         return marked(text)
@@ -22,4 +22,16 @@ export function convertToHtml(text, index) {
 function containsMarkdown(text) {
   const markdownRegex = /[#*_\-`>\[\]!]/
   return markdownRegex.test(text)
+}
+
+
+export function cleanText(text) {
+    return text 
+        .replace(/> /gm, ' ')
+        .replace(/>\n/gm, ' ')
+        .replace(/\\'/g, "'")
+        .replace('\\"', '"')
+        .replace(/"/g, '')
+        .replace(/[„“]/g, '')
+        .replace('?', ' ')
 }

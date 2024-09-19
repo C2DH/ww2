@@ -40,7 +40,7 @@ export default function Menu() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("https://ww2-lu.netlify.app/api/story/?filters=%7B%22tags__slug%22%3A%22menu%22%7D&order_by=slug&limit=10&h=d159095c9a67b4a002ed8a5c522df27440e74f0f58af01bd93b7d38de7ad7bfa")
+                const response = await axios.get("api/story/?filters=%7B%22tags__slug%22%3A%22menu%22%7D&orderby=slug&limit=10&h=16ee08eeb51a2ea46fa3d851e1dbbccdc2966dd7601aa1705c27db5890393b57")
                 const data = response.data
                 setResults(data)
                 setIsLoading(true)
@@ -163,8 +163,9 @@ const MenuLogo = ({ isOpenMenu, setIsOpenMenu, translate }) => {
     return (
         <div className='absolute top-[5px] left-[50%] -translate-x-[50%]'>
             <div>
-                <span className='block text-center cursor-pointer uppercase text-[18px]' onClick={() => setIsOpenMenu(!isOpenMenu) }
-                >{isOpenMenu ? `- ${translate('close')} -` : `- ${translate('menu')} -`  }</span>
+                <span className='block text-center cursor-pointer uppercase text-[18px]' onClick={() => setIsOpenMenu(!isOpenMenu) }>
+                    {isOpenMenu ? `- ${translate('close')} -` : `- ${translate('menu')} -`  }
+                </span>
                 <Link to={'/'}>
                     <img src={ logo } alt="Logo Menu" className='w-[180px]' onClick={() => setIsOpenMenu(false)}/>
                 </Link>

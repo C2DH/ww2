@@ -30,5 +30,7 @@
     "credits": "Credits",
     "related_note": "related note",
     "related_notes": "related notes",
-    "filters": "filters"
+    "filters": "filters",
+    "book": "Buch",
+    "manuscript": "Manuskript"
 }

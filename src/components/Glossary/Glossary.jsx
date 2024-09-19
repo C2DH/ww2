@@ -34,23 +34,20 @@ export default function Glossary() {
 
     const fetchTerms = async (offset = 0, limit = 10) => {
         try {
-            const response = await axios.get(
-                `api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter&limit=${ limit }&offset=${ offset }&h=3d18dc9b8cf034e6dfccb472839498f014b8ee036d3b37393e3af8022ddadb2b`
-            );
-            console.log(response.data.results)
-            return response.data.results; 
+            const response = await axios.get(`api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter&limit=${ limit }&offset=${ offset }&h=3d18dc9b8cf034e6dfccb472839498f014b8ee036d3b37393e3af8022ddadb2b`)
+            return response.data.results
         } catch (error) {
             setError(error)
-            return [];
+            return []
         }
     }
 
 
     const loadMoreTerms = async () => {
-        setLoading(true);
-        const newTerms = await fetchTerms(offset, 10); 
-        setTerms((prevTerms) => [...prevTerms, ...newTerms]);
-        setLoading(false);
+        setLoading(true)
+        const newTerms = await fetchTerms(offset, 10)
+        setTerms((prevTerms) => [...prevTerms, ...newTerms])
+        setLoading(false)
     };
 
 
@@ -145,7 +142,7 @@ export default function Glossary() {
                 <div className="hidden lg:block mt-[40px]">
                     <div className="border-b border-black pb-[40px] w-full flex flex-wrap gap-y-[20px]">
                         <div className="w-[40%] relative h-[40px] me-5">
-                            <Dropdown items={tags} text={'Tags'} />
+                            <Dropdown items={tags} text={'Liste des tags'} />
                         </div>
     
                         <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} />
@@ -155,10 +152,9 @@ export default function Glossary() {
                 {/** CONTENT */}
                 <div className="lg:overflow-scroll">
                     <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                        { filteredTerms.map((term, index) => {
-                            return <CardText key={term.id} ref={terms.length === index + 1 ? lastTermRef : null} 
-     title={term.data.title[language]} text={term.data.definition[language]} />
-                        })}
+                        { filteredTerms.map((term, index) => 
+                            <CardText key={term.id} ref={filteredTerms.length === index + 1 ? lastTermRef : null} title={term.data.title[language]} text={term.data.description[language]} />
+                        )}
                     </div>
                 </div>
     

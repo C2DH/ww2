@@ -1,26 +1,34 @@
-import { Link } from "react-router-dom";
-import { truncateText } from "../../lib/utils";
+import { truncateText } from "../../lib/utils"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBook } from "@fortawesome/pro-thin-svg-icons" 
+import { cleanText } from "../../lib/utils"
 
-export default function CardImageText({ img, tag = "", title = "", text, type = "", truncate = 80 }) {
+export default function CardImageText({ img, title = "", text, type = "", truncate = 80, myRef }) {
+
     return (
-        <Link className="col-span-12 md:col-span-6 xl:col-span-4 border border-black rounded-[5px] p-[10px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow">
+        <div className="col-span-12 md:col-span-6 xl:col-span-4 border border-black rounded-[5px] p-[10px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow h-[130px] overflow-hidden cursor-pointer" ref={myRef}>
             <div className="grid grid-cols-4 gap-x-[20px]">
+                
                 <div className="col-span-4 lg:col-span-1">
-                    <img src={ img } alt="" className='rounded-[2px] w-full h-[150px] lg:h-[110px] object-cover' />
+                    { (type === "book" || type === "manuscript") &&
+                        <div className="bg-gray-200 lg:h-[110px] flex items-center justify-center rounded-[2px]">
+                            <FontAwesomeIcon icon={ faBook} style={{ fontSize: '50px' }}/>
+                        </div>
+                    }
+
+                    { type === "video" &&
+                        <img src={ img } alt="" className='rounded-[2px] w-full h-[150px] lg:h-[110px] object-cover' />
+                    } 
                 </div>
+
                 <div className="col-span-4 lg:col-span-3">
-                    { tag &&
-                        <span className='block text-[20px] pt-[20px] lg:pt-0 font-light'># { tag }</span>
+                    { title &&  
+                        <h2 className='text-[22px] leading-none'>{ cleanText(title)} </h2>
                     }
-
-                    {type}
-
-                    { title &&
-                        <h2 className='uppercase py-[5px] font-abril text-[18px]'>{ title }</h2>
-                    }
-                    <p className='text-[20px] sm:text-[24px] pb-0'>{ truncateText(text, truncate) }</p>
                 </div>
             </div>
-        </Link>
+        </div>
     )
 }
+
+

@@ -1,6 +1,21 @@
 import classNames from "classnames"
+import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 export default function ButtonFilter({ title, number, types, handleClick }) {
+
+    const { t } = useTranslation()
+    const [titleBtn, setTitleBtn] = useState()
+
+    useEffect(() => {
+        if (title === "book") {
+            setTitleBtn(t('book'))
+        } else if (title === "manuscript")  {
+            setTitleBtn(t('manuscript'))
+        } else {
+            setTitleBtn(title)
+        }
+    }, [title, t])
 
     return (
         <button 
@@ -8,8 +23,8 @@ export default function ButtonFilter({ title, number, types, handleClick }) {
                 'bg-black text-white': types?.includes(title)
             })} 
             onClick={() => handleClick() }>
-            {title}
-            <span className="text-[20px] flex justify-center items-center absolute top-1/2 transform -translate-y-1/2 right-[-15px] border border-black bg-white w-[27px] h-[27px] rounded-full text-black">{number}</span>
+            {titleBtn}
+            <span className="text-[20px] flex justify-center items-center absolute top-1/2 transform -translate-y-1/2 right-[-20px] border border-black bg-white w-[27px] h-[27px] rounded-full text-black p-4">{number}</span>
         </button>
     )
 }

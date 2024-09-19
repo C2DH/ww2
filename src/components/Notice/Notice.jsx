@@ -36,8 +36,6 @@ export default function Notice() {
         .then((data) => {
             setResults(data)
             setIsLoaded(true)
-
-            console.log(data)
         })
         .catch((error) => console.log(error))
     }, [isLoaded])
