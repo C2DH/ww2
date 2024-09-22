@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import siteConfig from '../../../site.config'
+import axios from 'axios'
 
 
 export default function Catalogue() {
@@ -22,21 +23,30 @@ export default function Catalogue() {
     const [readTheme3, setReadTheme3] = useState(50/100)
     const [readTheme4, setReadTheme4] = useState(85/100)
     const [isLoaded, setIsLoaded] = useState(false)
-    const [theme, setTheme] = useState([])
+    const [themes, setThemes] = useState([])
 
     useEffect(() => {
         const fetchThemes = async () => {
             try {
-                const response1 = await fetch(`https://ww2-lu.netlify.app/api/story/theme-01-vivre-sous-lannexion`)
-                const data1 = await response1.json()
+                const allThemes = await axios.get('api/story/?filters=%7B%22mentioned_to__slug%22%3A+%22level-02-catalogue%22%7D&h=18911731f3caad4abb8fd1fe5397788fe24aa874993409dc78c29123ebd586b8')
 
-                const response2 = await fetch(`https://ww2-lu.netlify.app/api/story/theme-02-reagir-a-lannexion`)
-                const data2 = await response2.json()
+                if (allThemes.data.results.length > 0) {
+                    const themesPromises = allThemes.data.results.map( async (theme, index) => {
+                        try {
+                            const newTheme = await axios.get(`/api/story/${theme.slug}`)
+                            return newTheme.data
+                        } catch(error) {
+                            console.log(`Une erreur est survenue lors de la récupération du thème : ${theme.slug}`, error)
+                        }
+                    })
 
-                setTheme([data1, data2])
-                setIsLoaded(true)
+                    const themesData = await Promise.all(themesPromises)
+                    console.log('themesData', themesData)
+                    setThemes(themesData)
+                    setIsLoaded(true)
+                }
             } catch (error) {
-                console.log(error)
+                console.log('Une erreur est survenue lors de la récupération de tous les thèmes', error)
             }
         }
         fetchThemes()
@@ -44,7 +54,6 @@ export default function Catalogue() {
         setSharedState({ ...sharedState, showCurtains: false });
 
     }, [])
-
 
     if (isLoaded) {
         return (
@@ -86,7 +95,7 @@ export default function Catalogue() {
                     </div>
                     
                     <div className='lg:flex flex-grow flex-col lg:overflow-scroll'>
-                        <Accordion items={ theme } />
+                        <Accordion items={ themes } />
                     </div>
                 </div>
             </motion.div>

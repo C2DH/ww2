@@ -48,7 +48,7 @@ export default function Note() {
     }, [])
 
     const handleSourcePopup = (document) => {
-        
+        console.log('click')
         if (!dataPopup.open) {
             setDataPopup(prevSource => ({
                 ...prevSource, 
@@ -71,7 +71,7 @@ export default function Note() {
                     <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] flex flex-col px-[30px]">
     
                         <div className='flex items-center justify-between pt-[10px]'>
-                            <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[80px] text-[20px] lg:text-[30px]'>
+                            <Link to={'/level-02-catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[50px] text-[20px] lg:text-[30px]'>
                                 <FontAwesomeIcon icon={faArrowLeftLongToLine} />
                             </Link>
                             <div className='lg:hidden text-[20px] md:text-[24px] uppercase flex items-center cursor-pointer pl-[20px]'>   

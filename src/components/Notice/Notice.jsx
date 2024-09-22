@@ -86,7 +86,7 @@ export default function Notice() {
                             </div>
 
                             <div className="col-span-12 xl:col-span-6 xl:px-[50px] 2xl:px-0 xl:col-start-4 order-1 xl:order-2 rounded-[6px]">
-                                <Player url={ results.covers[0].data.videoResolutions.sd360p.url} controls={ true } className={'rounded-[6px]'} style={{ borderRadius: '6px' }}/>
+                                <Player url={ results.covers[0].data.videoResolutions.sd360p.url} controls={ true } className={'rounded-[6px]'}/>
                             </div>
 
                             <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3">

@@ -51,9 +51,12 @@ export default function App() {
                     <AnimatePresence mode="wait">
                         <Routes location={location} key={location.pathname}>
                             <Route path='/' element={ <Layout/>} >
-                                <Route index element={ <Home /> }/>
-                                <Route path='/catalogue' element={ <Catalogue /> }/>
-                                <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
+                                {/* <Route index element={ <Home /> }/> */}
+                                <Route path='/level-01-journeys' element={ <Home /> }/>
+                                {/* <Route path='/catalogue' element={ <Catalogue /> }/> */}
+                                <Route path='/level-02-catalogue' element={ <Catalogue /> }/>
+                                {/* <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/> */}
+                                <Route path='level-03-atelier-de-l-historien-ne' element={ <HistorianWorkshop /> }/>
                                 {/* <Route path='/historical-index' element={ <HistoricalIndex /> }/> */}
                                 <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
                                 <Route path='/bibliography' element={ <Bibliography /> }/>

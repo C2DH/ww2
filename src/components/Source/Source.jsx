@@ -21,7 +21,7 @@ export default function Source({ data, handleSourcePopup }) {
 
     return (
         <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='w-full lg:relative lg:top-0 absolute -top-[120px]'>
-            <div className='hidden lg:block absolute top-[40px] left-[40px] text-[30px] text-white'>
+            <div className='hidden lg:block absolute top-[40px] left-[40px] text-[30px] text-white z-[100]'>
                 <FontAwesomeIcon icon={faArrowLeftLongToLine} onClick={ handleSourcePopup } className='cursor-pointer'/>
             </div>
 

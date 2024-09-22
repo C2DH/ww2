@@ -38,18 +38,22 @@ export default function Menu() {
     })
 
     useEffect(() => {
-        const fetchData = async () => {
+        
             try {
-                const response = await axios.get("api/story/?filters=%7B%22tags__slug%22%3A%22menu%22%7D&orderby=slug&limit=10&h=16ee08eeb51a2ea46fa3d851e1dbbccdc2966dd7601aa1705c27db5890393b57")
-                const data = response.data
-                setResults(data)
-                setIsLoading(true)
+                axios
+                    .get("api/story?filters=%7B%22tags__slug%22%3A%22menu%22%7D&orderby=slug&limit=10&h=16ee08eeb51a2ea46fa3d851e1dbbccdc2966dd7601aa1705c27db5890393b57")
+                    .then(response => {
+                        console.log(response)
+                        setResults(response.data)
+                        setIsLoading(true)
+                    })
             } catch (error) {
+                console.log(error)
                 setIsLoading(false)
             }
-        }
+       
             
-        fetchData(); 
+       
     }, [])
 
    
@@ -98,16 +102,17 @@ export default function Menu() {
                                 'opacity-0': !openMenu 
                             })}>
 
-                                { results.results.slice(1, 5).map(item => 
+                                {/* { results.results.slice(2, 5).map(item =>
                                     <li key={ item.id } className="mb-[40px]">
-                                        <MenuItem path={'/'} title={item.data.title[language]} text={item.data.subtitle ? item.data.subtitle[language] : ""} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
+                                        <MenuItem path={item.slug} title={item.data.title[language]} text={item.data.subtitle ? item.data.subtitle[language] : ""} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
                                     </li>
-                                )}
+                                    )
+                                } */}
 
                                 {/** CREDITS */}
-                                <li className="mb-[40px]">
+                                {/* <li className="mb-[40px]">
                                     <MenuItem path={'/'} title={ results.results[6].data.title[language] } text={ results.results[6].data.subtitle ? results.results[6].data.subtitle[language] : "" } className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
-                                </li>
+                                </li> */}
                             </ul>
                         </div>
 

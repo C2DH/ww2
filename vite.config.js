@@ -6,8 +6,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://ww2.lu',   
-        changeOrigin: true,         
+        target: 'https://ww2.lu',
+        changeOrigin: true
       },
     },
   },
