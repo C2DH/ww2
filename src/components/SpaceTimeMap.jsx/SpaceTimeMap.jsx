@@ -20,159 +20,20 @@ import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import { t } from 'i18next'
-import { useTranslation } from 'react-i18next'
 import { useMediaQuery } from 'react-responsive'
 import siteConfig from '../../../site.config'
-
+import { fetchData } from '../../lib/utils';
 
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const styleBlueprint = import.meta.env.VITE_API_STYLE_MAPBOX_BLUEPRINT
 const styleMSF = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
 const styleGeo = import.meta.env.VITE_API_STYLE_MAPBOX_GEO
 
-const geojson = {
-    features: [
-        {
-            id: 1,
-            geometry: {
-                coordinates: [49.48056, 6.0875]
-            },
-            properties: {
-                place: 'Dudelange',
-                location: 'Clinique Saint Joseph',
-                description: 'Lieu de ravitaillement des réfugiés de Dudelange',
-                image: 'https://images.unsplash.com/photo-1590337318473-f1e81866c60c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                media: "video-1.mp4",
-            },
-            notes_related: [
-                {
-                    title: 'Note 01',
-                    description: "Lorem ipsum dolor sit amet consectetur."
-                },
-                {
-                    title: 'Note 02',
-                    description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                },
-                {
-                    title: 'Note 03',
-                    description: "Dolor sit amet consectetur."
-                }
-            ]
-        },
-        {
-            id: 2,
-            geometry: {
-                coordinates: [49.6112768, 6.129799]
-            },
-            properties: {
-                place: 'Luxembourg',
-                location: 'Clinique Saint Antoine',
-                description: 'Lieu de ravitaillement des réfugiés de Luxembourg',
-                image: 'https://images.unsplash.com/photo-1588336899284-950764f07147?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                media: "video-2.mp4"
-            },
-            notes_related: [
-                {
-                    title: 'Note 01',
-                    description: "Lorem ipsum dolor sit amet consectetur."
-                },
-                {
-                    title: 'Note 02',
-                    description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                },
-                {
-                    title: 'Note 03',
-                    description: "Dolor sit amet consectetur."
-                }
-            ]
-        },
-        {
-            id: 3,
-            geometry: {
-                coordinates: [49.4959628, 5.9850306]
-            },
-            properties: {
-                place: 'Esch-sur-Alzette',
-                location: 'Salle des sports',
-                description: 'Lieu de ravitaillement des réfugiés de Esch-sur-Alzette',
-                image: 'https://images.unsplash.com/photo-1590337318156-73e24cd1e36b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                media: 'video-1.mp4'
-            },
-            notes_related: [
-                {
-                    title: 'Note 01',
-                    description: "Lorem ipsum dolor sit amet consectetur."
-                },
-                {
-                    title: 'Note 02',
-                    description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                },
-                {
-                    title: 'Note 03',
-                    description: "Dolor sit amet consectetur."
-                }
-            ]
-        },
-        {
-            id: 4,
-            geometry: {
-                coordinates: [49.9666628, 5.9333296]
-            },
-            properties: {
-                place: 'Wiltz',
-                location: 'Hopital Lorem',
-                description: 'Lieu de ravitaillement des réfugiés de Wiltz',
-                image: 'https://images.unsplash.com/photo-1593131540982-57778192fc21?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                media: 'video-2.mp4'
-            },
-            notes_related: [
-                {
-                    title: 'Note 01',
-                    description: "Lorem ipsum dolor sit amet consectetur."
-                },
-                {
-                    title: 'Note 02',
-                    description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                },
-                {
-                    title: 'Note 03',
-                    description: "Dolor sit amet consectetur."
-                }
-            ]
-        },
-        {
-            id: 5,
-            geometry: {
-                coordinates: [50.2994, 5.5119]
-            },
-            properties: {
-                place: 'Grande-Bretagne',
-                location: 'Hopital Lorem',
-                description: 'Lieu de ravitaillement des réfugiés de Wiltz',
-                image: 'https://images.unsplash.com/photo-1593131540982-57778192fc21?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                media: 'video-2.mp4'
-            },
-            notes_related: [
-                {
-                    title: 'Note 01',
-                    description: "Lorem ipsum dolor sit amet consectetur."
-                },
-                {
-                    title: 'Note 02',
-                    description: "Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis."
-                },
-                {
-                    title: 'Note 03',
-                    description: "Dolor sit amet consectetur."
-                }
-            ]
-        }
-    ]
-};
 
 export default function SpaceTimeMap() {
-    const { t } = useTranslation()
     const [sharedState, setSharedState] = useSharedState()
+    const [data, setData] = useState([])
+    const [isLoaded, setIsLoaded] = useState(false)
     const mapRef = useRef(null);
     const [ viewState, setViewState ] = useState({
         longitude: 6.1243943,
@@ -183,6 +44,23 @@ export default function SpaceTimeMap() {
         maxZoom: 18,
         minZoom: 8
     })
+
+    // ALL LOCATIONS WITH DATE
+    useEffect(() => {
+        const getData = async () => {
+            const locations = await fetchData(`document`, {
+                covers__mentioned_to__slug: 'spatiotemporal-map'
+            })
+            
+            if (locations.results.length > 0) {
+                const locationsWithDates = locations.results.filter(location => location.data.start_date && location.data.end_date)
+                setData(locationsWithDates)
+                setIsLoaded(true)
+            }
+        }
+        getData()
+    }, [])
+
 
     useEffect(() => {
         setSharedState({ ...sharedState, showCurtains: false })
@@ -203,69 +81,71 @@ export default function SpaceTimeMap() {
     }
 
 
-    return (
-        
-        <motion.div className='h-full w-full' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                <MapBox items={geojson.features} state={viewState} reference={mapRef}/>
-                
-                {/** Map style and zoom */}
-                <div className='absolute top-[40px] right-[20px]'>
-                    <div className='flex gap-2 lg:gap-5'>
-
-                        { viewState.style !== styleGeo &&     
-                            <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleGeo}) }>
-                                <img src={map1} alt="map" className='rounded-[4px]' />
-                            </div>
-                        }
-
-                        { viewState.style !== styleMSF &&                    
-                            <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleMSF}) }>
-                                <img src={map2} alt="map" className='rounded-[4px]'/>
-                            </div>
-                        }
-
-                        { viewState.style !== styleBlueprint &&
-                            <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleBlueprint}) }>
-                                <img src={map3} alt="map" className='rounded-[4px]'/>
-                            </div>
-                        }
-
-                        <div>
-                            <>
-                                <div className='h-[40px] w-[40px] bg-white rounded-t-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) + 1}) }>
-                                    <FontAwesomeIcon icon={faPlus} className={classNames('cursor-pointer', {
-                                        'pointer-events-none text-gray-300': viewState.zoom >= 18
+    if (isLoaded) {
+        return (
+            
+            <motion.div className='h-full w-full' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
+                    <MapBox items={data} state={viewState} reference={mapRef}/>
+                    
+                    {/** Map style and zoom */}
+                    <div className='absolute top-[40px] right-[20px]'>
+                        <div className='flex gap-2 lg:gap-5'>
+    
+                            { viewState.style !== styleGeo &&     
+                                <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleGeo}) }>
+                                    <img src={map1} alt="map" className='rounded-[4px]' />
+                                </div>
+                            }
+    
+                            { viewState.style !== styleMSF &&                    
+                                <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleMSF}) }>
+                                    <img src={map2} alt="map" className='rounded-[4px]'/>
+                                </div>
+                            }
+    
+                            { viewState.style !== styleBlueprint &&
+                                <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: styleBlueprint}) }>
+                                    <img src={map3} alt="map" className='rounded-[4px]'/>
+                                </div>
+                            }
+    
+                            <div>
+                                <>
+                                    <div className='h-[40px] w-[40px] bg-white rounded-t-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) + 1}) }>
+                                        <FontAwesomeIcon icon={faPlus} className={classNames('cursor-pointer', {
+                                            'pointer-events-none text-gray-300': viewState.zoom >= 18
+                                        })} />
+                                    </div>
+                                    <hr />
+                                </>
+    
+                                <div className='h-[40px] w-[40px] bg-white rounded-b-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) - 1}) }>
+                                    <FontAwesomeIcon icon={faMinus} className={classNames('cursor-pointer', {
+                                        'pointer-events-none text-gray-300': viewState.zoom <= 8
                                     })} />
                                 </div>
-                                <hr />
-                            </>
-
-                            <div className='h-[40px] w-[40px] bg-white rounded-b-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) - 1}) }>
-                                <FontAwesomeIcon icon={faMinus} className={classNames('cursor-pointer', {
-                                    'pointer-events-none text-gray-300': viewState.zoom <= 8
-                                })} />
                             </div>
                         </div>
                     </div>
-                </div>
-
-
-
-            <span className='hidden xl:block absolute z-[100] bottom-[15px] right-[15px] text-[13px] text-white font-antonio'>© MAPBOX 2024</span>
-
-            {/** Gradient Bottom */}
-            <div className="hidden md:block bottom-gradient absolute bottom-0"></div>
-        
-            {/** Filter period Desktop */}
-            <div className="hidden md:block container mx-auto fixed bottom-[20px] left-0 right-0">
-                <div className="grid grid-cols-12">
-                    <div className="col-span-10 col-start-2">
-                        <MultiRangeSelector/>
+    
+    
+    
+                <span className='hidden xl:block absolute z-[100] bottom-[15px] right-[15px] text-[13px] text-white font-antonio'>© MAPBOX 2024</span>
+    
+                {/** Gradient Bottom */}
+                <div className="hidden md:block bottom-gradient absolute bottom-0"></div>
+            
+                {/** Filter period Desktop */}
+                <div className="hidden md:block container mx-auto fixed bottom-[20px] left-0 right-0">
+                    <div className="grid grid-cols-12">
+                        <div className="col-span-10 col-start-2">
+                            <MultiRangeSelector/>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </motion.div>
-    )
+            </motion.div>
+        )
+    }
 }
 
 
@@ -276,6 +156,8 @@ const MapBox = ({ items, state, reference }) => {
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
     const [openFilter, setOpenFilter] = useState(false)
 
+
+    console.log(items)
 
     const sourceStyle = {
         id: 'geoportail',
@@ -428,11 +310,11 @@ const MapBox = ({ items, state, reference }) => {
                         </Source>
                     )}
 
-                    {items.map((marker) => (
+                    {/* {items.map((marker) => (
                         <Marker
                             key={marker.id}
-                            longitude={marker.geometry.coordinates[1]}
-                            latitude={marker.geometry.coordinates[0]}
+                            longitude={marker.data.geometry.coordinates[1]}
+                            latitude={marker.data.geometry.coordinates[0]}
                             anchor={marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom"}
                         >
                             <div className='relative'>
@@ -440,7 +322,6 @@ const MapBox = ({ items, state, reference }) => {
                                     src={pinMarker}
                                     alt="marker"
                                     className="cursor-pointer"
-                                    // onMouseOver={() => setSelectedMarker({ id: marker.id, data: marker })}
                                     onClick={() => {
                                         setOpenLocation(true)
                                         setSelectedMarker({ id: marker.id, data: marker })}
@@ -448,7 +329,7 @@ const MapBox = ({ items, state, reference }) => {
                                 />
                             </div>
                         </Marker>
-                    ))}
+                    ))} */}
                 </Map>
     
                 {/** POPUP */}

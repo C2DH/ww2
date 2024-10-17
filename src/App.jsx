@@ -17,7 +17,6 @@ import Curtains from './components/Curtains/Curtains'
 import Note from "./components/Note/Note"
 import Source from "./components/Source/Source"
 import Sources from "./components/Sources/Sources"
-import HistoricalIndex from "./components/HistoricalIndex/HistoricalIndex"
 import Layout from "./components/Layout/Layout"
 import ResearchInstitutions from "./components/ResearchInstitutions/ResearchInstitutions"
 import Bibliography from './components/Bibliography/Bibliography'
@@ -52,16 +51,13 @@ export default function App() {
                         <Routes location={location} key={location.pathname}>
                             <Route path='/' element={ <Layout/>} >
                                 {/* <Route index element={ <Home /> }/> */}
-                                <Route path='/level-01-journeys' element={ <Home /> }/>
-                                {/* <Route path='/catalogue' element={ <Catalogue /> }/> */}
-                                <Route path='/level-02-catalogue' element={ <Catalogue /> }/>
-                                {/* <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/> */}
-                                <Route path='level-03-atelier-de-l-historien-ne' element={ <HistorianWorkshop /> }/>
-                                {/* <Route path='/historical-index' element={ <HistoricalIndex /> }/> */}
+                                <Route path='/' element={ <Home /> }/>
+                                <Route path='/catalogue' element={ <Catalogue /> }/>
+                                <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
                                 <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
                                 <Route path='/bibliography' element={ <Bibliography /> }/>
                                 <Route path='/glossary' element={ <Glossary /> }/>
-                                <Route path='/spacetime-map' element={ <SpaceTimeMap /> }/>
+                                <Route path='/spatiotemporal-map' element={ <SpaceTimeMap /> }/>
                                 <Route path='/notice/:slug' element={ <Notice /> }/>
                                 <Route path='/note/:slug' element={ <Note /> }/>
                                 <Route path='/sources' element={ <Sources /> }/>

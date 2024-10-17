@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import Source from '../Source/Source'
 
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLongToLine } from '@fortawesome/pro-regular-svg-icons'
-import { faImage, faVideo } from '@fortawesome/pro-thin-svg-icons'
+import { faImage, faVideo, faBook } from '@fortawesome/pro-thin-svg-icons'
 
 import { AnimatePresence, motion } from "framer-motion"
 
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { t } from 'i18next'
 
-import { convertToHtml } from '../../lib/utils'
+import { convertToHtml, fetchData, getAllNotes } from '../../lib/utils'
+import defaultImage from '../../assets/images/common/default.png'
 import siteConfig from '../../../site.config'
 
 
@@ -24,22 +25,34 @@ export default function Note() {
     const [dataPopup, setDataPopup] = useState({ open: false, data: null })
     const [data, setData] = useState(null)
     const [isLoaded, setIsLoaded] = useState(false)
+    const [notes, setNotes ] = useState([])
+    const navigate = useNavigate()
     const rootPath = import.meta.env.VITE_ROOT
 
     // DETAILS NOTE
     useEffect(() => {
-        fetch(`https://ww2-lu.netlify.app/api/story/${ slug }`, {
-            method: "GET",
-            headers: {}
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            setData(data)
-            setIsLoaded(true)
-        })
-        .catch((error) => console.log(error))
+        const getData = async () => {
+            const data = await fetchData(`story/${slug}`)
+            
+            if (data) {
+                setData(data)
+                setIsLoaded(true)
+            }
+        }
+        
+        getData();
     }, [isLoaded])
 
+    // ALL NOTES
+    useEffect(() => {
+        const fetchNotes = async () => {
+            const allNotes = await getAllNotes() 
+            if (allNotes.length === 0) return
+            setNotes(allNotes)
+        }
+    
+        fetchNotes()
+    }, [])
 
 
     // ANIMATION CURTAINS
@@ -47,8 +60,23 @@ export default function Note() {
         setSharedState({ ...sharedState, showCurtains: false })
     }, [])
 
+    // NAVIGATE NOTES
+    const navigateNote = (direction) => {
+        if (notes.length === 0 || !data) return
+        const noteIndex = notes.findIndex(note => note.slug === slug)
+        let newIndex = noteIndex + direction
+   
+        if (newIndex < 0) {
+            newIndex = notes.length - 1
+        } else if (newIndex >= notes.length) {
+            newIndex = 0    
+        }   
+
+        navigate(`/note/${notes[newIndex].slug}`)
+    }
+
+
     const handleSourcePopup = (document) => {
-        console.log('click')
         if (!dataPopup.open) {
             setDataPopup(prevSource => ({
                 ...prevSource, 
@@ -82,18 +110,18 @@ export default function Note() {
     
                         <div className="flex lg:justify-between lg:border-b border-black pt-[10px] md:pt-[20px] 2xl:pt-[60px]">
                             <div className="hidden lg:block uppercase">
-                                <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">{ data.data.title.fr_FR.split('(')[1]?.replace(')',"") }</span>
-                                <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data.title[language]?.split('(')[0] }</span>
+                                <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span>
+                                <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data.title[language] }</span>
                             </div>
                             <div className='hidden lg:flex items-center lg:items-end text-[22px] lg:text-[24px] uppercase lg:leading-[48px] cursor-pointer pl-[20px] lg:pl-0'>   
-                                <span className='pr-[10px] lg:pr-[20px]' onClick={() => console.log('previous')}>{ t('prev') }</span>
-                                <span className='pl-[10px] lg:pl-[20px] relative before:content-[""] before:absolute before:left-[0px] before:bottom-[50%] lg:before:bottom-0 before:translate-y-[50%] lg:before:translate-y-0 before:h-[30px] lg:before:h-[60px] before:w-[1px] before:bg-black' onClick={() => console.log('next')}>{ t('next') }</span>
+                                <span className='pr-[10px] lg:pr-[20px]' onClick={() => navigateNote(-1)}>{ t('prev') }</span>
+                                <span className='pl-[10px] lg:pl-[20px] relative before:content-[""] before:absolute before:left-[0px] before:bottom-[50%] lg:before:bottom-0 before:translate-y-[50%] lg:before:translate-y-0 before:h-[30px] lg:before:h-[60px] before:w-[1px] before:bg-black' onClick={() => navigateNote(+1)}>{ t('next') }</span>
                             </div>
                         </div>
 
                         <div className='lg:hidden border-b border-black pb-[20px] pt-[10px] text-[24px] md:text-[38px] uppercase'>
-                            <span className="relative after:content-[''] after:absolute after:left-[35px] md:after:left-[50px] after:bottom-[50%] after:translate-y-[50%] after:h-[30px] after:w-[1px] after:bg-black pr-[10px] font-thin">{ data.data.title.fr_FR.split('(')[1]?.replace(')',"") }</span>
-                            <span className="leading-none font-abril pl-[10px] md:pl-[15px]">{ data.data.title[language]?.split('(')[0] }</span>
+                            <span className="relative after:content-[''] after:absolute after:left-[35px] md:after:left-[50px] after:bottom-[50%] after:translate-y-[50%] after:h-[30px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span>
+                            <span className="leading-none font-abril pl-[10px] md:pl-[15px]">{ data.data.title[language] }</span>
                         </div>
     
                         <div className="flex flex-col lg:flex-row overflow-scroll" id="text">
@@ -101,13 +129,15 @@ export default function Note() {
                                 
                                 {/** CONTENT - REFERENCES */}
                                 <div className='text-[28px]' id="content">
-                                    {JSON.parse(data.contents).modules.map((text, index) => (
+                                    {/* {JSON.parse(data.data.abstract[language]).modules.map((text, index) => (
                                         <ContentDisplay
                                             key={index}
-                                            text={text.text.content[language]}
+                                            text={text}
                                             index={index}
                                         />
-                                    ))}
+                                    ))} */}
+
+                                    <ContentDisplay text={data.data.abstract[language]} />
                                 </div>
             
 
@@ -127,18 +157,33 @@ export default function Note() {
                             <div className="lg:w-1/2 lg:ml-[50px] py-[40px] lg:overflow-y-auto flex-grow border-t lg:border-none border-black">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     { data.documents.map(document => 
-                                        <div className="grid gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
+                                        <div className="grid gap-6 relative cursor-pointer medias" key={ document.id } onClick={() => handleSourcePopup(document) }>
                                             
-                                            {/* TODO : Traiter Galerie et Document */}
-                                            { document.type === 'picture' ? (
-                                                <img className="h-auto max-w-full cursor-pointer" src={ rootPath + document.attachment } alt={ document.data.title[language]}/>
-                                            ) :
-                                                <img className="h-auto max-w-full cursor-pointer" src={ document.data.resolutions.preview.url } alt={ document.data.title[language]}/>
+                                            { document.type === 'picture' &&
+                                                <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.preview.url !== "" ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
                                             }
 
-                                                <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                    <FontAwesomeIcon icon={ document.type === 'picture' ? faImage : faVideo } className='text-white text-[40px]' />
-                                                </div>
+                                            { document.type === 'video' &&
+                                                <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.preview.url === "" ? defaultImage : document.data.resolutions.preview.url } alt={document.data.title[language]} />
+                                            }
+
+                                            { document.type === 'book' &&
+                                                <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                            }
+
+                                            { document.type === 'pdf' &&
+                                                <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ rootPath + document.data.resolutions.preview.url } alt={""} />
+                                            }
+
+                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                <FontAwesomeIcon icon={ 
+                                                    document.type === 'picture' ? faImage :
+                                                    document.type === 'video' ? faVideo :
+                                                    faBook
+                                                    } className='text-white text-[40px]' 
+                                                />
+                                            </div>
+
                                         </div>
                                     )}
                                 </div>
@@ -167,7 +212,7 @@ export default function Note() {
 
 
 
-const ContentDisplay = ({ text, index }) => {
+const ContentDisplay = ({ text }) => {
     const htmlContent = convertToHtml(text);
     return (
         <div dangerouslySetInnerHTML={{ __html: htmlContent }} ></div>

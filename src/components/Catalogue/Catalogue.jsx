@@ -7,6 +7,7 @@ import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import siteConfig from '../../../site.config'
 import axios from 'axios'
+import { fetchData } from '../../lib/utils'
 
 
 export default function Catalogue() {
@@ -25,35 +26,33 @@ export default function Catalogue() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [themes, setThemes] = useState([])
 
+
     useEffect(() => {
-        const fetchThemes = async () => {
-            try {
-                const allThemes = await axios.get('api/story/?filters=%7B%22mentioned_to__slug%22%3A+%22level-02-catalogue%22%7D&h=18911731f3caad4abb8fd1fe5397788fe24aa874993409dc78c29123ebd586b8')
-
-                if (allThemes.data.results.length > 0) {
-                    const themesPromises = allThemes.data.results.map( async (theme, index) => {
-                        try {
-                            const newTheme = await axios.get(`/api/story/${theme.slug}`)
-                            return newTheme.data
-                        } catch(error) {
-                            console.log(`Une erreur est survenue lors de la récupération du thème : ${theme.slug}`, error)
-                        }
+        const getData = async () => {
+            const catalogue = await fetchData(`story/catalogue`)    
+            const allThemes = catalogue.stories
+            
+            if (catalogue && allThemes.length > 0) {
+                const themesData = await Promise.all(
+                    allThemes.map(async (item) => {
+                        return fetchData(`story/${item.slug}`)
                     })
-
-                    const themesData = await Promise.all(themesPromises)
-                    console.log('themesData', themesData)
-                    setThemes(themesData)
-                    setIsLoaded(true)
-                }
-            } catch (error) {
-                console.log('Une erreur est survenue lors de la récupération de tous les thèmes', error)
+                )
+    
+                setThemes(themesData);
+                setIsLoaded(true);
             }
         }
-        fetchThemes()
+        getData();
+    }, [isLoaded])
+
+
+    useEffect(() => {
 
         setSharedState({ ...sharedState, showCurtains: false });
-
     }, [])
+
+
 
     if (isLoaded) {
         return (

@@ -22,6 +22,7 @@
     "@fortawesome/sharp-thin-svg-icons": "^6.5.2",
     "@maptiler/client": "^1.8.1",
     "axios": "^1.7.7",
+    "base-64": "^1.0.0",
     "classnames": "^2.5.1",
     "flowbite": "^2.3.0",
     "flowbite-react": "^0.9.0",

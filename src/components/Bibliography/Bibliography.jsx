@@ -123,21 +123,25 @@ export default function Bibliography() {
                 {/** CONTENT */}
                 <div className="lg:overflow-scroll">
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                        { books.map((item, index) => 
-                            <div className={`block col-span-12 md:col-span-6 border border-black rounded-[5px] p-[10px] h-[240px] lg:h-[140px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow ${item.data.zotero.url !== "" ? 'cursor-pointer' : '' } overflow-hidden`}
-                                key={item.id} 
-                                ref={books.length === index + 1 ? lastBookRef : null} 
-                                to={item.data.zotero.url}
-                                target="_blank" >
-                                <div className="col-span-6 lg:col-span-4">
-                                    <h2 className='text-[24px] lg:text-[30px] pt-[10px] md:pt-0'>{ cleanText(truncateText(item.data.zotero.title, 100)) }</h2>
-                                    <hr className="border-black"/>
+                        { books.map((item, index) => {
+                            const Wrapper = item.data.zotero.url !== "" ? 'a' : 'div';
+                            const wrapperProps = item.data.zotero.url !== "" ? { href: item.data.zotero.url, target: "_blank"} : "";
+                            return (
+                                <Wrapper {...wrapperProps}
+                                    className={`block col-span-12 md:col-span-6 border border-black rounded-[5px] p-[10px] h-[240px] lg:h-[140px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow ${item.data.zotero.url !== "" ? 'cursor-pointer ' : '' }overflow-hidden`}
+                                    key={item.id}
+                                    ref={books.length === index + 1 ? lastBookRef : null}
+                                >
+                                    <div className="col-span-6 lg:col-span-4">
+                                        <h2 className='text-[24px] lg:text-[30px] pt-[10px] md:pt-0'>{ cleanText(truncateText(item.data.zotero.title, 100)) }</h2>
+                                        <hr className="border-black"/>
 
-                                    <DocumentReference doc={item}/>
-                                    {/* <p className='text-[20px] pt-[10px] md:text-[24px] pb-0'>{ truncateText('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. sit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscing Pellentesque sit amet sapien.', 80) }</p> */}
-                                </div>
-                            </div>
-                        )}
+                                        <DocumentReference doc={item}/>
+                                        {/* <p className='text-[20px] pt-[10px] md:text-[24px] pb-0'>{ truncateText('Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. sit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscingsit amet consectetur adipiscing Pellentesque sit amet sapien.', 80) }</p> */}
+                                    </div>
+                                </Wrapper>
+                            )
+                        } )}
                     </div>
                 </div>
     

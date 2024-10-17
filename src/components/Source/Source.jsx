@@ -13,11 +13,10 @@ import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pa
 
 export default function Source({ data, handleSourcePopup }) {
 
+    console.log(data)
     const { t } = useTranslation()
-    const root = import.meta.env.VITE_ROOT
+    const rootPath = import.meta.env.VITE_ROOT
     const { language } = useLanguageContext()
-
-    console.log(data.url)
 
     return (
         <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='w-full lg:relative lg:top-0 absolute -top-[120px]'>
@@ -37,22 +36,25 @@ export default function Source({ data, handleSourcePopup }) {
                             {/** IMAGE */}
                             { data.type === 'picture' &&                            
                                 <div className="pb-[20px] 2xl:pb-[40px] ipad:pt-[80px] 2xl:pt-[80px]">
-                                    <ImageZoom image={ root + data.attachment }/>
+                                    <ImageZoom image={ rootPath + data.data.resolutions.preview.url }/>
                                 </div>
                             }
 
                             {/** VIDEO */}
                             { data.type === 'video' &&
                                 <div className="pb-[20px]">
-                                    <Player url={ data.data.videoResolutions.hsl.url } controls={true} />
+                                    <Player url={ data.data.videoResolutions.sd360p.url } controls={true} />
                                 </div>
                             }
 
-                            {/** GALLERY */}
-                            {/* TODO : Faire un slider pour la galerie */}
-                            {/* <div className="lg:hidden col-span-9 pb-[20px]">
-                                <img src={ src }/>
-                            </div> */}
+                            {/** PDF */}
+                            { data.type === 'pdf' &&
+                                <div className="pb-[20px]">
+                                    <img src={ rootPath + data.data.resolutions.preview.url } />
+                                </div>
+                            }
+
+          
 
                         {/* </div> */}
                     </div>

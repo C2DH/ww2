@@ -6,8 +6,7 @@ import { useLanguageContext } from '../../contexts/LanguageProvider';
 
 export default function Accordion({ items }) {
 
-    // console.log('items', items)
-
+    console.log('items', items)
     const { t } = useTranslation()
     const { language } = useLanguageContext()
 

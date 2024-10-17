@@ -28,7 +28,7 @@ export default function Menu() {
     const [isLoading, setIsLoading] = useState(false)
     const { pathname } = useLocation()
     const {language, changeLanguage } = useLanguageContext()
-    const locations = ['/', '/spacetime-map', '/^\/notice\/[a-zA-Z0-9_-]+$/']
+    const locations = ['/', '/spatiotemporal-map', '/^\/notice\/[a-zA-Z0-9_-]+$/']
     const isMatch = locations.some(location => {
         if (location.startsWith('/^') && location.endsWith('$/')) {
             const regex = new RegExp(location.slice(1, -1))
@@ -38,34 +38,29 @@ export default function Menu() {
     })
 
     useEffect(() => {
-        
+        const fetchMenu = async () => {
             try {
-                axios
-                    .get("api/story?filters=%7B%22tags__slug%22%3A%22menu%22%7D&orderby=slug&limit=10&h=16ee08eeb51a2ea46fa3d851e1dbbccdc2966dd7601aa1705c27db5890393b57")
-                    .then(response => {
-                        console.log(response)
-                        setResults(response.data)
-                        setIsLoading(true)
-                    })
+                const response = await axios.get("/api/story/?orderby=priority&filters=%7B%22tags__slug%22:%22menu%22%7D")
+                setResults(response.data);
+                setIsLoading(true);
             } catch (error) {
                 console.log(error)
-                setIsLoading(false)
+                setIsLoading(false);
             }
-       
-            
-       
+        }
+        fetchMenu();
     }, [])
 
    
     // ANIMATION MENU 
     useEffect(() => {
-            if (openMenu) {
-                document.body.style.height = '';
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.height = '';
-                document.body.style.overflow = '';
-            }
+        if (openMenu) {
+            document.body.style.height = '';
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.height = '';
+            document.body.style.overflow = '';
+        }
     }, [openMenu])
 
 
@@ -102,17 +97,11 @@ export default function Menu() {
                                 'opacity-0': !openMenu 
                             })}>
 
-                                {/* { results.results.slice(2, 5).map(item =>
+                                { results.results.slice(0, 5).map(item =>
                                     <li key={ item.id } className="mb-[40px]">
-                                        <MenuItem path={item.slug} title={item.data.title[language]} text={item.data.subtitle ? item.data.subtitle[language] : ""} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
+                                        <MenuItem path={item.slug === 'journeys' ? '' : item.slug} title={item.data.title[language]} text={item.data.subtitle ? item.data.subtitle[language] : ""} className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
                                     </li>
-                                    )
-                                } */}
-
-                                {/** CREDITS */}
-                                {/* <li className="mb-[40px]">
-                                    <MenuItem path={'/'} title={ results.results[6].data.title[language] } text={ results.results[6].data.subtitle ? results.results[6].data.subtitle[language] : "" } className='text-[32px] md:text-[40px] leading-none text-blue font-abril' handleMenuItemClick={() => setOpenMenu(false) }/>
-                                </li> */}
+                                )}
                             </ul>
                         </div>
 
