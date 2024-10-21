@@ -99,7 +99,7 @@ export default function Note() {
                     <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] flex flex-col px-[30px]">
     
                         <div className='flex items-center justify-between pt-[10px]'>
-                            <Link to={'/level-02-catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[50px] text-[20px] lg:text-[30px]'>
+                            <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[50px] text-[20px] lg:text-[30px]'>
                                 <FontAwesomeIcon icon={faArrowLeftLongToLine} />
                             </Link>
                             <div className='lg:hidden text-[20px] md:text-[24px] uppercase flex items-center cursor-pointer pl-[20px]'>   
@@ -124,7 +124,7 @@ export default function Note() {
                             <span className="leading-none font-abril pl-[10px] md:pl-[15px]">{ data.data.title[language] }</span>
                         </div>
     
-                        <div className="flex flex-col lg:flex-row overflow-scroll" id="text">
+                        <div className="flex flex-col lg:flex-row overflow-scroll min-h-[calc(100%-120px)]" id="text">
                             <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
                                 
                                 {/** CONTENT - REFERENCES */}

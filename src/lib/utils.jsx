@@ -79,3 +79,13 @@ export async function getAllNotes() {
 
     return notes
 }
+
+
+
+export function formatDate(input, lang) {
+    const date = new Date(input)
+    return date.toLocaleDateString(lang.replace('_', '-'), {
+        month: 'long',
+        year: 'numeric'
+    })
+}

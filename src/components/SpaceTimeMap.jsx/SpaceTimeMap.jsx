@@ -23,6 +23,8 @@ import { t } from 'i18next'
 import { useMediaQuery } from 'react-responsive'
 import siteConfig from '../../../site.config'
 import { fetchData } from '../../lib/utils';
+import { useLanguageContext } from '../../contexts/LanguageProvider'
+import { formatDate } from '../../lib/utils'
 
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const styleBlueprint = import.meta.env.VITE_API_STYLE_MAPBOX_BLUEPRINT
@@ -48,13 +50,31 @@ export default function SpaceTimeMap() {
     // ALL LOCATIONS WITH DATE
     useEffect(() => {
         const getData = async () => {
-            const locations = await fetchData(`document`, {
-                covers__mentioned_to__slug: 'spatiotemporal-map'
+            const locations = await fetchData(`story`, {
+                // covers__mentioned_to__slug: 'spatiotemporal-map'
+                mentioned_to__slug: "spatiotemporal-map"
             })
-            
+
             if (locations.results.length > 0) {
-                const locationsWithDates = locations.results.filter(location => location.data.start_date && location.data.end_date)
-                setData(locationsWithDates)
+                const filteredResults = locations.results.map(result => {
+                    let hasPlace = false
+                    let hasEndDate = false
+
+                    result.covers.forEach(cover => {
+                        if (cover.data.type === "place") {
+                            hasPlace = true
+                        }
+
+                        if (cover.data.end_date && cover.data.end_date.trim() !== "") {
+                            hasEndDate = true
+                        }
+                    });
+
+                    if (hasPlace && hasEndDate) {
+                        return result
+                    }
+                })
+                setData(filteredResults)
                 setIsLoaded(true)
             }
         }
@@ -155,9 +175,13 @@ const MapBox = ({ items, state, reference }) => {
     const [btnHover, setBtnHover] = useState(false)
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
     const [openFilter, setOpenFilter] = useState(false)
+    const { language } = useLanguageContext()
+    let city = null
+    let date = null
 
-
-    console.log(items)
+    useEffect(() => {
+        console.log(selectedMarker)
+    },[selectedMarker])
 
     const sourceStyle = {
         id: 'geoportail',
@@ -199,26 +223,30 @@ const MapBox = ({ items, state, reference }) => {
                             </Source>
                         )}
 
-                        {items.map((marker) => (
-                            <Marker
-                                key={marker.id}
-                                longitude={marker.geometry.coordinates[1]}
-                                latitude={marker.geometry.coordinates[0]}
-                                anchor={marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom"}
-                            >
-                                <div className='relative'>
-                                    <img
-                                        src={pinMarker}
-                                        alt="marker"
-                                        className="cursor-pointer"
-                                        // onMouseOver={() => setSelectedMarker({ id: marker.id, data: marker })}
-                                        onClick={() => {
-                                            setOpenLocation(true)
-                                            setSelectedMarker({ id: marker.id, data: marker })}
-                                        }
-                                    />
-                                </div>
-                            </Marker>
+                        {items.map(item => (
+                            item.covers.map(cover => {
+                                if (cover.data.type === "place") {
+                                    return (
+                                        <Marker
+                                            key={cover.id}
+                                            longitude={cover.data.geojson.geometry.coordinates[0]}
+                                            latitude={cover.data.geojson.geometry.coordinates[1]}
+                                        >
+                                            <div className='relative'>
+                                                <img
+                                                    src={pinMarker}
+                                                    alt="marker"
+                                                    className="cursor-pointer"
+                                                    onClick={() => {
+                                                        setOpenLocation(true)
+                                                        setSelectedMarker({ id: cover.id, data: item })}
+                                                    }
+                                                />
+                                            </div>
+                                        </Marker>
+                                    )
+                                }
+                            })
                         ))}
                     </Map>
 
@@ -267,9 +295,26 @@ const MapBox = ({ items, state, reference }) => {
                             </div>
     
                             <div className='px-[20px] md:px-0 bg-white flex-grow'>
-                                <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.properties.location}</h2>
-                                <span className='text-[28px] block pb-[40px] md:pb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
-                                <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' />
+                                <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.data.title[language]}</h2>
+                                {selectedMarker.data.covers.map(cover => {
+                                    if (cover.data.type === "event") {
+                                        date = formatDate(cover.data.end_date, language)
+                                    }
+
+                                    if (cover.data.type === "place") {
+                                        city = cover.data.geojson.properties.city[language]
+                                    }
+
+                                })}
+
+                                {city &&
+                                    <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ city }, </span>
+                                }
+
+                                {date &&
+                                    <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ date }</span>
+                                }
+                                {/* <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' /> */}
                                 <Link
                                     className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
                                     onMouseOver={() => setBtnHover(true)}
@@ -310,26 +355,32 @@ const MapBox = ({ items, state, reference }) => {
                         </Source>
                     )}
 
-                    {/* {items.map((marker) => (
-                        <Marker
-                            key={marker.id}
-                            longitude={marker.data.geometry.coordinates[1]}
-                            latitude={marker.data.geometry.coordinates[0]}
-                            anchor={marker.properties.place === 'Grande-Bretagne' ? "center" : "bottom"}
-                        >
-                            <div className='relative'>
-                                <img
-                                    src={pinMarker}
-                                    alt="marker"
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                        setOpenLocation(true)
-                                        setSelectedMarker({ id: marker.id, data: marker })}
-                                    }
-                                />
-                            </div>
-                        </Marker>
-                    ))} */}
+                    {items.map(item => (
+                        item.covers.map(cover => {
+                            if (cover.data.type === "place") {
+                                console.log('item',item)
+                                return (
+                                    <Marker
+                                        key={cover.id}
+                                        longitude={cover.data.geojson.geometry.coordinates[0]}
+                                        latitude={cover.data.geojson.geometry.coordinates[1]}
+                                    >
+                                        <div className='relative'>
+                                            <img
+                                                src={pinMarker}
+                                                alt="marker"
+                                                className="cursor-pointer"
+                                                onClick={() => {
+                                                    setOpenLocation(true)
+                                                    setSelectedMarker({ id: cover.id, data: item })}
+                                                }
+                                            />
+                                        </div>
+                                    </Marker>
+                                )
+                            }
+                        })
+                    ))}
                 </Map>
     
                 {/** POPUP */}
@@ -354,9 +405,28 @@ const MapBox = ({ items, state, reference }) => {
                             />
     
                             <div className='px-[20px] md:px-0'>
-                                <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.properties.location}</h2>
-                                <span className='text-[28px] block pb-[40px] md:pb-[10px]'>{selectedMarker.data.properties.place}, mars 1945</span>
-                                <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' />
+                                <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.data.title[language]}</h2>
+
+                                {selectedMarker.data.covers.map(cover => {
+                                    if (cover.data.type === "event") {
+                                        date = formatDate(cover.data.end_date, language)
+                                    }
+
+                                    if (cover.data.type === "place") {
+                                        city = cover.data.geojson.properties.city[language]
+                                    }
+
+                                })}
+
+                                {city &&
+                                    <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ city }, </span>
+                                }
+
+                                {date &&
+                                    <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ date }</span>
+                                }
+
+                                {/* <img src={selectedMarker.data.properties.image} alt="" className='rounded-[5px]' /> */}
                                 <Link
                                     className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
                                     onMouseOver={() => setBtnHover(true)}
