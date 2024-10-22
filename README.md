@@ -4,8 +4,8 @@ First, copy the ```.env.example``` file and rename it to ```.env```. Please fill
 
 Next, copy the ```.npmrc.example``` file and rename it to ```.npmrc```. Please replace the ```AUTH_TOKEN``` value with your auth token from [fontawesome.com](fontawesome.com).
 
-[!IMPORTANT]
-If you use a pipeline to build and deploy the project automaticaly, don't forget to includes the above into your pipeline.
+> [!IMPORTANT]
+> If you use a pipeline to build and deploy the project automaticaly, don't forget to includes the above into your pipeline.
 
 ## Install dependencies
 
