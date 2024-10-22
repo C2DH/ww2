@@ -1,8 +1,32 @@
-# React + Vite
+# C2DH x WW2
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+First, copy the ```.env.example``` file and rename it to ```.env```. Please fill the variables according to your needs.
 
-Currently, two official plugins are available:
+Next, copy the ```.npmrc.example``` file and rename it to ```.npmrc```. Please replace the ```AUTH_TOKEN``` value with your auth token from [fontawesome.com](fontawesome.com).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[!IMPORTANT]
+If you use a pipeline to build and deploy the project automaticaly, don't forget to includes the above into your pipeline.
+
+## Install dependencies
+
+In order to work or build the project, the dependencies need to be installed first.
+
+```
+npm install
+```
+
+## Work on the project
+
+```
+npm run dev
+```
+
+Don't forget to install dependencies and configure your environment files.
+
+## Build the project
+
+```
+npm run build
+```
+
+Don't forget to install dependencies and configure your environment files.
