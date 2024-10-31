@@ -3,10 +3,11 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import Source from '../Source/Source'
 
+
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLongToLine } from '@fortawesome/pro-regular-svg-icons'
-import { faImage, faVideo, faBook } from '@fortawesome/pro-thin-svg-icons'
+import { faImage, faImages, faVideo, faBook, faFilePdf, faFileAudio, faCube } from '@fortawesome/pro-thin-svg-icons'
 
 import { AnimatePresence, motion } from "framer-motion"
 
@@ -29,17 +30,33 @@ export default function Note() {
     const navigate = useNavigate()
     const rootPath = import.meta.env.VITE_ROOT
 
+    const [jsonFile, setJsonFile] = useState([])
+
     // DETAILS NOTE
     useEffect(() => {
         const getData = async () => {
             const data = await fetchData(`story/${slug}`)
-            
+           
             if (data) {
                 setData(data)
                 setIsLoaded(true)
             }
-        }
-        
+
+            {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
+            const response = await fetch('/data.json')
+            const jsonData = await response.json()
+            setJsonFile(jsonData)            
+            if (data) {
+                    const updatedDocuments = Array.isArray(data.documents) 
+                        ? [...data.documents, ...jsonData]
+                        : [...jsonData]
+
+                    setData({ ...data, documents: updatedDocuments })
+                    setIsLoaded(true);
+                }
+            }
+            {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
+
         getData();
     }, [isLoaded])
 
@@ -50,7 +67,6 @@ export default function Note() {
             if (allNotes.length === 0) return
             setNotes(allNotes)
         }
-    
         fetchNotes()
     }, [])
 
@@ -71,7 +87,6 @@ export default function Note() {
         } else if (newIndex >= notes.length) {
             newIndex = 0    
         }   
-
         navigate(`/note/${notes[newIndex].slug}`)
     }
 
@@ -98,13 +113,13 @@ export default function Note() {
                 <motion.div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} className='note' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
                     <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] flex flex-col px-[30px]">
     
-                        <div className='flex items-center justify-between pt-[10px]'>
+                        <div className='flex items-center justify-between'>
                             <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[50px] text-[20px] lg:text-[30px]'>
                                 <FontAwesomeIcon icon={faArrowLeftLongToLine} />
                             </Link>
                             <div className='lg:hidden text-[20px] md:text-[24px] uppercase flex items-center cursor-pointer pl-[20px]'>   
-                                <span className='pr-[10px] lg:pr-[20px]' onClick={() => console.log('previous')}>{ t('prev') }</span>
-                                <span className='pl-[10px] lg:pl-[20px] relative before:content-[""] before:absolute before:left-[0px] before:bottom-[50%] lg:before:bottom-0 before:translate-y-[50%] lg:before:translate-y-0 before:h-[30px] lg:before:h-[60px] before:w-[1px] before:bg-black' onClick={() => console.log('next')}>{ t('next') }</span>
+                                <span className='pr-[10px] lg:pr-[20px]' onClick={() => navigateNote(-1)}>{ t('prev') }</span>
+                                <span className='pl-[10px] lg:pl-[20px] relative before:content-[""] before:absolute before:left-[0px] before:bottom-[50%] lg:before:bottom-0 before:translate-y-[50%] lg:before:translate-y-0 before:h-[30px] lg:before:h-[60px] before:w-[1px] before:bg-black' onClick={() => navigateNote(+1)}>{ t('next') }</span>
                             </div>
                         </div>
     
@@ -157,35 +172,73 @@ export default function Note() {
                             <div className="lg:w-1/2 lg:ml-[50px] py-[40px] lg:overflow-y-auto flex-grow border-t lg:border-none border-black">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     { data.documents.map(document => 
-                                        <div className="grid gap-6 relative cursor-pointer medias" key={ document.id } onClick={() => handleSourcePopup(document) }>
-                                            
-                                            { document.type === 'picture' &&
-                                                <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.preview.url !== "" ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
+                                        <>
+                                            { document.type === 'picture' && document.data.resolutions.medium.url &&
+                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url !== "" ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <FontAwesomeIcon icon={ faImage } className='text-white text-[40px]'/>
+                                                    </div>
+                                                </div>
                                             }
 
-                                            { document.type === 'video' &&
-                                                <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.preview.url === "" ? defaultImage : document.data.resolutions.preview.url } alt={document.data.title[language]} />
+                                            { document.type === 'video' && document.data.videoResolutions.sd360p.url &&
+                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }> 
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url !== "" ? document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <FontAwesomeIcon icon={ faVideo } className='text-white text-[40px]'/>
+                                                    </div>
+                                                </div>
                                             }
 
                                             { document.type === 'book' &&
-                                                <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <FontAwesomeIcon icon={ faBook } className='text-white text-[40px]'/>
+                                                    </div>
+                                                </div>
                                             }
 
                                             { document.type === 'pdf' &&
-                                                <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ rootPath + document.data.resolutions.preview.url } alt={""} />
+                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ rootPath + document.data.resolutions.preview.url } alt={""} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <FontAwesomeIcon icon={ faFilePdf } className='text-white text-[40px]'/>
+                                                    </div>
+                                                </div>
                                             }
 
-                                            <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                <FontAwesomeIcon icon={ 
-                                                    document.type === 'picture' ? faImage :
-                                                    document.type === 'video' ? faVideo :
-                                                    faBook
-                                                    } className='text-white text-[40px]' 
-                                                />
-                                            </div>
+                                            { document.type === 'audio' &&
+                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <FontAwesomeIcon icon={ faFileAudio } className='text-white text-[40px]'/>
+                                                    </div>
+                                                </div>
+                                            }
 
-                                        </div>
+                                            { document.type === "gallery" &&
+                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <FontAwesomeIcon icon={ faImages } className='text-white text-[40px]'/>
+                                                    </div>
+                                                </div>
+                                            }
+
+
+                                            { document.type === "3d" &&
+                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <FontAwesomeIcon icon={ faCube } className='text-white text-[40px]'/>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </>
                                     )}
+
                                 </div>
                             </div>
                         </div>

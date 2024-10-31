@@ -1,12 +1,10 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import Accordion from '../Accordion/Accordion'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import siteConfig from '../../../site.config'
-import axios from 'axios'
 import { fetchData } from '../../lib/utils'
 
 
@@ -14,8 +12,7 @@ export default function Catalogue() {
 
     // Stocker un json dans le local storage pour gérer les progress bar
     // Quand j'ouvre la popup de la note je sette le localstorage
-    const { i18n, t } = useTranslation()
-    const { language } = useLanguageContext()
+    const { t } = useTranslation()
     const [lastRead, setLastRead] = useState('')
     const storedParams = localStorage.getItem('params')
     const [sharedState, setSharedState] = useSharedState()
@@ -106,8 +103,8 @@ export default function Catalogue() {
 
 const ProgressBar = ({ progress }) => {
     return (
-        <div className="progress-container">
-            <motion.div className='progress-bar' initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 1, delay: 1 }}></motion.div>
+        <div className="h-[20px] w-full bg-[#000000]/[0.15]">
+            <motion.div className='h-[20px] bg-[rgba(0,0,0,0.3)] w-full relative after:bg-[#6EDFFB] after:absolute after:top-1/2 after:left-0 after:transform after:-translate-y-1/2 after:h-[10px] after:w-full' initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 1, delay: 1 }}></motion.div>
         </div>
     )
 }

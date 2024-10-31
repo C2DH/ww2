@@ -1,9 +1,8 @@
-import { truncateText } from "../../lib/utils"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBook } from "@fortawesome/pro-thin-svg-icons" 
 import { cleanText } from "../../lib/utils"
 
-export default function CardImageText({ img, title = "", text, type = "", truncate = 80, myRef }) {
+export default function CardImageText({ img, title = "", type = "", myRef }) {
 
     return (
         <div className="col-span-12 md:col-span-6 xl:col-span-4 border border-black rounded-[5px] p-[10px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow h-[130px] overflow-hidden cursor-pointer" ref={myRef}>

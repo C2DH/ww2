@@ -125,13 +125,13 @@ export default function Notice() {
 
                             <motion.div 
                                 initial={{ opacity: 0, y: '100%' }}
-			                    animate={{ opacity: 1, y: 0, transition: { delay: 2, duration: 1.5 } }}
-			                    exit={{ transition: {duration: 0.8, delay: 0.8} } } 
+                                animate={{ opacity: 1, y: 0, transition: { delay: 2, duration: 1.5 } }}
+                                exit={{ transition: {duration: 0.8, delay: 0.8} } } 
                                 className="col-span-12 xl:col-span-6 xl:px-[50px] 2xl:px-0 xl:col-start-4 order-1 xl:order-2 rounded-[6px] h-[500px]">
                                 { results.documents.map(document => {
                                     if (document.type === "video") {
                                         return (
-                                            <Player key={document.id} url={ document.data.videoResolutions.hsl.url } controls={ true } className={'rounded-[6px]'}/>
+                                            <Player key={document.id} status={'video'} url={ document.data.videoResolutions.hsl.url } controls={ true } className={'rounded-[6px]'}/>
                                         )
                                     }
                                 })}

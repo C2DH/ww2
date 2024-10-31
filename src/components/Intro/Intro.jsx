@@ -6,15 +6,10 @@ import bgBlack from '../../assets/images/common/bg-black.jpg'
 import logo from '../../assets/images/common/logo.png'
 
 // FRAMER
-import { motion, AnimatePresence } from "framer-motion"
-
-
 export default function Intro() {
 
     const [isLoading, setIsLoading] = useState(false)
     const [results, setResults] = useState(null)
-
-    const [isVisible, setIsVisible] = useState(true)
     
     useEffect(() => {
         fetch("https://ww2-lu.netlify.app/api/story/home", {

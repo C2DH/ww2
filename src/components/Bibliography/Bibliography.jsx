@@ -21,7 +21,6 @@ export default function Bibliography() {
     const notes = ['a', 'b', 'c', 'd', 'e'] 
 
     const { t } = useTranslation()
-    const { language } = useLanguageContext()
     const [sharedState, setSharedState] = useSharedState()
     const { pathname } = useLocation()
     const [isOpenMenu, setIsOpenMenu] = useState(false)

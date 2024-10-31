@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 import "./Player.scss"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -14,8 +14,7 @@ import sample from '../../assets/sounds/sample-15s.mp3'
 import { useMenuSoundContext } from '../../contexts/MenuProvider'
 
 
-
-export default function Player({ url, className, controls })  {
+export default function Player({ url, className, controls, status })  {
 
     const { isMenuSoundPlay, setIsMenuSoundPlay } = useMenuSoundContext()
     const { t } = useTranslation()
@@ -25,8 +24,9 @@ export default function Player({ url, className, controls })  {
     const [isPlaying, setIsPlaying] = useState(false)
     const playerRef = useRef(null);
     const playerMenuRef = useRef(null);
+    const playerAudioRef = useRef(null);
 
-    const handleEnded = (ref) => {
+    const handleEnded = () => {
         if (playerRef.current) {    
             playerRef.current.seekTo(0)
             playerRef.current.getInternalPlayer().play()
@@ -56,7 +56,7 @@ export default function Player({ url, className, controls })  {
     }, [pathname])
 
 
-    if (url) {
+    if (status === 'video') {
         return (
             <div className="relative">
                 <ReactPlayer url={ url } width={ '100%' } height={ '100%' } controls={controls} className={ className } playing={isPlaying} onPause={ handleMediaPause } onPlay={ handleMediaPlay } onEnded={ handleEnded } ref={playerRef} />
@@ -70,7 +70,7 @@ export default function Player({ url, className, controls })  {
                 }
             </div>
         )
-    } else {
+    } else if (status === 'menu') {
         return (
             <div>
                 <div className='flex items-center'>
@@ -82,5 +82,9 @@ export default function Player({ url, className, controls })  {
                 </div>
             </div>
         )
+    } else if (status === 'audio') {
+        return (
+            <ReactPlayer url={ url } width={ '100%' } height={ '50px' } controls={controls} className={ className } ref={playerAudioRef} />
+        )
     }
-}
+}   

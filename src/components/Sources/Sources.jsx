@@ -51,7 +51,7 @@ export default function Sources() {
     
     const fetchSources = async (offset = 0, limit = 20) => {
         try {
-            const response = await axios.get(`api/document/?filters=%7B%22type__in%22%3A%5B%22audio%22%2C%22video%22%2C%22photo%22%2C%22book%22%2C%22manuscript%22%5D%7D&facets=type&limit=${ limit }&offset=${ offset }&h=7fcfbced29a08130670e1a6aee760896b53846be36792d39833dc9c0550fe56f`)
+            const response = await axios.get(`api/document/?filters=%7B%22type__in%22%3A%5B%22audio%22%2C%22video%22%2C%22photo%22%2C%22book%22%2C%22manuscript%22%5D%7D&facets=type&limit=${ limit }&offset=${ offset }`)
             setTypes(response.data.facets.type)
             return response.data
         } catch (error) {
@@ -185,7 +185,7 @@ export default function Sources() {
                                     myRef={filteredSources.length === index + 1 ? lastSourceRef : null}
                                     key={index}
                                     title={source.data.zotero.title}
-                                    // text={source.text}
+                                    text={source.text}
                                     type={source.type}
                                 />
                             )

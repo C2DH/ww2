@@ -1,5 +1,4 @@
 import { marked } from "marked";
-import { useState } from "react";
 
 export function truncateText(text, maxLength) {
     if (text && text.length > maxLength) {
@@ -18,8 +17,8 @@ export function convertToHtml(text) {
 }
 
 function containsMarkdown(text) {
-  const markdownRegex = /[#*_\-`>\[\]!]/
-  return markdownRegex.test(text)
+    const markdownRegex = /[#*_\-`>\[\]!]/
+    return markdownRegex.test(text)
 }
 
 export function cleanText(text) {

@@ -1,0 +1,166 @@
+[
+  {
+    "id": 1502,
+    "document_id": 20,
+    "title": "GALLERY IMAGES",
+    "slug": "klinik-st-joseph-1943-cna",
+    "url": "https://vimeo.com/528298336/8b9085c3b6?share=copy",
+    "type": "gallery",
+    "copyrights": "",
+    "caption": "",
+    "short_url": "b9EcuWk",
+    "data": {
+      "type": "media",
+      "title": {
+        "de_DE": "Gallery Images",
+        "en_GB": "Gallery Images",
+        "fr_FR": "Gallery Images"
+      },
+      "geojson": {
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:2169"
+          }
+        },
+        "geometry": {
+          "properties": {
+            "city": {
+              "de_DE": "",
+              "en_GB": "",
+              "fr_FR": ""
+            },
+            "name": {
+              "de_DE": "",
+              "en_GB": "",
+              "fr_FR": ""
+            },
+            "address": {
+              "de_DE": "",
+              "en_GB": "",
+              "fr_FR": ""
+            }
+          }
+        }
+      },
+      "identifier": "",
+      "provenance": "",
+      "description": {
+        "de_DE": "Gallery Images",
+        "en_GB": "Gallery Images",
+        "fr_FR": "Gallery Images"
+      }
+    },
+    "attachment": "/test-2.mp3"
+  },
+
+  {
+    "id": 1503,
+    "document_id": 20,
+    "title": "AUDIO TEST",
+    "slug": "klinik-st-joseph-1943-cna",
+    "url": "https://vimeo.com/528298336/8b9085c3b6?share=copy",
+    "type": "audio",
+    "copyrights": "",
+    "caption": "",
+    "short_url": "b9EcuWk",
+    "data": {
+      "type": "media",
+      "title": {
+        "de_DE": "AUDIO TEST",
+        "en_GB": "AUDIO TEST",
+        "fr_FR": "AUDIO TEST"
+      },
+      "geojson": {
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:2169"
+          }
+        },
+        "geometry": {
+          "properties": {
+            "city": {
+              "de_DE": "",
+              "en_GB": "",
+              "fr_FR": ""
+            },
+            "name": {
+              "de_DE": "",
+              "en_GB": "",
+              "fr_FR": ""
+            },
+            "address": {
+              "de_DE": "",
+              "en_GB": "",
+              "fr_FR": ""
+            }
+          }
+        }
+      },
+      "identifier": "",
+      "provenance": "",
+      "description": {
+        "de_DE": "AUDIO TEST",
+        "en_GB": "AUDIO TEST",
+        "fr_FR": "AUDIO TEST"
+      }
+    },
+    "attachment": "/test-2.mp3"
+  },
+
+  {
+    "id": 1504,
+    "document_id": 20,
+    "title": "3D",
+    "slug": "klinik-st-joseph-1943-cna",
+    "url": "https://vimeo.com/528298336/8b9085c3b6?share=copy",
+    "type": "3d",
+    "copyrights": "",
+    "caption": "",
+    "short_url": "b9EcuWk",
+    "data": {
+      "type": "media",
+      "title": {
+        "de_DE": "3D",
+        "en_GB": "3D",
+        "fr_FR": "3D"
+      },
+      "geojson": {
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:2169"
+          }
+        },
+        "geometry": {
+          "properties": {
+            "city": {
+              "de_DE": "",
+              "en_GB": "",
+              "fr_FR": ""
+            },
+            "name": {
+              "de_DE": "",
+              "en_GB": "",
+              "fr_FR": ""
+            },
+            "address": {
+              "de_DE": "",
+              "en_GB": "",
+              "fr_FR": ""
+            }
+          }
+        }
+      },
+      "identifier": "",
+      "provenance": "",
+      "description": {
+        "de_DE": "3D",
+        "en_GB": "3D",
+        "fr_FR": "3D"
+      }
+    },
+    "attachment": "/test-2.mp3"
+  }
+]

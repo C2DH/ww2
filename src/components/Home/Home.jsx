@@ -1,4 +1,3 @@
-import Intro from "../Intro/Intro"
 import { useEffect, useRef, useState } from "react"
 import { useMediaQuery } from 'react-responsive'
 import { useSharedState } from "../../contexts/SharedStateProvider"
@@ -21,9 +20,9 @@ import { AnimatePresence, motion } from "framer-motion"
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
-import Map, { Marker, Source, Layer } from 'react-map-gl';
+import Map, { Marker } from 'react-map-gl';
 import * as maptilerClient from "@maptiler/client"
-import { fetchData } from "../../lib/utils";
+import { fetchData, truncateText } from "../../lib/utils";
 import { useLanguageContext } from "../../contexts/LanguageProvider";
 
 const apiKeyMapbox = import.meta.env.VITE_API_KEY_MAPBOX
@@ -34,7 +33,6 @@ maptilerClient.config.apiKey = import.meta.env.VITE_API_MAPTILER
 export default function Home() {
     const [sharedState, setSharedState] = useSharedState()
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
-    const [isLoading, setIsLoading] = useState(false)
     const [dataMarker, setDataMarker] = useState([
         {ukArrow: UKArrowLong, ukLng: "", ukLat: "" },
         {russiaArrow: russiaArrowLong, russiaLng: "", russiaLat: "" },
@@ -51,13 +49,13 @@ export default function Home() {
     useEffect(() => {
         if (isSmall) {
             setDataMarker([
-                {ukArrow: smallLeftArrow, ukLng: 5.6591201603317075, ukLat: 50.40793013795516 },
+                {ukArrow: smallLeftArrow, ukLng: 5.659120160331707, ukLat: 50.40793013795516 },
                 {russiaArrow: smallRightArrow, russiaLng: 6.467898325775285, russiaLat: 50.24406234423884 },
                 {polskaArrow: smallRightArrow, polskaLng: 6.532067821847243, polskaLat: 50.40793013795516 }
             ])
         } else {
             setDataMarker([
-                {ukArrow: UKArrowLong, ukLng: 5.377067446744771, ukLat: 50.177084096989245 },
+                {ukArrow: UKArrowLong, ukLng: 5.377067446744771, ukLat: 50.17708409698924 },
                 {russiaArrow: russiaArrowLong, russiaLng: 7.104207203884845, russiaLat: 50.03469691527637 },
                 {polskaArrow: polskaArrowLong, polskaLng: 6.815322417081631, polskaLat: 50.347060676591056 }
             ])
@@ -93,7 +91,7 @@ export default function Home() {
         
         getData();
         
-    }, [isLoading])
+    }, [])
     
 
     return isLoaded && data && (
@@ -114,11 +112,17 @@ const MapBox = ({ items, markers }) => {
     const [lat, setLat] = useState(49.815764);
     const [zoom, setZoom] = useState(4);
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
-    const [convertedItems, setConvertedItems] = useState([]);
+    // const [convertedItems, setConvertedItems] = useState([]);
     const bounds = [
         [4.635609906406312, 49.24474658911654], // Southeast coordinate
         [7.7936412937252015, 50.38780761708563] // Northeast coordinate
     ]
+
+    const calculatePixelPosition = (coordinates) => {
+        const projected = mapRef.current.project(coordinates);
+        return { x: projected.x, y: projected.y };
+    };
+    
 
     return (
         <motion.div className='mask h-[calc(100dvh-80px)] sm:h-[calc(100vh-80px)] overflow-hidden' exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}}>
@@ -143,12 +147,12 @@ const MapBox = ({ items, markers }) => {
             >
 
                 {/* MARKERS */}
-                {items.map((marker, index) => {
+                {/* {items.map((marker, index) => {
                     if (marker.covers[0].data.geojson?.geometry.coordinates) {
                         return (
                             <Marker key={index} longitude={marker.covers[0].data.geojson.geometry.coordinates[0]} latitude={marker.covers[0].data.geojson.geometry.coordinates[1]} >
                                 <div className='relative'>
-                                    <img src={pinMarker} alt="marker" className="cursor-pointer relative z-[10]"  onClick={() => { setSelectedMarker({ id: index, data: marker }) }} />
+                                    <img src={pinMarker} alt="marker" className="cursor-pointer relative z-[1]"  onClick={() => { setSelectedMarker({ id: index, data: marker }) }} />
                                     <AnimatePresence>
                                         { selectedMarker && selectedMarker.id == index &&
                                             <motion.div
@@ -156,7 +160,7 @@ const MapBox = ({ items, markers }) => {
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 exit={{ opacity: 0, scale: 0.8 }}
                                                 transition={{ duration: 0.4, ease: 'easeInOut'}}
-                                                className='flex w-[275px] h-[110px] absolute z-[9999] left-0 top-0 bg-white items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
+                                                className='flex w-[275px] h-[110px] absolute z-[100] left-0 top-0 bg-white items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
                                                 style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
                                             >
                                                 <div className='border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative'>
@@ -167,8 +171,8 @@ const MapBox = ({ items, markers }) => {
                                                         <div className='flex'>
                                                             <span className='font-abril block pr-[10px]'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
                                                             <div>                                                
-                                                                <h3 className='font-abril text-[16px] pb-[8px]'>{ marker.data.title[language] }</h3>
-                                                                <p className='text-[16px] font-sofia leading-none uppercase'>{ marker.covers[0]?.data?.description[language] }</p>
+                                                                <h3 className='font-abril text-[16px] pb-[8px]'>{ truncateText(marker.data.title[language], 40) }</h3>
+                                                                <p className='text-[16px] font-sofia leading-none uppercase'>{ truncateText(marker.covers[0]?.data?.description[language], 70) }</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -181,7 +185,76 @@ const MapBox = ({ items, markers }) => {
                             </Marker>
                         )
                     }
-                })}                   
+                })}                    */}
+
+                {/* MARKERS */}
+                {items.map((marker, index) => {
+                    if (marker.covers[0].data.geojson?.geometry.coordinates) {
+                        return (
+                            <Marker 
+                                key={index} 
+                                longitude={marker.covers[0].data.geojson.geometry.coordinates[0]} 
+                                latitude={marker.covers[0].data.geojson.geometry.coordinates[1]}
+                            >
+                                <div className="relative">
+                                    <img 
+                                        src={pinMarker} 
+                                        alt="marker" 
+                                        className="cursor-pointer relative z-[1]"  
+                                        onClick={() => { setSelectedMarker({ id: index, data: marker }) }} 
+                                    />
+                                </div>
+                            </Marker>
+                        )
+                    }
+                })}
+
+                {/* POPUP */}
+                <AnimatePresence>
+                    {selectedMarker && selectedMarker.data && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.4, ease: 'easeInOut' }}
+                            className="absolute z-[1000] bg-white rounded-[6px] shadow-lg p-[3px]"
+                            style={{
+                                left: `${calculatePixelPosition(selectedMarker.data.covers[0].data.geojson.geometry.coordinates).x}px`,
+                                top: `${calculatePixelPosition(selectedMarker.data.covers[0].data.geojson.geometry.coordinates).y}px`,
+                                filter: 'drop-shadow(23px 30px 15px rgba(0, 0, 0, 0.65))'
+                            }}
+                        >
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                                className="flex w-[275px] h-[110px] items-center justify-center cursor-pointer p-[6px] rounded-[6px]"
+                            >
+                                <div className="border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative">
+                                    <div onClick={() => {
+                                        mapRef.current.flyTo({ zoom: zoom + 2, speed: 0.2, curve: 1 });
+                                        navigate(`/notice/${selectedMarker.data.slug}`);
+                                    }}>
+                                        <div className="flex">
+                                            <span className="font-abril block pr-[10px]">{selectedMarker.id + 1 < 10 ? '0' + (selectedMarker.id + 1) : selectedMarker.id + 1}</span>
+                                            <div>
+                                                <h3 className="font-abril text-[16px] pb-[8px]">{truncateText(selectedMarker.data.data.title[language], 40)}</h3>
+                                                <p className="text-[16px] font-sofia leading-none uppercase">{truncateText(selectedMarker.data.covers[0]?.data?.description[language], 70)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <FontAwesomeIcon 
+                                        icon={faXmark} 
+                                        className="absolute top-[2px] right-[4px]" 
+                                        onClick={() => setSelectedMarker({ id: null, data: null })}
+                                    />
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
 
                 <Marker key={"great-britain"} longitude={markers[0].ukLng} latitude={markers[0].ukLat} anchor={"center"}>   
                     <div className='relative z-[9999]'>
@@ -207,5 +280,7 @@ const MapBox = ({ items, markers }) => {
         </motion.div>
     );
 }
+
+
 
 

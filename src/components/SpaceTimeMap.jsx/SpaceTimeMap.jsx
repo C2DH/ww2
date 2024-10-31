@@ -15,7 +15,7 @@ import { Map, Marker, Source, Layer } from 'react-map-gl';
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
 
-import MultiRangeSlider, { ChangeResult } from "multi-range-slider-react";
+import MultiRangeSlider from "multi-range-slider-react";
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { useSharedState } from '../../contexts/SharedStateProvider'
@@ -53,9 +53,7 @@ export default function SpaceTimeMap() {
     
     // ALL LOCATIONS WITH DATE
     useEffect(() => {
-
         const getData = async () => {
-
             const locations = await fetchData(`story`, {
                 mentioned_to__slug: 'spatiotemporal-map'
             })

@@ -53,30 +53,6 @@ p {
 
 
 // CATALOGUE
-.progress-container {
-    height: 20px;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.15);
-}
-
-.progress-bar {
-    height: 20px;
-    background-color: rgba(0, 0, 0, 0.3);
-    width: 100%;
-    position: relative;
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        height: 10px;
-        width: 100%;
-        background-color: #6EDFFB;
-    }
-}
-
-
 .accordion-content {
     overflow: hidden;
     height: 0;
@@ -108,10 +84,6 @@ p {
 // NOTICE (Capsule)
 .iconMapBack svg {
     transition: stroke 2s ease-in-out;
-}
-
-video {
-    // border-radius: 6px;
 }
 
 .notice-filter {
@@ -457,3 +429,21 @@ video {
 }
 
 
+// SWIPER 
+.swiper-pagination {
+    height: 100px;
+    display: flex;
+    justify-content: center;
+}
+.swiper-pagination-bullet { 
+    display: inline-block;
+    margin: 10px;
+    height: 10px; 
+    width: 10px;
+    border-radius: 50%;
+    border: 1px solid white;
+
+    &.swiper-pagination-bullet-active {
+        background: white;
+    }
+}

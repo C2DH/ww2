@@ -28,7 +28,7 @@ export default function Menu() {
     const [isLoading, setIsLoading] = useState(false)
     const { pathname } = useLocation()
     const {language, changeLanguage } = useLanguageContext()
-    const locations = ['/', '/spatiotemporal-map', '/^\/notice\/[a-zA-Z0-9_-]+$/']
+    const locations = ['/', '/spatiotemporal-map', '/^/notice/[a-zA-Z0-9_-]+$/']
     const isMatch = locations.some(location => {
         if (location.startsWith('/^') && location.endsWith('$/')) {
             const regex = new RegExp(location.slice(1, -1))
@@ -83,7 +83,7 @@ export default function Menu() {
 
                     {/** HEADER */}
                     <div className="flex justify-between px-[30px] pt-[120px] sm:px-[90px] md:pt-[40px] lg:pt-[20px]">
-                        <Player />
+                        <Player status={'menu'}/>
                         <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
                         <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>
                     </div>
