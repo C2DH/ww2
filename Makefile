@@ -1,0 +1,10 @@
+BUILD_TAG ?= latest
+
+build:
+	docker build -t c2dhunilu/ww2:${BUILD_TAG} \
+	--build-arg BUILD_DATE=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ') \
+	--build-arg NPM_AUTH_TOKEN=$(NPM_AUTH_TOKEN) \
+	--build-arg GIT_TAG=latest \
+	--build-arg GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD) \
+	--build-arg GIT_REVISION=$(shell git rev-parse --short HEAD) \
+	--build-arg GIT_LAST_COMMIT_DATE=$(shell git log -1 --format=%cd --date=format:%Y-%m-%d) .
