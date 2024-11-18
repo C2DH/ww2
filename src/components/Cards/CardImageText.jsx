@@ -1,5 +1,5 @@
-   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBook } from "@fortawesome/pro-thin-svg-icons" 
+import { BookOpenIcon } from '@heroicons/react/24/outline'
+
 import { cleanText } from "../../lib/utils"
 
 export default function CardImageText({ img, title = "", type = "", myRef }) {
@@ -11,7 +11,7 @@ export default function CardImageText({ img, title = "", type = "", myRef }) {
                 <div className="col-span-4 lg:col-span-1">
                     { (type === "book" || type === "manuscript") &&
                         <div className="bg-gray-200 lg:h-[110px] flex items-center justify-center rounded-[2px]">
-                            <FontAwesomeIcon icon={ faBook} style={{ fontSize: '50px' }}/>
+                            <BookOpenIcon style={{ width: '30px', height: '30px' }} />
                         </div>
                     }
 

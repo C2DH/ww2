@@ -329,7 +329,7 @@ p {
 
 
 .bottom-gradient {
-    height: 250px;
+    height: 160px;
     width: 100%;
     background: rgb(71,93,169);
     background: linear-gradient(0deg, rgba(71,93,169,1) 0%, rgba(71,93,169,0) 100%);
@@ -431,7 +431,8 @@ p {
 
 // SWIPER 
 .swiper-pagination {
-    height: 100px;
+    height: 30px;
+    // height: 100px;
     display: flex;
     justify-content: center;
 }
@@ -442,8 +443,15 @@ p {
     width: 10px;
     border-radius: 50%;
     border: 1px solid white;
+    cursor: pointer;
 
     &.swiper-pagination-bullet-active {
         background: white;
     }
+}
+
+
+// REACT PDF 
+.react-pdf__Page {
+    background-color: transparent !important;
 }

@@ -12,6 +12,7 @@ export default defineConfig({
   },
 
   plugins: [react()],
+  assetsInclude: ['**/*.gltf', '**/*.glb'],
   define: {
     "process.env": {},
   },

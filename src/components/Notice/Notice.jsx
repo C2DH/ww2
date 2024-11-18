@@ -17,10 +17,13 @@ import { motion } from "framer-motion"
 import '../../assets/scss/app.scss'
 import next from '../../assets/images/notices/next.png'
 import prev from '../../assets/images/notices/prev.png'
-import { fetchData } from '../../lib/utils';
+import { fetchData } from '../../lib/utils'
+import defaultImage from '../../assets/images/common/default.png'
+
 
 export default function Notice() {
-
+    
+    const rootPath = import.meta.env.VITE_ROOT
     const { t } = useTranslation()
     const { language } = useLanguageContext()
     const { slug } = useParams()
@@ -28,7 +31,10 @@ export default function Notice() {
     const [results, setResults] = useState(null)
     const [capsules, setCapsules] = useState([])
     const [sharedState, setSharedState] = useSharedState()
+    const [imgBg, setImgBg] = useState()
     const navigate = useNavigate()
+
+
 
     // DETAILS CAPSULE
     useEffect(() => {
@@ -38,10 +44,23 @@ export default function Notice() {
             if (data) {
                 setResults(data)
                 setIsLoaded(true)
+
+                console.log('data', data)
+                data.covers.map(item => {
+                    if (item.type === 'picture') {
+                        setImgBg(rootPath + item.attachment)
+                    } else {
+                        setImgBg(defaultImage)
+                    }
+                })
             }
         }
         getData()
     }, [slug])
+
+    useEffect(() => {
+        console.log(results)
+    }, [results])
 
 
     // ALL CAPSULES
@@ -81,7 +100,7 @@ export default function Notice() {
     if (isLoaded) {
         return (
             <motion.div className='mask overflow-hidden relative' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}} >
-                <div className='h-full relative flex' style={{ background: `url(${'https://images.unsplash.com/photo-1571840615922-50fb24649d4b?q=80&w=4515&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}) 50% / cover no-repeat` }}>
+                <div className='h-full relative flex' style={{ background: `url(${imgBg }) 50% / cover no-repeat` }}>
                     <div className='notice-filter absolute inset-0'></div>
 
                     <div className="container mx-auto relative px-[30px] overflow-scroll">

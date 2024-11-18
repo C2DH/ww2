@@ -1,40 +1,49 @@
 import patternBG from '../../assets/images/source/squarePattern.png'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useTranslation } from 'react-i18next'
 import classNames from "classnames"
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import Player from '../Player/Player'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeftLongToLine, faArrowRightLongToLine } from '@fortawesome/pro-regular-svg-icons'
-import { faMagnifyingGlassMinus , faMagnifyingGlassPlus } from '@fortawesome/pro-regular-svg-icons'
 import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch"
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
-
+import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css'
-
 import { pdfjs } from 'react-pdf'
 import { Document, Page } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
+import test from '../../assets/images/common/test.pdf'
+import sound from '../../assets/sounds/test-2.mp3'
+import imageDefault from '../../assets/images/common/default.png'
+import { Suspense } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, useBounds, Bounds, useGLTF } from '@react-three/drei'
+import * as THREE from 'three';
+import { Link, useLocation } from 'react-router-dom'
+import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline'
+import { useMediaQuery } from 'react-responsive'
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
     import.meta.url,
-).toString()
+).toString()  
 
-import test from '../../assets/images/common/test.pdf'
-import sound from '../../assets/sounds/test-2.mp3'
-import imageDefault from '../../assets/images/common/default.png'
 
 export default function Source({ data, handleSourcePopup }) {
+
+    console.log('data', data)
 
     const { t } = useTranslation()
     const rootPath = import.meta.env.VITE_ROOT
     const { language } = useLanguageContext()
     const [numPages, setNumPages] = useState()
     const [pageNumber, setPageNumber] = useState(1)
-  
+    const [pageWidth, setPageWidth] = useState(window.innerWidth * 0.9)
+    const [modelHeight, setModelHeight] = useState('500px')
+    const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
+    const { pathname } = useLocation()
+
+
     const onDocumentLoadSuccess = ({ numPages }) => {
       setNumPages(numPages);
     }
@@ -51,95 +60,154 @@ export default function Source({ data, handleSourcePopup }) {
         }
     }
 
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            if (width > 1280) {
+                setPageWidth(500)
+                setModelHeight('calc(100vh - 400px)')
+            } else if (width > 768) {
+                setPageWidth(420)
+                setModelHeight('500px')
+            } else if (width > 400) {
+                setPageWidth(380)
+                setModelHeight('400px')
+            } else {
+                setPageWidth(300)
+                setModelHeight('300px')
+            }
+        }
 
-    console.log('data', data)
+        window.addEventListener('resize', handleResize)
+        handleResize()
+
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
 
     return (
-        <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='w-full lg:relative lg:top-0 absolute -top-[120px]'>
+        <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className={classNames('w-full lg:relative lg:top-0 absolute h-full', {
+            "-top-[120px]": !pathname === 'spatiotemporal-map',
+            // "top-0": isSmall && pathname === 'spatiotemporal-map'
+        })}>
             <div className='hidden lg:block absolute top-[40px] left-[40px] text-[30px] text-white z-[100]'>
-                <FontAwesomeIcon icon={faArrowLeftLongToLine} onClick={ handleSourcePopup } className='cursor-pointer'/>
+                <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" className='cursor-pointer' onClick={ handleSourcePopup } >
+                    <path d="M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z" fill="white"/>
+                </svg>  
             </div>
 
             <div className='h-[120px] lg:hidden flex justify-center items-center border-b border-white relative z-[100] bg-[rgba(0,0,0,0.9)]'>
                 <span className='text-white uppercase text-[24px] cursor-pointer' onClick={ handleSourcePopup }>{ t('close') }</span>
             </div>
 
-            <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] px-[20px]">
-                <div className="grid grid-cols-12 pt-[20px] lg:pt-[40px] h-full">
-                    {/* <div className="col-span-12 lg:col-span-7 lg:col-start-2 2xl:col-span-8 2xl:col-start-1"> */}
+            <div className={classNames("container mx-auto relative px-[20px]", {
+                "h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)]": pathname !== '/spatiotemporal-map',
+                "h-[calc(100dvh-120px)] sm:h-[calc(100vh-80px)]": pathname === '/spatiotemporal-map'
+            })}>
+                <div className="grid grid-cols-12 pt-[20px] lg:pt-[40px] h-auto md:h-full">
                     <div className="col-span-12 lg:col-span-7 lg:col-start-2">
                         
-                        {/** IMAGE */}
-                        { data.type === 'picture' &&                            
-                            <div className="pb-[20px] 2xl:pb-[40px] ipad:pt-[80px] 2xl:pt-[80px]">
+                        <div className="pb-[20px] pt-[20px] 2xl:pb-[40px] 2xl:pt-[80px] relative">
+                        
+                            {/** IMAGE */}
+                            {data.covers?.map(item => {
+                                if (item.data.type === 'event') {
+                                    return (
+                                        <ImageZoom key={item.id} image={ item.data.resolutions.preview.url ? rootPath + item.data.resolutions.preview.url : imageDefault }/>
+                                    )
+                                }
+                            })}
+
+                            { data.type === 'picture' &&                            
                                 <ImageZoom image={ rootPath + data.data.resolutions.preview.url }/>
-                            </div>
-                        }
+                            }
 
-                        {/** VIDEO */}
-                        { data.type === 'video' && data.data.videoResolutions.sd360p.url &&
-                            <div className="pb-[20px] 2xl:pb-[40px] ipad:pt-[80px] 2xl:pt-[80px]">
+                            {/** VIDEO */}
+                            { data.type === 'video' && data.data.videoResolutions.sd360p.url &&
                                 <Player url={ data.data.videoResolutions.sd360p.url } controls={true} status={'video'}/>
-                            </div>
-                        }
+                            }
 
-                        {/** PDF */}
-                        { data.type === 'pdf' &&
-                            <div className="pb-[20px] relative 2xl:pb-[40px] ipad:pt-[80px] 2xl:pt-[80px]">
-                                <Document file={test} onLoadSuccess={onDocumentLoadSuccess}>
-                                    <Page pageNumber={pageNumber}/>
-                                </Document>
-
-                                <div className='flex justify-center'>
-                                    { pageNumber > 1 &&
-                                        <FontAwesomeIcon icon={faArrowLeftLongToLine} onClick={ prevPage } className='absolute bottom-0 left-[45%] cursor-pointer text-white text-[20px]'/>
+                            {/** PDF */}
+                            { data.type === 'pdf' &&
+                                <>
+                                    {pageNumber > 1 &&
+                                        <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" className='absolute -top-[10px] left-[20px] transform -translate-x-1/2 space-x-4 cursor-pointer text-white text-[20px]' onClick={prevPage} >
+                                            <path d="M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z" fill="white"/>
+                                        </svg>  
                                     }
 
-                                    { pageNumber < numPages &&
-                                        <FontAwesomeIcon icon={faArrowRightLongToLine} onClick={ nextPage } className='absolute bottom-0 right-[45%] cursor-pointer text-white text-[20px] ml-[20px]'/>
+                                    {pageNumber < numPages &&
+                                        <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" className='rotate-180 absolute -top-[10px] left-[50px] transform -translate-x-1/2 space-x-4 cursor-pointer text-white text-[20px] ml-[20px]' onClick={nextPage} >
+                                            <path d="M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z" fill="white"/>
+                                        </svg>  
                                     }
-                                </div>
-                            </div>
-                        }
+                                    
+                                    <Document file={test} onLoadSuccess={onDocumentLoadSuccess}>
+                                        <Page pageNumber={pageNumber} size="A4" width={pageWidth} className="relative"/>
+                                    </Document>
+                                </>
+                            }
 
-                        {/** AUDIO */}
-                        { data.type === 'audio' &&
-                            <div className="pb-[20px] 2xl:pb-[40px] ipad:pt-[80px] 2xl:pt-[80px]">
-                                <img src={ imageDefault } alt="" />
-                                <Player url={ sound } controls={true} status={'audio'} />
-                            </div>
-                        }
+                            {/** AUDIO */}
+                            { data.type === 'audio' &&
+                                <>
+                                    <img src={ imageDefault } alt="" className='w-full' />
+                                    <Player url={ sound } controls={true} status={'audio'} />
+                                </>
+                            }
 
-                        {/** GALLERY */}
-                        { data.type === 'gallery' &&
-                            <div className="pb-[20px] 2xl:pb-[40px] ipad:pt-[80px] 2xl:pt-[80px]">
+                            {/** GALLERY */}
+                            { data.type === 'gallery' &&
                                 <Swiper modules={[Pagination, Navigation]} spaceBetween={50} slidesPerView={1} pagination={{ clickable: true }} loop={true} grabCursor={true}>
                                     <SwiperSlide><img src={ imageDefault } alt="" className='w-full'/></SwiperSlide>
                                     <SwiperSlide><img src={ imageDefault } alt="" className='w-full'/></SwiperSlide>
                                     <SwiperSlide><img src={ imageDefault } alt="" className='w-full'/></SwiperSlide>
                                     <SwiperSlide><img src={ imageDefault } alt="" className='w-full'/></SwiperSlide>
                                 </Swiper>
-                            </div>
-                        }
+                            }
 
-                        {/** BOOK */}
-                        {/* { data.type === 'book' &&
-                            <div className="pb-[20px]">
-                            </div>
-                        } */}
+                            {/** BOOK */}
+                            { data.type === 'book' &&
+                                <img src={ imageDefault } alt="" className='w-full' />
+                            }
 
-                        {/** 3D */}
-                        {/* { data.type === 'book' &&
-                            <div className="pb-[20px]">
-                            </div>
-                        } */}
-
-          
+                            {/** 3D */}
+                            { data.type === '3d' &&
+                                <ModelViewer model="/assets/images/3D/avatar_1.glb" height={modelHeight} />  
+                            }
+                        </div>
                     </div>
 
                     <div className="col-span-12 lg:col-span-3 lg:col-start-10 lg:border-l text-white overflow-scroll lg:pr-[30px]">
-                        <p className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>{ data.data.description[language] }</p>
-                        <hr className='w-1/2'/>
+                        
+                        {!data.covers &&
+                            <>
+                                <p className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>{ data.type !== 'book' ? data.data.description[language] : data.data.zotero.title }</p>
+                                <hr className='w-1/2'/>
+                            </>                 
+                        }
+
+                        {data.covers?.map(item => {
+                            console.log('item',item.data.title)
+                            if (item.data.type === 'event') {
+                                return (
+                                    <>
+                                        <p className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>{ item.data.title[language] }</p>
+                                        <hr className='w-1/2'/> 
+                                    </>
+                                )    
+                            }    
+                        })}
+         
+                        { (data.type === "book" && data.data.zotero.publisher) &&
+                            <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Publisher : { data.data.zotero.publisher }</span>
+                        }
+
+                        { (data.type === "book" && data.data.zotero.url) &&
+                            <>
+                                <hr className='w-1/2'/>
+                                <Link to={data.data.zotero.url} target="_blank" className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Lien : <span className='hover:text-blue transition-all duration-500'>{ data.data.zotero.url }</span></Link>
+                            </>
+                        }
                     </div>
                 </div>
             </div>
@@ -156,8 +224,7 @@ const ImageZoom = ({ image }) => {
     }
 
     return (
-        <TransformWrapper initialScale={1} initialPositionX={0} initialPositionY={0} onTransformed={(e) => handleTransform(e)}
->
+        <TransformWrapper initialScale={1} initialPositionX={0} initialPositionY={0} onTransformed={(e) => handleTransform(e)}>
             {() => (
                 <>
                     <TransformComponent>
@@ -170,23 +237,65 @@ const ImageZoom = ({ image }) => {
     )
 }
 
-
 const Controls = ({zoom}) => {
-    const { zoomIn, zoomOut, resetTransform } = useControls();
+    const { zoomIn, zoomOut, resetTransform } = useControls()
     return (
         <div className='flex justify-center pt-[20px] lg:pt-[40px] 2xl:pt-[80px]'>
             <div className="flex cursor-pointer">
                 <div className='border border-w' style={{ borderTopLeftRadius: '6px', borderBottomLeftRadius: '6px'}} onClick={() => zoomOut() }>
-                    <FontAwesomeIcon icon={faMagnifyingGlassMinus} className={classNames('text-[14px] lg:text-[18px] text-white px-[15px] py-[6px] lg:py-[12px]', { "pointer-events-none opacity-20": zoom === null || zoom === 1 })}/>
+                    <MagnifyingGlassMinusIcon style={{width: '50px'}} className={classNames('text-white px-[15px] py-[6px] lg:py-[12px]', { "pointer-events-none opacity-20": zoom === null || zoom === 1 })} />
                 </div>
                 <div className='uppercase text-[15px] lg:text-[20px] text-white flex items-center border-t border-b border-white px-[12px]' onClick={() => resetTransform()}>
                     <span className={classNames({"pointer-events-none opacity-20": zoom === null || zoom === 1})}>Reset</span>
                 </div>
                 <div className='border border-w' style={{ borderTopRightRadius: '6px', borderBottomRightRadius: '6px'}} onClick={() => zoomIn()}>
-                    <FontAwesomeIcon icon={faMagnifyingGlassPlus} className='text-[14px] lg:text-[18px] text-white px-[15px] py-[6px] lg:py-[12px]' />
+                    <MagnifyingGlassPlusIcon style={{width: '50px'}} className={classNames('text-white px-[15px] py-[6px] lg:py-[12px]', { "pointer-events-none opacity-20": zoom === 8 })}/>
                 </div>
             </div>
         </div>
     )
 }
 
+const Model3D = ({ model }) => {
+    const { scene } = useGLTF(model)
+    const api = useBounds()
+  
+    useEffect(() => {
+        if (api) {
+            api.refresh(scene).fit()
+            const box = new THREE.Box3().setFromObject(scene)
+            const center = box.getCenter(new THREE.Vector3())
+            const size = box.getSize(new THREE.Vector3())
+            scene.position.y -= center.y
+            scene.position.z = -size.z / 2
+        }    
+    }, [scene, api])
+  
+    return (
+        <group position={[0, 0, 0]}>
+            <primitive object={scene} />
+        </group>
+    )
+}
+  
+const ModelViewer = ({ model, height }) => {
+    console.log('height',height)
+    return (
+        <Canvas camera={{ position: [0, 0, 5], fov: 60 }} style={{ width: '100%', height: height }} >
+            
+            {/* Éclairage */}
+            <ambientLight intensity={0.4} />
+            <directionalLight position={[10, 10, 5]} intensity={1} />
+            
+            {/* Modèle */}
+            <Suspense fallback={null}>
+                <Bounds fit clip observe margin={1}>
+                    <Model3D model={model}/>   
+                </Bounds>
+            </Suspense>
+  
+            {/* Contrôles */}
+            <OrbitControls enablePan enableZoom enableRotate />
+        </Canvas>
+    )
+}

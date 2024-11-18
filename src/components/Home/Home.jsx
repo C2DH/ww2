@@ -12,8 +12,7 @@ import smallRightArrow from '../../assets/images/common/smallRightArrow.png'
 import UKArrowLong from '../../assets/images/common/ukArrowLong.png'
 import russiaArrowLong from '../../assets/images/common/russiaArrowLong.png'
 import polskaArrowLong from '../../assets/images/common/polskaArrowLong.png'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faXmark } from "@fortawesome/free-solid-svg-icons"
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
@@ -176,7 +175,7 @@ const MapBox = ({ items, markers }) => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <FontAwesomeIcon icon={faXmark} className="absolute top-[2px] right-[4px]" onClick={() => setSelectedMarker({ id: null, data: null })} />
+                                                    <XMarkIcon className="absolute top-[2px] right-[4px]" style={{ width: '15px'}} onClick={() => setSelectedMarker({ id: null, data: null })}/>
                                                 </div>
                                             </motion.div>
                                         }
@@ -244,11 +243,7 @@ const MapBox = ({ items, markers }) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <FontAwesomeIcon 
-                                        icon={faXmark} 
-                                        className="absolute top-[2px] right-[4px]" 
-                                        onClick={() => setSelectedMarker({ id: null, data: null })}
-                                    />
+                                    <XMarkIcon className="absolute top-[2px] right-[4px]" style={{ width: '15px'}} onClick={() => setSelectedMarker({ id: null, data: null })}/>
                                 </div>
                             </motion.div>
                         </motion.div>

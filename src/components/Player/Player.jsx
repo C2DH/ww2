@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 import "./Player.scss"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlay } from '@fortawesome/free-solid-svg-icons'
-import { faVolume, faVolumeXmark } from '@fortawesome/sharp-thin-svg-icons'
 import { useMediaQuery } from 'react-responsive'
 import classNames from 'classnames'
 import { useLocation } from 'react-router-dom'
@@ -12,6 +9,8 @@ import sound_1 from '../../assets/sounds/sound-1.mp3'
 import sound_2 from '../../assets/sounds/test-2.mp3'
 import sample from '../../assets/sounds/sample-15s.mp3'
 import { useMenuSoundContext } from '../../contexts/MenuProvider'
+import { PlayIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline'
+
 
 
 export default function Player({ url, className, controls, status })  {
@@ -65,7 +64,7 @@ export default function Player({ url, className, controls, status })  {
                         "w-[100px] h-[100px]": !isMobile,
                         "w-[50px] h-[50px]": isMobile,
                     })}>
-                        <FontAwesomeIcon icon={faPlay} style={{ fontSize: isMobile ? '20px': '40px', color: '#6EDFFB' }} />
+                        <PlayIcon style={{ width: isMobile ? '20px': '40px', color: '#6EDFFB' }} />
                     </div>
                 }
             </div>
@@ -76,9 +75,13 @@ export default function Player({ url, className, controls, status })  {
                 <div className='flex items-center'>
                     <span className='text-[20px] sm:text-[24px] uppercase whitespace-nowrap me-3'>{ isPlaying ? t('sound_on') : t('sound_off') }</span>
                     <ReactPlayer url={ sound } width={ '100%' } height={ '100%' } className={ className } playing={isMenuSoundPlay} ref={playerMenuRef } onEnded={ handleEnded } />
-                    <FontAwesomeIcon icon={isMenuSoundPlay ? faVolume : faVolumeXmark} className='text-[22px] sm:text-[24px] cursor-pointer' 
-                        onClick={() => setIsMenuSoundPlay(!isMenuSoundPlay)}
-                    />
+
+                    { isMenuSoundPlay ? (
+                        <SpeakerWaveIcon style={{ width: '40px', color: 'white'}} className='cursor-pointer' onClick={() => setIsMenuSoundPlay(!isMenuSoundPlay)}/>
+                    ) : (
+                        <SpeakerXMarkIcon style={{ width: '40px', color: 'white'}} className='cursor-pointer' onClick={() => setIsMenuSoundPlay(!isMenuSoundPlay)}/>
+                    )}
+
                 </div>
             </div>
         )

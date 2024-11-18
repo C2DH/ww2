@@ -1,5 +1,4 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleUp, faAngleDown } from '@fortawesome/pro-light-svg-icons';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 import classNames from "classnames"
 import { useState } from 'react';
 
@@ -15,7 +14,7 @@ export default function Dropdown({ items, text }) {
         >
             <div className='flex justify-between items-center'>
                 <span className='block uppercase text-[24px]'>{text}</span>
-                <FontAwesomeIcon icon={ isOpen ? faAngleDown : faAngleUp } className='block text-[20px]'/>
+                { isOpen ? <ChevronDownIcon style={{ width: '30px', height: '30px' }} /> : <ChevronUpIcon style={{ width: '30px', height: '30px' }} /> }
             </div>
 
             <div className={classNames('text-[24px] transition-all duration-[750ms]',{ 'opacity-0': !isOpen })}>

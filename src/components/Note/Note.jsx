@@ -2,21 +2,14 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import Source from '../Source/Source'
-
-
 import bgPaper from '../../assets/images/common/bg-paper.png'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeftLongToLine } from '@fortawesome/pro-regular-svg-icons'
-import { faImage, faImages, faVideo, faBook, faFilePdf, faFileAudio, faCube } from '@fortawesome/pro-thin-svg-icons'
-
 import { AnimatePresence, motion } from "framer-motion"
-
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { t } from 'i18next'
-
 import { convertToHtml, fetchData, getAllNotes } from '../../lib/utils'
 import defaultImage from '../../assets/images/common/default.png'
 import siteConfig from '../../../site.config'
+import { BookOpenIcon, CubeIcon, DocumentIcon, PhotoIcon, SpeakerWaveIcon, VideoCameraIcon } from '@heroicons/react/24/outline'
 
 
 export default function Note() {
@@ -76,6 +69,11 @@ export default function Note() {
         setSharedState({ ...sharedState, showCurtains: false })
     }, [])
 
+
+    useEffect(() => {
+        console.log(data)
+    }, [data])
+
     // NAVIGATE NOTES
     const navigateNote = (direction) => {
         if (notes.length === 0 || !data) return
@@ -111,11 +109,13 @@ export default function Note() {
         return (
             <>
                 <motion.div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} className='note' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                    <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] flex flex-col px-[30px]">
+                    <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] flex flex-col px-[30px] pt-[30px] 2xl:pt-0">
     
                         <div className='flex items-center justify-between'>
                             <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[73px] 2xl:-left-[50px] text-[20px] lg:text-[30px]'>
-                                <FontAwesomeIcon icon={faArrowLeftLongToLine} />
+                                <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z" fill="black"/>
+                                </svg>  
                             </Link>
                             <div className='lg:hidden text-[20px] md:text-[24px] uppercase flex items-center cursor-pointer pl-[20px]'>   
                                 <span className='pr-[10px] lg:pr-[20px]' onClick={() => navigateNote(-1)}>{ t('prev') }</span>
@@ -139,7 +139,7 @@ export default function Note() {
                             <span className="leading-none font-abril pl-[10px] md:pl-[15px]">{ data.data.title[language] }</span>
                         </div>
     
-                        <div className="flex flex-col lg:flex-row overflow-scroll min-h-[calc(100%-120px)]" id="text">
+                        <div className="flex flex-col lg:flex-row overflow-scroll lg:min-h-[calc(100%-120px)]" id="text">
                             <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
                                 
                                 {/** CONTENT - REFERENCES */}
@@ -177,7 +177,7 @@ export default function Note() {
                                                 <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url !== "" ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                        <FontAwesomeIcon icon={ faImage } className='text-white text-[40px]'/>
+                                                        <PhotoIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
@@ -186,7 +186,7 @@ export default function Note() {
                                                 <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }> 
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url !== "" ? document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                        <FontAwesomeIcon icon={ faVideo } className='text-white text-[40px]'/>
+                                                        <VideoCameraIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
@@ -195,7 +195,7 @@ export default function Note() {
                                                 <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                        <FontAwesomeIcon icon={ faBook } className='text-white text-[40px]'/>
+                                                        <BookOpenIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
@@ -204,7 +204,7 @@ export default function Note() {
                                                 <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ rootPath + document.data.resolutions.preview.url } alt={""} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                        <FontAwesomeIcon icon={ faFilePdf } className='text-white text-[40px]'/>
+                                                        <DocumentIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
@@ -213,7 +213,7 @@ export default function Note() {
                                                 <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                        <FontAwesomeIcon icon={ faFileAudio } className='text-white text-[40px]'/>
+                                                        <SpeakerWaveIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
@@ -222,7 +222,7 @@ export default function Note() {
                                                 <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                        <FontAwesomeIcon icon={ faImages } className='text-white text-[40px]'/>
+                                                        <PhotoIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
@@ -232,7 +232,7 @@ export default function Note() {
                                                 <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                        <FontAwesomeIcon icon={ faCube } className='text-white text-[40px]'/>
+                                                        <CubeIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
