@@ -2,20 +2,24 @@ import { Outlet, useLocation } from "react-router-dom"
 import { useMenuContext } from '../../contexts/MenuProvider'
 import classNames from "classnames"
 import { useMediaQuery } from "react-responsive"
+import { useSourceContext } from "../../contexts/SourceProvider"
 
 
 export default function Layout() {
     const { pathname } = useLocation()
     const { openMenu } = useMenuContext()
+    const {isOpenSource} = useSourceContext()
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
+
+    console.log('isOpensource', isOpenSource)
+
 
     if (pathname === '/' || pathname === '/spatiotemporal-map' || pathname.includes('/notice/')) {
         return (
-            <div className={classNames('absolute inset-0 ransition-all duration-[2000ms] flex z-[200] top-[80px]', {
+            <div className={classNames('absolute inset-0 transition-all duration-[2500ms] flex z-[200] top-[80px]', {
                 'translate-y-0': !openMenu,
                 'translate-y-full': openMenu,
-                // 'top-[80px]': !isSmall && pathname === '/spatiotemporal-map',
-                // 'top-0': isSmall && pathname === '/spatiotemporal-map'
+                '-translate-y-[80px]': isOpenSource && isSmall
             })}>
                 <Outlet/>
             </div>

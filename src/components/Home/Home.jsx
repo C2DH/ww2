@@ -107,9 +107,9 @@ const MapBox = ({ items, markers }) => {
 
     const mapRef = useRef(null);
     const navigate = useNavigate();
-    const [lng, setLng] = useState(6.131514);
-    const [lat, setLat] = useState(49.815764);
-    const [zoom, setZoom] = useState(4);
+    const [lng] = useState(6.131514);
+    const [lat] = useState(49.815764);
+    const [zoom] = useState(4);
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
     // const [convertedItems, setConvertedItems] = useState([]);
     const bounds = [

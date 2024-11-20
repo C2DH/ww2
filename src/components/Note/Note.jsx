@@ -10,6 +10,7 @@ import { convertToHtml, fetchData, getAllNotes } from '../../lib/utils'
 import defaultImage from '../../assets/images/common/default.png'
 import siteConfig from '../../../site.config'
 import { BookOpenIcon, CubeIcon, DocumentIcon, PhotoIcon, SpeakerWaveIcon, VideoCameraIcon } from '@heroicons/react/24/outline'
+import { useMediaQuery } from 'react-responsive'
 
 
 export default function Note() {
@@ -22,6 +23,8 @@ export default function Note() {
     const [notes, setNotes ] = useState([])
     const navigate = useNavigate()
     const rootPath = import.meta.env.VITE_ROOT
+    const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
+
 
     const [jsonFile, setJsonFile] = useState([])
 
@@ -35,20 +38,17 @@ export default function Note() {
                 setIsLoaded(true)
             }
 
-            {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
+        {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
             const response = await fetch('/data.json')
             const jsonData = await response.json()
             setJsonFile(jsonData)            
             if (data) {
-                    const updatedDocuments = Array.isArray(data.documents) 
-                        ? [...data.documents, ...jsonData]
-                        : [...jsonData]
-
-                    setData({ ...data, documents: updatedDocuments })
-                    setIsLoaded(true);
-                }
+                const updatedDocuments = Array.isArray(data.documents) ? [...data.documents, ...jsonData] : [...jsonData]
+                setData({ ...data, documents: updatedDocuments })
+                setIsLoaded(true);
             }
-            {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
+        }
+        {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
 
         getData();
     }, [isLoaded])
@@ -248,9 +248,9 @@ export default function Note() {
                 <AnimatePresence>
                     { dataPopup.open && 
                         <motion.div 
-                            className='absolute w-full top-0'
+                            className='absolute w-full top-0 h-full lg:h-auto'
                             initial={{ top: '100%' }}
-                            animate={{ top: '120px' }}
+                            animate={{ top: isSmall ? 0 : '120px'}}
                             exit={{ top: '100%'}}
                             transition={{ duration: 0.8, ease: 'easeInOut'}}
                         >

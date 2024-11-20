@@ -9,7 +9,7 @@ export default function Dropdown({ items, text }) {
     return (
         <div onClick={() => setIsOpen(!isOpen) } className={classNames("absolute z-[6] overflow-hidden py-[5px] px-[10px] border border-black cursor-pointer w-full rounded-[4px] bg-[#EFEFED] transition-all duration-[750ms]", {
             'max-h-[40px]': !isOpen,
-            'max-h-[50vh]': isOpen
+            'max-h-[50vh] overflow-scroll': isOpen
             })}
         >
             <div className='flex justify-between items-center'>
@@ -21,9 +21,16 @@ export default function Dropdown({ items, text }) {
                 <hr className='border-black my-[10px]'/>
 
                 { items?.map((item, index) => {
-                    return (
-                        <span key={index} className="block uppercase"># { item }</span>
-                    )
+
+                    if (typeof item == "object") {
+                        return (
+                            <span key={index} className="block uppercase"># {`${item.family} ${item.given} `}</span>
+                        )
+                    } else {
+                        return (
+                            <span key={index} className="block uppercase"># { item }</span>
+                        )
+                    }
                 })}
             </div>
         </div>

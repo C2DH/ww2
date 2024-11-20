@@ -74,12 +74,12 @@ export default function Player({ url, className, controls, status })  {
             <div>
                 <div className='flex items-center'>
                     <span className='text-[20px] sm:text-[24px] uppercase whitespace-nowrap me-3'>{ isPlaying ? t('sound_on') : t('sound_off') }</span>
-                    <ReactPlayer url={ sound } width={ '100%' } height={ '100%' } className={ className } playing={isMenuSoundPlay} ref={playerMenuRef } onEnded={ handleEnded } />
+                    <ReactPlayer url={ sound } width={ '' } height={ '' } className={ className } playing={isMenuSoundPlay} ref={playerMenuRef } onEnded={ handleEnded } />
 
                     { isMenuSoundPlay ? (
-                        <SpeakerWaveIcon style={{ width: '40px', color: 'white'}} className='cursor-pointer' onClick={() => setIsMenuSoundPlay(!isMenuSoundPlay)}/>
+                        <SpeakerWaveIcon style={{ width: '30px', color: 'white'}} className='cursor-pointer' onClick={() => setIsMenuSoundPlay(!isMenuSoundPlay)}/>
                     ) : (
-                        <SpeakerXMarkIcon style={{ width: '40px', color: 'white'}} className='cursor-pointer' onClick={() => setIsMenuSoundPlay(!isMenuSoundPlay)}/>
+                        <SpeakerXMarkIcon style={{ width: '30px', color: 'white'}} className='cursor-pointer' onClick={() => setIsMenuSoundPlay(!isMenuSoundPlay)}/>
                     )}
 
                 </div>

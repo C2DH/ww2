@@ -25,6 +25,7 @@ import { formatDate } from '../../lib/utils'
 import defaultImage from '../../assets/images/common/default.png'
 import { MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import SourceComponent from '../Source/Source'
+import { useSourceContext } from '../../contexts/SourceProvider'
 
 
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
@@ -39,9 +40,7 @@ export default function SpaceTimeMap() {
     const [filters, setFilters] = useState({ min: transformDate('Jan-1939'), max: transformDate('Jan-1946') })
     const [isLoaded, setIsLoaded] = useState(false)
     const mapRef = useRef(null)
-    const [openSource, setOpenSource] = useState(false)
     const [openFilter, setOpenFilter] = useState(false)
-
 
     const [ viewState, setViewState ] = useState({
         longitude: 6.1243943,
@@ -203,12 +202,11 @@ const MapBox = ({ items, state, reference }) => {
     const { language } = useLanguageContext()
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null })
     const [openLocation, setOpenLocation] = useState(false)
-    const [btnHover, setBtnHover] = useState(false)
     const [openSource, setOpenSource] = useState(false)
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
     const [date, setDate] = useState(null)
     const [city, setCity] = useState(null)
-
+    const {setIsOpenSource} = useSourceContext()
    
 
     const sourceStyle = {
@@ -276,8 +274,9 @@ const MapBox = ({ items, state, reference }) => {
                                         <div className='relative'>
                                             <img src={pinMarker} alt="marker" className="cursor-pointer"
                                                 onClick={() => {
-                                                    setOpenLocation(true);
-                                                    setSelectedMarker({ id: item.id, data: item });
+                                                    setOpenLocation(true)
+                                                    setIsOpenSource(true)
+                                                    setSelectedMarker({ id: item.id, data: item })
                                                 }}
                                             />
                                         </div>
@@ -297,12 +296,13 @@ const MapBox = ({ items, state, reference }) => {
                                 animate={{ x: 0 }}
                                 exit={{ x: '-100%' }}
                                 transition={{ duration: 0.8, ease: 'easeInOut' }}
-                                className='md:w-[70%] lg:w-[60%] xl:w-[40%] h-full bg-white absolute z-[9999] sm:pt-[100px] sm:pl-[80px] sm:pr-[40px] top-0'
+                                className='md:w-[70%] lg:w-[60%] xl:w-[40%] h-full bg-white absolute z-[9999] md:pt-[100px] sm:pl-[80px] sm:pr-[40px] top-0'
                             >
 
                                 <XMarkIcon className='hidden md:block absolute right-[40px] top-[60px] cursor-pointer' style={{ width: '40px' }}
                                     onClick={() => {
                                         setOpenLocation(false);
+                                        setIsOpenSource(false)
                                         setSelectedMarker({ id: null, data: null });
                                     }}
                                 />
@@ -331,8 +331,6 @@ const MapBox = ({ items, state, reference }) => {
 
                                     <Link
                                         className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
-                                        onMouseOver={() => setBtnHover(true)}
-                                        onMouseLeave={() => setBtnHover(false)}
                                         onClick={() => setOpenSource(true)}
                                     >
                                         <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
@@ -355,7 +353,7 @@ const MapBox = ({ items, state, reference }) => {
                             animate={{ x: 0 }}
                             exit={{ x: '-100%' }}
                             transition={{ duration: 0.8, ease: 'easeInOut' }}
-                            className='md:w-[70%] lg:w-[60%] xl:w-[40%] h-full bg-white absolute z-[9999] sm:pt-[100px] sm:pl-[80px] sm:pr-[40px] -top-[80px]'
+                            className='md:w-[70%] lg:w-[60%] xl:w-[40%] h-full bg-white absolute z-[9999] md:pt-[100px] md:pl-[80px] md:pr-[40px] top-0'
                         >
 
                             <div className="md:hidden bg-[rgba(0,0,0,0.9)] h-[120px] flex justify-center items-center"
@@ -363,7 +361,7 @@ const MapBox = ({ items, state, reference }) => {
                                     setOpenLocation(false);
                                     setSelectedMarker({ id: null, data: null });
                                 }}>
-                                    <span className='cursor-pointer text-[24px] uppercase text-white'>{ t('close') }</span>
+                                    <span className='cursor-pointer text-[24px] uppercase text-white' onClick={() => setIsOpenSource(false)}>{ t('close') }</span>
                             </div>
 
                             <div className='px-[20px] md:px-0'>
@@ -382,8 +380,6 @@ const MapBox = ({ items, state, reference }) => {
 
                                 <Link
                                     className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
-                                    onMouseOver={() => setBtnHover(true)}
-                                    onMouseLeave={() => setBtnHover(false)}
                                     onClick={() => setOpenSource(true)}
                                 >
                                     <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
@@ -402,7 +398,7 @@ const MapBox = ({ items, state, reference }) => {
                             'mask': !isSmall
                         })}
                         initial={{ top: '100%' }}
-                        animate={{ top: isSmall ? '-80px' : '0px' }}
+                        animate={{ top: 0}}
                         exit={{ top: '100%'}}
                         transition={{ duration: 0.8, ease: 'easeInOut'}}
                     >

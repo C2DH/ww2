@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import patternBG from '../../assets/images/source/squarePattern.png'
 import { useEffect, useState } from "react"
 import { useTranslation } from 'react-i18next'
@@ -21,7 +22,6 @@ import { OrbitControls, useBounds, Bounds, useGLTF } from '@react-three/drei'
 import * as THREE from 'three';
 import { Link, useLocation } from 'react-router-dom'
 import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline'
-import { useMediaQuery } from 'react-responsive'
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -40,7 +40,6 @@ export default function Source({ data, handleSourcePopup }) {
     const [pageNumber, setPageNumber] = useState(1)
     const [pageWidth, setPageWidth] = useState(window.innerWidth * 0.9)
     const [modelHeight, setModelHeight] = useState('500px')
-    const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
     const { pathname } = useLocation()
 
 
@@ -85,11 +84,12 @@ export default function Source({ data, handleSourcePopup }) {
     }, [])
 
     return (
-        <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className={classNames('w-full lg:relative lg:top-0 absolute h-full', {
+        <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className={classNames('w-full h-full lg:relative lg:top-0 absolute', {
             "-top-[120px]": !pathname === 'spatiotemporal-map',
-            // "top-0": isSmall && pathname === 'spatiotemporal-map'
         })}>
-            <div className='hidden lg:block absolute top-[40px] left-[40px] text-[30px] text-white z-[100]'>
+            <div className={classNames('hidden lg:block absolute top-[40px] left-[40px] text-[30px] text-white z-[100]', {
+                'top-[80px]': pathname === '/spatiotemporal-map'
+            })}>
                 <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" className='cursor-pointer' onClick={ handleSourcePopup } >
                     <path d="M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z" fill="white"/>
                 </svg>  

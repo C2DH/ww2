@@ -18,7 +18,6 @@ export default function Sources() {
     const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
     const { language } = useLanguageContext()
-
     const [offset, setOffset] = useState(0)
     const [loading, setLoading] = useState(false)
     const [sources, setSources] = useState([])
@@ -28,6 +27,7 @@ export default function Sources() {
     const [isOpenFilters, setIsOpenFilters] = useState(false)
     const [filters, setFilters] = useState({types: [], tags: []})
     const [filteredSources, setFilteredSources] = useState([])
+    const [hasMore, setHasMore] = useState(true);
     const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
     const menuItems = [
         {
@@ -53,14 +53,20 @@ export default function Sources() {
         try {
             const response = await axios.get(`api/document/?filters=%7B%22type__in%22%3A%5B%22audio%22%2C%22video%22%2C%22photo%22%2C%22book%22%2C%22manuscript%22%5D%7D&facets=type&limit=${ limit }&offset=${ offset }`)
             setTypes(response.data.facets.type)
+
+            if (response.data.results.length < limit) {
+                setHasMore(false);
+            }
             return response.data
         } catch (error) {
+            setHasMore(false)
             return []
         }
     }
 
 
     const loadMoreSources = async () => {
+        if (!hasMore) return
         setLoading(true)
         const newSources = await fetchSources(offset)
         setSources((prevSources) => [...prevSources, ...newSources.results])
@@ -72,13 +78,16 @@ export default function Sources() {
 
     const lastSourceRef = useCallback(
         (node) => {
-            if (loading) return;
+            if (loading || !hasMore) return
+
+            console.log('observer', observer)
             
             if (observer.current) {
-                observer.current.disconnect();
+                observer.current.disconnect()
             } 
     
             observer.current = new IntersectionObserver((entries) => {
+                console.log('entries', entries)
                 if (entries[0].isIntersecting) {
                     setOffset((prevOffset) => prevOffset + 20)
                 }
@@ -87,7 +96,7 @@ export default function Sources() {
             if (node) {
                 observer.current.observe(node);
             } 
-        },[loading]
+        },[loading, hasMore]
     )
 
     useEffect(() => {
@@ -103,15 +112,9 @@ export default function Sources() {
         } else {
             setFilteredSources(sources)
         }
-
-        console.log(sources)
     },[sources, filters])
     
 
-
-
-
-    
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, [])
@@ -173,10 +176,8 @@ export default function Sources() {
                                 <CardImageText 
                                     myRef={filteredSources.length === index + 1 ? lastSourceRef : null}
                                     key={index}
-                                    img={source.data.resolutions.medium.url} 
                                     title={source.data.title[language]}
-                                    // text={source.text}
-                                    type={source.type}
+                                    data={source}
                                 />
                             )
                         } else if (source.type === "book" || source.type === "manuscript") {
@@ -185,8 +186,7 @@ export default function Sources() {
                                     myRef={filteredSources.length === index + 1 ? lastSourceRef : null}
                                     key={index}
                                     title={source.data.zotero.title}
-                                    text={source.text}
-                                    type={source.type}
+                                    data={source}
                                 />
                             )
                         }

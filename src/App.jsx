@@ -23,6 +23,7 @@ import Bibliography from './components/Bibliography/Bibliography'
 import Glossary from "./components/Glossary/Glossary"
 import { MenuProvider } from "./contexts/MenuProvider"
 import { LanguageProvider } from "./contexts/LanguageProvider"
+import { SourceProvider } from "./contexts/SourceProvider"
 import NotFound from "./components/NotFound/NotFound"
 
 export default function App() {
@@ -46,30 +47,32 @@ export default function App() {
         <>
             <LanguageProvider>
                 <MenuProvider>
-                    <Menu />
-                    <AnimatePresence mode="wait">
-                        <Routes location={location} key={location.pathname}>
-                            <Route path='/' element={ <Layout/>} >
-                                {/* <Route index element={ <Home /> }/> */}
-                                <Route path='/' element={ <Home /> }/>
-                                <Route path='/catalogue' element={ <Catalogue /> }/>
-                                <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
-                                <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
-                                <Route path='/bibliography' element={ <Bibliography /> }/>
-                                <Route path='/glossary' element={ <Glossary /> }/>
-                                <Route path='/spatiotemporal-map' element={ <SpaceTimeMap /> }/>
-                                <Route path='/notice/:slug' element={ <Notice /> }/>
-                                <Route path='/note/:slug' element={ <Note /> }/>
-                                <Route path='/sources' element={ <Sources /> }/>
-                                <Route path='/source/:id' element={ <Source /> }/>
-                                <Route path='/credits' element={ <Credits /> }/>
-                                <Route path='/about' element={ <About /> }/>
-                                <Route path='/terms' element={ <Terms /> }/>
-                                <Route path='/contact' element={ <Contact /> }/>
-                                <Route path="*" element={ <NotFound /> }/>
-                            </Route>
-                        </Routes>
-                    </AnimatePresence>
+                    <SourceProvider>
+                        <Menu />
+                        <AnimatePresence mode="wait">
+                            <Routes location={location} key={location.pathname}>
+                                <Route path='/' element={ <Layout/>} >
+                                    {/* <Route index element={ <Home /> }/> */}
+                                    <Route path='/' element={ <Home /> }/>
+                                    <Route path='/catalogue' element={ <Catalogue /> }/>
+                                    <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
+                                    <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
+                                    <Route path='/bibliography' element={ <Bibliography /> }/>
+                                    <Route path='/glossary' element={ <Glossary /> }/>
+                                    <Route path='/spatiotemporal-map' element={ <SpaceTimeMap /> }/>
+                                    <Route path='/notice/:slug' element={ <Notice /> }/>
+                                    <Route path='/note/:slug' element={ <Note /> }/>
+                                    <Route path='/sources' element={ <Sources /> }/>
+                                    <Route path='/source/:id' element={ <Source /> }/>
+                                    <Route path='/credits' element={ <Credits /> }/>
+                                    <Route path='/about' element={ <About /> }/>
+                                    <Route path='/terms' element={ <Terms /> }/>
+                                    <Route path='/contact' element={ <Contact /> }/>
+                                    <Route path="*" element={ <NotFound /> }/>
+                                </Route>
+                            </Routes>
+                        </AnimatePresence>
+                    </SourceProvider>    
                 </MenuProvider>
             </LanguageProvider>
 

@@ -8,7 +8,6 @@ import bgPaper from '../../assets/images/common/bg-paper.png'
 import classNames from "classnames"
 import { useTranslation } from "react-i18next"
 import { useSharedState } from "../../contexts/SharedStateProvider"
-import { useLanguageContext } from '../../contexts/LanguageProvider'
 import axios from "axios"
 import { Cite } from '@citation-js/core'
 import '@citation-js/plugin-csl'
@@ -17,8 +16,7 @@ import { truncateText, cleanText } from '../../lib/utils'
 
 export default function Bibliography() {
 
-    const authors = ['a', 'b', 'c', 'd', 'e']
-    const notes = ['a', 'b', 'c', 'd', 'e'] 
+    const notes = ['a', 'b', 'c', 'd', 'e']
 
     const { t } = useTranslation()
     const [sharedState, setSharedState] = useSharedState()
@@ -28,11 +26,33 @@ export default function Bibliography() {
     const [offset, setOffset] = useState(0)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const [authors, setAuthors] = useState([])
 
     const fetchBooks = async (offset = 0, limit = 10) => {
         try {
-            const response = await axios.get(`api/document/?filters=%7B%22type__in%22:%5B%22reference%22,%22book%22,%22manuscript%22%5D%7D&facets=data__type&limit=${limit}&offset=${offset}&h=d5e2e995b3db151bf2ed6ed27ffa19713a0dd8bacd529494021ae0ff6b3f0185`)
-            return response.data.results
+
+            const content = await axios.get(`/api/document/?filters={"type__in":["reference","book","manuscript"]}&facets=data__type&limit=${limit}&offset=${offset}`)
+            
+            const allAuthors = await axios.get(`/api/document/?filters={"type__in":["reference","book","manuscript"]}&facets=data__type&limit=1500`)
+            const collator = new Intl.Collator('fr', { sensitivity: 'base' })
+            const authorsTab = []
+            allAuthors.data.results.forEach(item => {
+                if (item.data.csljson.author) {
+                    item.data.csljson.author.forEach(author => {
+                        authorsTab.push(author)
+                    })
+                }
+            })
+
+            const uniqueAuthors = authorsTab.filter(
+                (author, index, self) =>
+                  index === self.findIndex((a) => a.family === author.family)
+            )
+
+            uniqueAuthors.sort((a, b) => collator.compare(a.family, b.family))
+            setAuthors(uniqueAuthors)
+        
+            return content.data.results
         } catch (error) {
             setError(error)
             return []
@@ -71,7 +91,7 @@ export default function Bibliography() {
 
     useEffect(() => {
         loadMoreBooks()
-        console.log(books)
+        console.log(authors)
     }, [offset])
 
 

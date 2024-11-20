@@ -57,5 +57,5 @@ export default {
       ipadBig: { raw: "(min-height: 1366px),(min-width: 1024px)" },
     },
   },
-  plugins: [require("flowbite/plugin")],
+  plugins: [("flowbite/plugin")],
 };

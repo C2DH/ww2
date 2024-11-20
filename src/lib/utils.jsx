@@ -17,8 +17,8 @@ export function convertToHtml(text) {
 }
 
 function containsMarkdown(text) {
-    const markdownRegex = /[#*_\-`>\[\]!]/
-    return markdownRegex.test(text)
+    const markdownRegex = /(?:__|[*#_~`]|```|--|\+\+|\[\[|\]\]|\(\()/;
+    return markdownRegex.test(text);
 }
 
 export function cleanText(text) {
