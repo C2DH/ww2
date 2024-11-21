@@ -4,7 +4,6 @@ import Catalogue from './components/Catalogue/Catalogue'
 import HistorianWorkshop from './components/HistorianWorkshop/HistorianWorkshop'
 import SpaceTimeMap from "./components/SpaceTimeMap.jsx/SpaceTimeMap"
 import About from "./components/About/About"
-import Contact from "./components/Contact/Contact"
 import Credits from "./components/Credits/Credits"
 import Notice from "./components/Notice/Notice"
 import Menu from "./components/Menu/Menu"
@@ -52,7 +51,6 @@ export default function App() {
                         <AnimatePresence mode="wait">
                             <Routes location={location} key={location.pathname}>
                                 <Route path='/' element={ <Layout/>} >
-                                    {/* <Route index element={ <Home /> }/> */}
                                     <Route path='/' element={ <Home /> }/>
                                     <Route path='/catalogue' element={ <Catalogue /> }/>
                                     <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
@@ -67,7 +65,6 @@ export default function App() {
                                     <Route path='/credits' element={ <Credits /> }/>
                                     <Route path='/about' element={ <About /> }/>
                                     <Route path='/terms' element={ <Terms /> }/>
-                                    <Route path='/contact' element={ <Contact /> }/>
                                     <Route path="*" element={ <NotFound /> }/>
                                 </Route>
                             </Routes>

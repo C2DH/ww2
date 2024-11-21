@@ -51,7 +51,7 @@ export default function Sources() {
     
     const fetchSources = async (offset = 0, limit = 20) => {
         try {
-            const response = await axios.get(`api/document/?filters=%7B%22type__in%22%3A%5B%22audio%22%2C%22video%22%2C%22photo%22%2C%22book%22%2C%22manuscript%22%5D%7D&facets=type&limit=${ limit }&offset=${ offset }`)
+            const response = await axios.get(`api/document/?filters=%7B%22type__in%22%3A%5B%22audio%22%2C%22video%22%2C%22picture%22%2C%22book%22%2C%22manuscript%22%5D%7D&facets=type&limit=${ limit }&offset=${ offset }`)
             setTypes(response.data.facets.type)
 
             if (response.data.results.length < limit) {
@@ -171,7 +171,7 @@ export default function Sources() {
             <div className='lg:overflow-scroll'>
                 <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
                     { filteredSources.map((source, index) => {
-                        if (source.type === 'video') { 
+                        if (source.type === 'video' || source.type === 'picture') { 
                             return (
                                 <CardImageText 
                                     myRef={filteredSources.length === index + 1 ? lastSourceRef : null}
@@ -190,8 +190,6 @@ export default function Sources() {
                                 />
                             )
                         }
-
-
                     })}
                 </div>
             </div>

@@ -1,12 +1,16 @@
-import { BookOpenIcon, VideoCameraIcon } from '@heroicons/react/24/outline'
+import { BookOpenIcon, VideoCameraIcon, PhotoIcon } from '@heroicons/react/24/outline'
 
 import { cleanText } from "../../lib/utils"
 import { AnimatePresence, motion } from 'framer-motion';
 import Source from '../Source/Source';
 import { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+const rootPath = import.meta.env.VITE_ROOT
+
 
 export default function CardImageText({ title = "", myRef, data }) {
+
+    console.log(data.attachment)
 
     const [openSource, setOpenSource] = useState(false)
     const [setSelectedData] = useState({})
@@ -36,6 +40,16 @@ export default function CardImageText({ title = "", myRef, data }) {
                             ) : (
                                 <div className="bg-gray-200 lg:h-[110px] flex items-center justify-center rounded-[2px]">
                                     <VideoCameraIcon style={{ width: '30px', height: '30px' }} />
+                                </div>
+                            )
+                        )}
+
+                        {data.type === "picture" && (
+                            data.attachment ? (
+                                <img src={rootPath + data.attachment} alt="" className="rounded-[2px] w-full h-[110px] object-cover" />
+                            ) : (
+                                <div className="bg-gray-200 lg:h-[110px] flex items-center justify-center rounded-[2px]">
+                                    <PhotoIcon style={{ width: '30px', height: '30px' }} />
                                 </div>
                             )
                         )}

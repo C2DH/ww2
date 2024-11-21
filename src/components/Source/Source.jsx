@@ -14,7 +14,7 @@ import { Document, Page } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
 import test from '../../assets/images/common/test.pdf'
-import sound from '../../assets/sounds/test-2.mp3'
+import sound from '../../assets/sounds/sound-2.mp3'
 import imageDefault from '../../assets/images/common/default.png'
 import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
@@ -30,8 +30,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 
 export default function Source({ data, handleSourcePopup }) {
-
-    console.log('data', data)
 
     const { t } = useTranslation()
     const rootPath = import.meta.env.VITE_ROOT
@@ -151,7 +149,7 @@ export default function Source({ data, handleSourcePopup }) {
                             { data.type === 'audio' &&
                                 <>
                                     <img src={ imageDefault } alt="" className='w-full' />
-                                    <Player url={ sound } controls={true} status={'audio'} />
+                                    <Player url={ '' } controls={true} status={'audio'} />
                                 </>
                             }
 

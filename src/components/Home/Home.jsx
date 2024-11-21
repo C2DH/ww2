@@ -35,7 +35,8 @@ export default function Home() {
     const [dataMarker, setDataMarker] = useState([
         {ukArrow: UKArrowLong, ukLng: "", ukLat: "" },
         {russiaArrow: russiaArrowLong, russiaLng: "", russiaLat: "" },
-        {polskaArrow: polskaArrowLong, polskaLng: "", polskaLat: "" }
+        {polskaArrow: polskaArrowLong, polskaLng: "", polskaLat: "" },
+        {ukToLuxArrow: polskaArrowLong, ukToLuxArrowLng: "", ukToLuxArrowLat: "" }
     ])
     const [showIntro, setShowIntro] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false); 
@@ -50,13 +51,15 @@ export default function Home() {
             setDataMarker([
                 {ukArrow: smallLeftArrow, ukLng: 5.659120160331707, ukLat: 50.40793013795516 },
                 {russiaArrow: smallRightArrow, russiaLng: 6.467898325775285, russiaLat: 50.24406234423884 },
-                {polskaArrow: smallRightArrow, polskaLng: 6.532067821847243, polskaLat: 50.40793013795516 }
+                {polskaArrow: smallRightArrow, polskaLng: 6.532067821847243, polskaLat: 50.40793013795516 },
+                {ukToLuxArrow: smallRightArrow, ukToLuxArrowLng: 6.532067821847243, ukToLuxArrowLat: 50.40793013795516 }
             ])
         } else {
             setDataMarker([
                 {ukArrow: UKArrowLong, ukLng: 5.377067446744771, ukLat: 50.17708409698924 },
                 {russiaArrow: russiaArrowLong, russiaLng: 7.104207203884845, russiaLat: 50.03469691527637 },
-                {polskaArrow: polskaArrowLong, polskaLng: 6.815322417081631, polskaLat: 50.347060676591056 }
+                {polskaArrow: polskaArrowLong, polskaLng: 6.815322417081631, polskaLat: 50.347060676591056 },
+                {ukToLuxArrow: polskaArrowLong, ukToLuxArrowLng: -0.1278, ukToLuxArrowLat: 51.5074 }
             ])
         }
 
@@ -80,6 +83,7 @@ export default function Home() {
         const getData = async () => {
             const data = await fetchData('story', {
                 mentioned_to__slug: 'journeys',
+                covers__data__type: 'place'
             }, 100)
             
             if (data) {
@@ -95,7 +99,6 @@ export default function Home() {
 
     return isLoaded && data && (
         <>      
-            {/* <Intro /> */}
             <MapBox items={data} markers={dataMarker}/>
         </>
     )
@@ -109,7 +112,7 @@ const MapBox = ({ items, markers }) => {
     const navigate = useNavigate();
     const [lng] = useState(6.131514);
     const [lat] = useState(49.815764);
-    const [zoom] = useState(4);
+    const [zoom] = useState(8);
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null });
     // const [convertedItems, setConvertedItems] = useState([]);
     const bounds = [
@@ -118,12 +121,27 @@ const MapBox = ({ items, markers }) => {
     ]
 
     const calculatePixelPosition = (coordinates) => {
-        const projected = mapRef.current.project(coordinates);
-        return { x: projected.x, y: projected.y };
-    };
+        const projected = mapRef.current.project(coordinates)
+        return { x: projected.x, y: projected.y }
+    }
+
+    const navigateToUK = () => {
+        mapRef.current.flyTo({ center: [-0.1278, 51.5074], essential: true, duration: 2000, curve: 2 })
+    }
+
+    const navigateToLux = () => {
+        mapRef.current.flyTo({ center: [6.131514, 49.815764], essential: true, duration: 2000, curve: 2 })
+    }
+
+    
+
+    useEffect(() => {
+        console.log(selectedMarker)
+    }, [selectedMarker])
     
 
     return (
+        <>
         <motion.div className='mask h-[calc(100dvh-80px)] sm:h-[calc(100vh-80px)] overflow-hidden' exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}}>
 
             <Map
@@ -138,54 +156,12 @@ const MapBox = ({ items, markers }) => {
                     zoom: zoom,
                     pitch: 30 // Inclinaison en degrés
                 }}
-                // center={[6.090742202904814, 49.7627550671219]}
-                minZoom={8} // Ne peut pas dézoomer en dessous de x8
                 dragRotate={false} // 3D Relief : désactiver
                 scrollZoom={true} // Désactiver Zoom scroll
-                maxBounds={bounds} // Bloquer le panning
+                // minZoom={8} // Ne peut pas dézoomer en dessous de x8
+                // center={[6.090742202904814, 49.7627550671219]}
+                // maxBounds={bounds} // Bloquer le panning
             >
-
-                {/* MARKERS */}
-                {/* {items.map((marker, index) => {
-                    if (marker.covers[0].data.geojson?.geometry.coordinates) {
-                        return (
-                            <Marker key={index} longitude={marker.covers[0].data.geojson.geometry.coordinates[0]} latitude={marker.covers[0].data.geojson.geometry.coordinates[1]} >
-                                <div className='relative'>
-                                    <img src={pinMarker} alt="marker" className="cursor-pointer relative z-[1]"  onClick={() => { setSelectedMarker({ id: index, data: marker }) }} />
-                                    <AnimatePresence>
-                                        { selectedMarker && selectedMarker.id == index &&
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.8 }}
-                                                transition={{ duration: 0.4, ease: 'easeInOut'}}
-                                                className='flex w-[275px] h-[110px] absolute z-[100] left-0 top-0 bg-white items-center justify-center cursor-pointer p-[6px] rounded-[6px]' 
-                                                style={{ boxShadow: '23px 30px 15px 0px rgba(0, 0, 0, 0.45)'}}
-                                            >
-                                                <div className='border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative'>
-                                                    <div onClick={() => {
-                                                        mapRef.current.flyTo({ zoom: zoom + 2, speed: 0.2, curve: 1 });
-                                                        navigate(`/notice/${marker.slug}`);
-                                                    }}>
-                                                        <div className='flex'>
-                                                            <span className='font-abril block pr-[10px]'>{index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                                                            <div>                                                
-                                                                <h3 className='font-abril text-[16px] pb-[8px]'>{ truncateText(marker.data.title[language], 40) }</h3>
-                                                                <p className='text-[16px] font-sofia leading-none uppercase'>{ truncateText(marker.covers[0]?.data?.description[language], 70) }</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <XMarkIcon className="absolute top-[2px] right-[4px]" style={{ width: '15px'}} onClick={() => setSelectedMarker({ id: null, data: null })}/>
-                                                </div>
-                                            </motion.div>
-                                        }
-                                    </AnimatePresence>
-                                </div>
-                            </Marker>
-                        )
-                    }
-                })}                    */}
-
                 {/* MARKERS */}
                 {items.map((marker, index) => {
                     if (marker.covers[0].data.geojson?.geometry.coordinates) {
@@ -239,7 +215,7 @@ const MapBox = ({ items, markers }) => {
                                             <span className="font-abril block pr-[10px]">{selectedMarker.id + 1 < 10 ? '0' + (selectedMarker.id + 1) : selectedMarker.id + 1}</span>
                                             <div>
                                                 <h3 className="font-abril text-[16px] pb-[8px]">{truncateText(selectedMarker.data.data.title[language], 40)}</h3>
-                                                <p className="text-[16px] font-sofia leading-none uppercase">{truncateText(selectedMarker.data.covers[0]?.data?.description[language], 70)}</p>
+                                                <p className="text-[16px] font-sofia leading-none uppercase">{truncateText(selectedMarker.data.data?.abstract[language], 70)}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -251,8 +227,8 @@ const MapBox = ({ items, markers }) => {
                 </AnimatePresence>
 
 
-                <Marker key={"great-britain"} longitude={markers[0].ukLng} latitude={markers[0].ukLat} anchor={"center"}>   
-                    <div className='relative z-[9999]'>
+                <Marker key={"great-britain"} longitude={markers[0].ukLng} latitude={markers[0].ukLat} anchor={"center"} >   
+                    <div className='relative z-[9999]' onClick={() => navigateToUK()}>
                         <img src={markers[0].ukArrow} alt="marker" className="cursor-pointer" />
                         <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] left-[100%] lg:right-[105%] lg:left-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }}>{ t('uk') }</div>
                     </div>
@@ -271,8 +247,16 @@ const MapBox = ({ items, markers }) => {
                         <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ t('polska') }</div>
                     </div>
                 </Marker>
+
+                <Marker key={"uk_to_lux"} longitude={markers[3].ukToLuxArrowLng} latitude={markers[3].ukToLuxArrowLat} anchor={"center"}>   
+                    <div className='relative z-[9999]' onClick={() => navigateToLux()}>
+                        <img src={markers[2].polskaArrow} alt="marker" className="cursor-pointer" />
+                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ t('luxembourg') }</div>
+                    </div>
+                </Marker>
             </Map>
         </motion.div>
+        </>
     );
 }
 

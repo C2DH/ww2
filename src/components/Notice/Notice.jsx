@@ -45,7 +45,6 @@ export default function Notice() {
                 setResults(data)
                 setIsLoaded(true)
 
-                console.log('data', data)
                 data.covers.map(item => {
                     if (item.type === 'picture') {
                         setImgBg(rootPath + item.attachment)
@@ -118,7 +117,7 @@ export default function Notice() {
                                     <img src={ next } alt="next" /> 
                                 </div>
                             </div>
-                            <p className='text-[18px] xl:text-[24px] text-center font-sofia uppercase text-white border border-white px-[15px] py-[5px] mt-[30px] sm:mt-[10px]'>{ results.covers[0].data.description[language]}</p>
+                            <p className='text-[18px] xl:text-[24px] text-center font-sofia uppercase text-white border border-white px-[15px] py-[5px] mt-[30px] sm:mt-[10px]'>{ results.data.abstract[language]}</p>
                         </div>
 
                         <Link to={'/'} className='hidden xl:block absolute top-[70px] left-0' state={{ from: location.pathname }}>
@@ -147,10 +146,10 @@ export default function Notice() {
                                 animate={{ opacity: 1, y: 0, transition: { delay: 2, duration: 1.5 } }}
                                 exit={{ transition: {duration: 0.8, delay: 0.8} } } 
                                 className="col-span-12 xl:col-span-6 xl:px-[50px] 2xl:px-0 xl:col-start-4 order-1 xl:order-2 rounded-[6px] h-[500px]">
-                                { results.documents.map(document => {
-                                    if (document.type === "video") {
+                                { results.covers.map(cover => {
+                                    if (cover.type === "video") {   
                                         return (
-                                            <Player key={document.id} status={'video'} url={ document.data.videoResolutions.hsl.url } controls={ true } className={'rounded-[6px]'}/>
+                                            <Player key={cover.id} status={'video'} url={ cover.data.videoResolutions.hsl.alternate[language] } controls={ true } className={'rounded-[6px]'}/>
                                         )
                                     }
                                 })}

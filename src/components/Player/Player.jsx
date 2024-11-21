@@ -6,33 +6,35 @@ import classNames from 'classnames'
 import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import sound_1 from '../../assets/sounds/sound-1.mp3'
-import sound_2 from '../../assets/sounds/test-2.mp3'
-import sample from '../../assets/sounds/sample-15s.mp3'
+import sound_2 from '../../assets/sounds/sound-2.mp3'
 import { useMenuSoundContext } from '../../contexts/MenuProvider'
 import { PlayIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline'
 
 
-
-export default function Player({ url, className, controls, status })  {
-
+export default function Player({ url, className, controls, status, onEnded })  {
     const { isMenuSoundPlay, setIsMenuSoundPlay } = useMenuSoundContext()
     const { t } = useTranslation()
     const { pathname } = useLocation()
-    const [sound, setSound] = useState(sample)
+    const [sound, setSound] = useState(sound_1)
     const isMobile = useMediaQuery({ query: '(max-width: 640px)'})
     const [isPlaying, setIsPlaying] = useState(false)
-    const playerRef = useRef(null);
-    const playerMenuRef = useRef(null);
-    const playerAudioRef = useRef(null);
+    const [isMuted, setIsMuted] = useState(true)
+    const playerRef = useRef(null)
+    const playerMenuRef = useRef(null)
+    const playerAudioRef = useRef(null)
+    const playerTrailerRef = useRef(null)
 
     const handleEnded = () => {
         if (playerRef.current) {    
             playerRef.current.seekTo(0)
             playerRef.current.getInternalPlayer().play()
         }
-        if (playerMenuRef.current) {    
+        if (playerMenuRef.current) {        
             playerMenuRef.current.seekTo(0)
             playerMenuRef.current.getInternalPlayer().play()
+        }
+        if (playerTrailerRef.current) {
+            onEnded()
         }
     }
 
@@ -47,9 +49,14 @@ export default function Player({ url, className, controls, status })  {
     };
 
     useEffect(() => {
+
+        if (playerTrailerRef.current) {
+            console.log(playerTrailerRef.current.getDuration())
+        }
+
         if (pathname === "/") {
             setSound(sound_1)
-        } else if (pathname === '/catalogue') {
+        } else {
             setSound(sound_2)
         }
     }, [pathname])
@@ -74,7 +81,7 @@ export default function Player({ url, className, controls, status })  {
             <div>
                 <div className='flex items-center'>
                     <span className='text-[20px] sm:text-[24px] uppercase whitespace-nowrap me-3'>{ isPlaying ? t('sound_on') : t('sound_off') }</span>
-                    <ReactPlayer url={ sound } width={ '' } height={ '' } className={ className } playing={isMenuSoundPlay} ref={playerMenuRef } onEnded={ handleEnded } />
+                    <ReactPlayer url={ sound } width={ '' } height={ '' } className={ className } playing={isMenuSoundPlay} ref={playerMenuRef} onEnded={ handleEnded } />
 
                     { isMenuSoundPlay ? (
                         <SpeakerWaveIcon style={{ width: '30px', color: 'white'}} className='cursor-pointer' onClick={() => setIsMenuSoundPlay(!isMenuSoundPlay)}/>
@@ -85,7 +92,28 @@ export default function Player({ url, className, controls, status })  {
                 </div>
             </div>
         )
-    } else if (status === 'audio') {
+    }  else if (status === 'trailer') {
+        return (
+            <div className="relative pt-[56.25%]">
+                <ReactPlayer url={ url } width={ '100%' } height={ '100%' } autoPlay controls={controls} className={ "absolute top-0 left-0" } playing={true} muted={isMuted} ref={playerTrailerRef} onEnded={ handleEnded } />
+
+                <div
+                    className="absolute bottom-5 right-5 cursor-pointer bg-black bg-opacity-50 p-2 rounded-full"
+                    onClick={() => setIsMuted(!isMuted)}
+                >
+                    {isMuted ? (
+                        <SpeakerXMarkIcon
+                            style={{ width: "24px", color: "white" }}
+                        />
+                    ) : (
+                        <SpeakerWaveIcon
+                            style={{ width: "24px", color: "white" }}
+                        />
+                    )}
+                </div>
+            </div>
+        )
+    }  else if (status === 'audio') {
         return (
             <ReactPlayer url={ url } width={ '100%' } height={ '50px' } controls={controls} className={ className } ref={playerAudioRef} />
         )

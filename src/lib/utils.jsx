@@ -38,9 +38,9 @@ export async function fetchData(endpoint, params = {}, limit = "") {
     const searchParams = new URLSearchParams({
         filters: filters,
         limit: 100,
-    });
+    })
 
-    const url = `/api/${endpoint}/?${searchParams.toString()}${limit === "" ? "" : `&limit=${limit}`}`;
+    const url = `/api/${endpoint}/?${searchParams.toString()}${limit === "" ? "" : `&limit=${limit}`}`
 
     try {
         const response = await fetch(url)
@@ -50,10 +50,26 @@ export async function fetchData(endpoint, params = {}, limit = "") {
         }
 
     } catch (error) {
-        console.error('Erreur lors de la récupération des données: ', error);
-        throw error;
+        console.error('Erreur lors de la récupération des données: ', error)
+        throw error
     }
 }
+
+export async function fetchFacets(endpoint, facets) {
+
+    const url = `/api/${endpoint}/?facets=${facets}`
+    try {
+        const response = await fetch(url)
+        if (response.status === 200) {
+            return response.json()
+        }
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données: ', error)
+        throw error
+    }
+}
+
 
 
 export async function getAllNotes() {

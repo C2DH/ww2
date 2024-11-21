@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import siteConfig from '../../../site.config'
 import { fetchData } from '../../lib/utils'
+import { useLanguageContext } from '../../contexts/LanguageProvider'
 
 
 export default function Catalogue() {
@@ -21,6 +22,8 @@ export default function Catalogue() {
     const [readTheme3, setReadTheme3] = useState(50/100)
     const [readTheme4, setReadTheme4] = useState(85/100)
     const [isLoaded, setIsLoaded] = useState(false)
+    const [textCatalogue, setTextCatalogue] = useState()
+    const { language } = useLanguageContext()
     const [themes, setThemes] = useState([])
 
 
@@ -28,6 +31,9 @@ export default function Catalogue() {
         const getData = async () => {
             const catalogue = await fetchData(`story/catalogue`)    
             const allThemes = catalogue.stories
+            const textCatalogue = catalogue.data.abstract
+
+            setTextCatalogue(textCatalogue)
             
             if (catalogue && allThemes.length > 0) {
                 const themesData = await Promise.all(
@@ -45,7 +51,6 @@ export default function Catalogue() {
 
 
     useEffect(() => {
-
         setSharedState({ ...sharedState, showCurtains: false });
     }, [])
 
@@ -60,7 +65,7 @@ export default function Catalogue() {
                     <div className='grid grid-cols-12 pt-[20px] 2xl:pt-[35px]'>
                         <div className="col-span-12 lg:col-span-8">
                             <h1 className='font-abril text-[40px] sm:text-[50px] 2xl:text-[70px]'>Catalogue</h1>
-                            <p className='pt-[15px] pr-[15px] text-[20px] md:text-[24px] 2xl:text-[28px] mb-[20px]'>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.</p>                    
+                            <p className='pt-[15px] pr-[15px] text-[20px] md:text-[24px] 2xl:text-[28px] mb-[20px]'>{textCatalogue[language]}</p>                    
                         </div>
     
                         <div className="hidden lg:flex col-span-4 border-l border-black mt-[70px] mb-[45px] pl-[20px] flex-col justify-between">

@@ -16,7 +16,8 @@ import { useLanguageContext } from '../../contexts/LanguageProvider'
 
 // TRANSLATION
 import { useTranslation } from 'react-i18next'
-import axios from "axios";
+import axios from "axios"
+const email = import.meta.env.VITE_EMAIL
 
 
 export default function Menu() {
@@ -126,7 +127,7 @@ export default function Menu() {
                             <div className='flex text-[24px]'>
                                 <MenuItem path={'/about'} title={ t('about')} className={'tiret'} handleMenuItemClick={() => setOpenMenu(false) } />
                                 <MenuItem path={'/terms'} title={ t('conditions')} className={'tiret'} handleMenuItemClick={() => setOpenMenu(false) } />
-                                <MenuItem path={'/contact'} title={ t('contact')} handleMenuItemClick={() => setOpenMenu(false) } />
+                                <Link to={email}>Contact</Link>
                             </div>
                         </div>
                     </div>
@@ -145,7 +146,7 @@ const CustomLink = (props) => {
 const MenuItem = ({path, title = "", text = "", className = "", handleMenuItemClick}) => {
     return (
         <CustomLink to={path} onClick={handleMenuItemClick}>
-            <h3 className={`${className}`}>{title}</h3>
+            <h3 className={className}>{title}</h3>
             { text !== "" &&
                 <p className="hidden sm:block pt-[15px] pb-0 text-[20px] leading-none">{text}</p>
             }

@@ -3,6 +3,8 @@ import classNames from "classnames"
 import { useState } from 'react';
 
 export default function Dropdown({ items, text }) {
+
+    console.log(items)
     
     const [isOpen, setIsOpen] = useState(false)
 
