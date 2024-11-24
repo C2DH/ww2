@@ -92,80 +92,79 @@ export default function Notice() {
         } else if (newIndex >= capsules.length) {
           newIndex = 0
         }  
-
         navigate(`/notice/${capsules[newIndex].slug}`)
     }
     
     if (isLoaded) {
         return (
             <motion.div className='mask overflow-hidden relative' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}} >
-                <div className='h-full relative flex' style={{ background: `url(${imgBg }) 50% / cover no-repeat` }}>
+                <motion.div initial={{ scale: 1.2 }} animate={{ scale: 1, transition: { duration: 1, delay: 2 } }} exit={{ scale: 1, transition: { duration: 1 } }} className='h-full relative flex' style={{ background: `url(${imgBg }) 50% / cover no-repeat` }}>
                     <div className='notice-filter absolute inset-0'></div>
-
-                    <div className="container mx-auto relative px-[30px] overflow-scroll">
-                        <div className='pt-[30px] xl:pt-[40px] 2xl:pt-[55px] flex flex-col items-center'>
-                            <Link to={'/'} className='xl:hidden block text-[20px] xl:text-[24px] text-white uppercase mb-[15px]'>
-                                { t('back') }
-                            </Link>
-                            <span className='text-[27px] font-abril text-blue underline underline-offset-[8px] decoration-1 block'>{ results.covers[0].data.geojson.properties.city[language]}</span>
-                            <div className='relative text-center w-[33%]'>
-                                <h1 className='text-[34px] xl:text-[48px] text-blue font-abril pt-[12px] leading-none'>{ results.covers[0].data.title[language] }</h1>
-                                <div className='hidden xl:block absolute top-[50%] -translate-[50%] -left-[100px] cursor-pointer' onClick={() => navigateCapsule(-1)}>
-                                    <img src={ prev } alt="previous" />
-                                </div>
-                                <div className='hidden xl:block absolute top-[50%] -translate-[50%] -right-[100px] cursor-pointer' onClick={() => navigateCapsule(+1)}>
-                                    <img src={ next } alt="next" /> 
-                                </div>
+                </motion.div>
+                <div className="container mx-auto absolute inset-0 px-[30px] overflow-scroll">
+                    <div className='pt-[30px] xl:pt-[40px] 2xl:pt-[55px] flex flex-col items-center'>
+                        <Link to={'/'} className='xl:hidden block text-[20px] xl:text-[24px] text-white uppercase mb-[15px]'>
+                            { t('back') }
+                        </Link>
+                        <span className='text-[27px] font-abril text-blue underline underline-offset-[8px] decoration-1 block'>{ results.covers[0].data.geojson.properties.city[language]}</span>
+                        <div className='relative text-center max-w-screen-sm'>
+                            <h1 className='text-[34px] xl:text-[48px] text-blue font-abril pt-[12px] leading-none'>{ results.covers[0].data.title[language] }</h1>
+                            <div className='hidden xl:block absolute top-[50%] -translate-[50%] -left-[100px] cursor-pointer' onClick={() => navigateCapsule(-1)}>
+                                <img src={ prev } alt="previous" />
                             </div>
-                            <p className='text-[18px] xl:text-[24px] text-center font-sofia uppercase text-white border border-white px-[15px] py-[5px] mt-[30px] sm:mt-[10px]'>{ results.data.abstract[language]}</p>
+                            <div className='hidden xl:block absolute top-[50%] -translate-[50%] -right-[100px] cursor-pointer' onClick={() => navigateCapsule(+1)}>
+                                <img src={ next } alt="next" /> 
+                            </div>
+                        </div>
+                        <p className='text-[18px] xl:text-[24px] text-center font-sofia uppercase text-white border border-white px-[15px] py-[5px] mt-[30px] sm:mt-[10px]'>{ results.data.abstract[language]}</p>
+                    </div>
+
+                    <Link to={'/'} className='hidden xl:block absolute top-[70px] left-0' state={{ from: location.pathname }}>
+                        <IconMapBack />
+                    </Link>
+
+                    <div className="grid grid-cols-12 mt-[30px] xl:mt-[50px] 2xl:mt-[70px]">
+                        <div className="col-span-12 xl:col-span-3 2xl:col-span-2 pt-[20px] order-3 xl:order-1">
+                            { results.stories.length > 0 && (
+                                <>
+                                    <span className='block uppercase font-abril text-[22px] text-white mb-[20px] xl:mb-[30px]'>
+                                        { results.stories.length > 1 ? t('related_notes') : t('related_note') }
+                                    </span>
+
+                                    {results.stories.map((note, index) => (
+                                        <Link key={ index } to={ `/note/${note.slug}` } className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2]'>
+                                            <h3 className='font-abril text-[22px] text-white uppercase'>{ note.title }</h3>
+                                        </Link>
+                                    ))}
+                                </>
+                            )}
                         </div>
 
-                        <Link to={'/'} className='hidden xl:block absolute top-[70px] left-0' state={{ from: location.pathname }}>
-                            <IconMapBack />
-                        </Link>
+                        <motion.div 
+                            initial={{ opacity: 0, y: '100%' }}
+                            animate={{ opacity: 1, y: 0, transition: { delay: 2, duration: 1.5 } }}
+                            exit={{ transition: {duration: 0.8, delay: 0.8} } } 
+                            className="col-span-12 xl:col-span-6 xl:px-[50px] 2xl:px-0 xl:col-start-4 order-1 xl:order-2 rounded-[6px] xl:h-[500px]">
+                            { results.covers.map(cover => {
+                                if (cover.type === "video") {   
+                                    return (
+                                        <Player key={cover.id} status={'video'} url={ cover.data.videoResolutions.hsl.alternate[language] } controls={ true } className={'rounded-[6px]'}/>
+                                    )
+                                }
+                            })}
+                        </motion.div>
 
-                        <div className="grid grid-cols-12 mt-[30px] xl:mt-[50px] 2xl:mt-[70px]">
-                            <div className="col-span-12 xl:col-span-3 2xl:col-span-2 pt-[20px] order-3 xl:order-1">
-                                { results.stories.length > 0 && (
-                                    <>
-                                        <span className='block uppercase font-abril text-[22px] text-white mb-[20px] xl:mb-[30px]'>
-                                            { results.stories.length > 1 ? t('related_notes') : t('related_note') }
-                                        </span>
+                        <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3">
 
-                                        {results.stories.map((note, index) => (
-                                            <Link key={ index } to={ `/note/${note.slug}` } className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2]'>
-                                                <h3 className='font-abril text-[22px] text-white uppercase'>{ note.title }</h3>
-                                            </Link>
-                                        ))}
-                                    </>
-                                )}
-                            </div>
+                            {/* TODO: Ajouter le tag ppur filtrer sur la page sources */}
+                            <Link to={'/historical-index'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('about') }</Link>
 
-                            <motion.div 
-                                initial={{ opacity: 0, y: '100%' }}
-                                animate={{ opacity: 1, y: 0, transition: { delay: 2, duration: 1.5 } }}
-                                exit={{ transition: {duration: 0.8, delay: 0.8} } } 
-                                className="col-span-12 xl:col-span-6 xl:px-[50px] 2xl:px-0 xl:col-start-4 order-1 xl:order-2 rounded-[6px] h-[500px]">
-                                { results.covers.map(cover => {
-                                    if (cover.type === "video") {   
-                                        return (
-                                            <Player key={cover.id} status={'video'} url={ cover.data.videoResolutions.hsl.alternate[language] } controls={ true } className={'rounded-[6px]'}/>
-                                        )
-                                    }
-                                })}
-                            </motion.div>
-
-                            <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3">
-
-                                {/* TODO: Ajouter le tag ppur filtrer sur la page sources */}
-                                <Link to={'/historical-index'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('about') }</Link>
-
-                                {/* TODO: Ajouter le tag ppur filtrer sur la page index historique */}
-                                <Link to={'/historical-index'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('menuItems.glossary')}</Link>
-                            </div>
+                            {/* TODO: Ajouter le tag ppur filtrer sur la page index historique */}
+                            <Link to={'/historical-index'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('menuItems.glossary')}</Link>
                         </div>
                     </div>
                 </div>
+                
             </motion.div>
         )
     }

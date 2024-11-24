@@ -55,9 +55,9 @@ export default function Accordion({ items }) {
                             }}
                         >
                             <div className={`accordion-content-inner ${currentTheme === index ? 'open' : ''} mb-[50px]`}>
-                                {item.stories.map((note, index) =>                                    
+                                {item.stories.map((note, index) =>
                                     <Link to={ `/note/${note.slug}` } key={ index } className="block text-[24px] lg:text-[28px] 2xl:text-[40px] uppercase pb-[20px] cursor-pointer">
-                                        <span className='text-[28px] 2xl:text-[38px] font-light'>N{index < 10 ? '0' + (index + 1) : index }</span>
+                                        <span className='text-[28px] 2xl:text-[38px] font-light'>N{(index+1) < 10 ? '0' + (index + 1) : (index+1)}</span>
                                         <span className='font-abril'> { note.data.title[language]?.split('(')[0] }</span> 
                                     </Link>      
                                 )}

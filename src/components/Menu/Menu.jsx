@@ -127,7 +127,7 @@ export default function Menu() {
                             <div className='flex text-[24px]'>
                                 <MenuItem path={'/about'} title={ t('about')} className={'tiret'} handleMenuItemClick={() => setOpenMenu(false) } />
                                 <MenuItem path={'/terms'} title={ t('conditions')} className={'tiret'} handleMenuItemClick={() => setOpenMenu(false) } />
-                                <Link to={email}>Contact</Link>
+                                <Link to={`mailto:${email}`}>Contact</Link>
                             </div>
                         </div>
                     </div>

@@ -30,7 +30,7 @@ export default function Catalogue() {
     useEffect(() => {
         const getData = async () => {
             const catalogue = await fetchData(`story/catalogue`)    
-            const allThemes = catalogue.stories
+            const allThemes = catalogue.stories.sort((a, b) => a.slug.localeCompare(b.slug))
             const textCatalogue = catalogue.data.abstract
 
             setTextCatalogue(textCatalogue)

@@ -5,6 +5,7 @@ import { useSourceContext } from "../../contexts/SourceProvider"
 import Player from '../Player/Player'
 import { useEffect, useState } from "react"
 import classNames from "classnames"
+import { ForwardIcon } from "@heroicons/react/24/outline"
 const video = import.meta.env.VITE_VIDEO_TRAILER_HOME
 
 export default function Layout() {
@@ -14,23 +15,27 @@ export default function Layout() {
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
     const [showIntro, setShowIntro] = useState(false)
 
+    const handleIntroEnd = () => {
+        setShowIntro(false)
+        localStorage.setItem("introSeen", JSON.stringify({value: true, expire: new Date().getTime()}))
+    }
+
     useEffect(() => {
-        const introSeen = localStorage.getItem("introSeen");
-        if (!introSeen && pathname === "/") {
-            setShowIntro(true);
+        const introSeen = localStorage.getItem("introSeen")
+        const now = new Date().getTime()
+        if ((!introSeen && pathname === "/") || (now - parseInt(introSeen.expire) > 6 * 60 * 60 * 1000)) {
+            setShowIntro(true)
         }
     }, [pathname])
 
-    const handleIntroEnd = () => {
-        setShowIntro(false)
-        localStorage.setItem("introSeen", "true")
-    }
-
     return (
         <>
-            {(showIntro && pathname === '/') &&
-                <div className='h-[100vh] absolute inset-0 z-[201]'>
+            {(showIntro && pathname === '/' ) &&
+                <div className='h-screen absolute inset-0 z-[201] flex items-center justify-center bg-black'>
                     <Player url={video} status={"trailer"} onEnded={handleIntroEnd} />
+                    <div onClick={handleIntroEnd} className="absolute top-[50%] -translate-y-[50%] right-[50px] cursor-pointer bg-black bg-opacity-50 p-2 rounded-full">
+                        <ForwardIcon style={{ width: '50px', color: 'white'}}/>
+                    </div>
                 </div>  
             }
 

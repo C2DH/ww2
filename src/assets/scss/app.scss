@@ -455,3 +455,34 @@ p {
 .react-pdf__Page {
     background-color: transparent !important;
 }
+
+
+
+// GENERIQUE
+#credits {
+    h2 {
+        font-size: 40px;
+        margin: 40px 0;
+        text-transform: uppercase;
+    }
+
+    .credits-animation {
+        animation: scroll-up 15s linear;
+    }
+    
+    .credits-animation.stopped {
+        animation: none;
+        transform: translateY(-100%);
+    }
+    
+    @keyframes scroll-up {
+        0% {
+            transform: translateY(100%);
+        }
+        100% {
+            transform: translateY(-100%);
+        }
+    }
+}
+
+
