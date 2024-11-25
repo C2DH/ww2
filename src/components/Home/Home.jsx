@@ -67,10 +67,11 @@ const MapBox = ({ items }) => {
     const [lng] = useState(6.131514)
     const [lat] = useState(49.815764)
     const [zoom, setZoom] = useState(8)
-    const [scroolZoom, setScrollZoom] = useState(true)
     const [isFlying, setIsFlying] = useState(false)
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null })
     const [markers, setMarkers] = useState([])
+    const [interactive, setInteractive] = useState(true);
+
     const bounds = [
         [4.635609906406312, 49.24474658911654], // Southeast coordinate
         [7.7936412937252015, 50.38780761708563] // Northeast coordinate
@@ -95,13 +96,15 @@ const MapBox = ({ items }) => {
     const fly = (longitude, latitude) => {
         if (isFlying) return
         setIsFlying(true)
+        setInteractive(false); 
         setZoom(0)
-        setScrollZoom(false)
+        
         mapRef.current.flyTo({ center: [longitude, latitude], essential: true, duration: 2500, curve: 2 })
+        
         setTimeout(() => {
             setZoom(8)
-            setScrollZoom(true)
             setIsFlying(false)
+            setInteractive(true)
         }, 3000)
     }
 
@@ -119,9 +122,11 @@ const MapBox = ({ items }) => {
                 style={{ width: '100%', height: '100%' }}
                 mapboxAccessToken={apiKeyMapbox}
                 mapStyle={apiStyleMapbox}
-                dragPan={true}
                 dragRotate={false} // 3D Relief : désactiver
-                scrollZoom={scroolZoom}
+                scrollZoom={interactive} // Désactiver/Activer selon l'état
+                dragPan={interactive}
+                doubleClickZoom={interactive}
+                keyboard={interactive}
                 minZoom={zoom} // Ne peut pas dézoomer en dessous de x8
                 initialViewState={{
                     longitude: lng,
@@ -130,7 +135,7 @@ const MapBox = ({ items }) => {
                     pitch: 30 // Inclinaison en degrés
                 }}
                 // center={[6.090742202904814, 49.7627550671219]}
-                // maxBounds={bounds} // Bloquer le panning
+                maxBounds={bounds} // Bloquer le panning
             >
                 {/* MARKERS */}
                 {items.map((marker, index) => {
