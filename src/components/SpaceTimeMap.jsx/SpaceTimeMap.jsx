@@ -242,6 +242,8 @@ const MapBox = ({ items, state, reference }) => {
     const oldMapLayerStyle = {
         id: "oldmap-layer",
         type: "raster",
+        minzoom: 16,
+
         source: "oldmap"
     }
 

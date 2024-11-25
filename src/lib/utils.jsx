@@ -1,7 +1,7 @@
 import { marked } from "marked";
 
 export function truncateText(text, maxLength) {
-    if (text && text.length > maxLength) {
+    if (text && text !== "" && text.length > maxLength) {
         return text.substring(0, maxLength) + '...';
     }
     return text;

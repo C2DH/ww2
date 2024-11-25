@@ -70,13 +70,9 @@ const MapBox = ({ items }) => {
     const [isFlying, setIsFlying] = useState(false)
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null })
     const [markers, setMarkers] = useState([])
-    const [interactive, setInteractive] = useState(true);
+    const [interactive, setInteractive] = useState(true)
+    const [bounds, setBounds] = useState([[4.635609906406312, 49.24474658911654], [7.7936412937252015, 50.38780761708563]])
 
-    const bounds = [
-        [4.635609906406312, 49.24474658911654], // Southeast coordinate
-        [7.7936412937252015, 50.38780761708563] // Northeast coordinate
-    ]
-     
     useEffect(() => {
         setMarkers([
             {origin: 'luxToUk', country: 'uk', img: isSmall ? smallLeftArrow : UKArrowLong, lat: isSmall ? 50.09985688348138 : 50.00708409698924, lng: isSmall ? 5.773948314338081 : 5.377067446744771, destination: {lat: 51.5074, lng: -0.1278 }},
@@ -88,13 +84,24 @@ const MapBox = ({ items }) => {
         ])
     }, [isSmall])
 
-    const calculatePixelPosition = (coordinates) => {
-        const projected = mapRef.current.project(coordinates)
-        return { x: projected.x, y: projected.y }
+    const calculatePixelPosition = () => {
+        const place = selectedMarker.data.covers.find(place => 
+            place.data.type === 'place' && place.data.geojson?.geometry?.coordinates.length === 2
+        )
+
+        if (place) {
+            const projected = mapRef.current.project(place.data.geojson.geometry.coordinates);
+            return { 
+                x: projected.x, 
+                y: projected.y, 
+                filter: 'drop-shadow(23px 30px 15px rgba(0, 0, 0, 0.65))'
+            }
+        }
     }
 
-    const fly = (longitude, latitude) => {
+    const fly = (longitude, latitude, origin) => {
         if (isFlying) return
+        setBounds(null)
         setIsFlying(true)
         setInteractive(false); 
         setZoom(0)
@@ -105,6 +112,10 @@ const MapBox = ({ items }) => {
             setZoom(8)
             setIsFlying(false)
             setInteractive(true)
+
+            if (origin === 'luxToUk') {
+                setBounds([[-6.38, 49.86], [1.77, 55.81]])
+            }
         }, 3000)
     }
 
@@ -128,6 +139,7 @@ const MapBox = ({ items }) => {
                 doubleClickZoom={interactive}
                 keyboard={interactive}
                 minZoom={zoom} // Ne peut pas dézoomer en dessous de x8
+                maxBounds={bounds} // Bloquer le panning
                 initialViewState={{
                     longitude: lng,
                     latitude: lat,
@@ -135,38 +147,36 @@ const MapBox = ({ items }) => {
                     pitch: 30 // Inclinaison en degrés
                 }}
                 // center={[6.090742202904814, 49.7627550671219]}
-                maxBounds={bounds} // Bloquer le panning
             >
                 {/* MARKERS */}
-                {items.map((marker, index) => {
-                    if (marker.covers[0].data.geojson?.geometry.coordinates) {
-                        return (
-                            <Marker 
-                                key={index} 
-                                longitude={marker.covers[0].data.geojson.geometry.coordinates[0]} 
-                                latitude={marker.covers[0].data.geojson.geometry.coordinates[1]}
-                            >
-                                <div className="relative">
-                                    <img src={pinMarker} alt="marker" className="cursor-pointer relative z-[1]" onClick={() => { setSelectedMarker({ id: index, data: marker }) }} />
-                                </div>
-                            </Marker>
-                        )
-                    }
+                {items.map((item, index) => {
+                   return item.covers.filter(marker => marker.type === 'entity' && marker.data.geojson?.geometry?.coordinates).map(marker => 
+                        <Marker 
+                            key={index} 
+                            longitude={marker.data.geojson.geometry.coordinates[0]} 
+                            latitude={marker.data.geojson.geometry.coordinates[1]}
+                        >
+                            <div className="relative">
+                                <img src={pinMarker} alt="marker" className="cursor-pointer relative z-[1]" onClick={() => { setSelectedMarker({ id: index, data: item }) }} />
+                            </div>
+                        </Marker>
+                    )
                 })}
 
                 {/* POPUP */}
                 <AnimatePresence>
                     {selectedMarker && selectedMarker.data && (
                         <motion.div
+                            key={selectedMarker.id}
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                             transition={{ duration: 0.4, ease: 'easeInOut' }}
                             className="absolute z-[1000] bg-white rounded-[6px] shadow-lg p-[3px]"
                             style={{
-                                left: `${calculatePixelPosition(selectedMarker.data.covers[0].data.geojson.geometry.coordinates).x}px`,
-                                top: `${calculatePixelPosition(selectedMarker.data.covers[0].data.geojson.geometry.coordinates).y}px`,
-                                filter: 'drop-shadow(23px 30px 15px rgba(0, 0, 0, 0.65))'
+                                left: `${calculatePixelPosition().x}px`,
+                                top: `${calculatePixelPosition().y}px`,
+                                filter: calculatePixelPosition().filter
                             }}
                         >
                             <motion.div
@@ -184,8 +194,8 @@ const MapBox = ({ items }) => {
                                         <div className="flex">
                                             <span className="font-abril block pr-[10px]">{selectedMarker.id + 1 < 10 ? '0' + (selectedMarker.id + 1) : selectedMarker.id + 1}</span>
                                             <div>
-                                                <h3 className="font-abril text-[16px] pb-[8px]">{truncateText(selectedMarker.data.data.title[language], 40)}</h3>
-                                                <p className="text-[16px] font-sofia leading-none uppercase">{truncateText(selectedMarker.data.data?.abstract[language], 70)}</p>
+                                                <h3 className="font-abril text-[16px] pb-[8px]">{truncateText(selectedMarker.data.data.title[language] ?? "", 40)}</h3>
+                                                <p className="text-[16px] font-sofia leading-none uppercase">{truncateText(selectedMarker.data.data.abstract[language] ?? "", 70)}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -206,7 +216,7 @@ const MapBox = ({ items }) => {
                                 initial="initial"
                                 animate="animate"
                                 exit="exit"
-                                onClick={() => !isFlying && fly(marker.destination.lng, marker.destination.lat)}
+                                onClick={() => !isFlying && fly(marker.destination.lng, marker.destination.lat, marker.origin)}
                             >
                                 <img src={marker.img} alt="marker" className={classNames("cursor-pointer", {"rotate-[320deg]": marker.origin === "russiaToLux" || marker.origin === "polskaToLux" })} />
                                 <div style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))"}}

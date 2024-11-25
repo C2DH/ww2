@@ -19,11 +19,11 @@ import next from '../../assets/images/notices/next.png'
 import prev from '../../assets/images/notices/prev.png'
 import { fetchData } from '../../lib/utils'
 import defaultImage from '../../assets/images/common/default.png'
+const rootPath = import.meta.env.VITE_ROOT
 
 
 export default function Notice() {
     
-    const rootPath = import.meta.env.VITE_ROOT
     const { t } = useTranslation()
     const { language } = useLanguageContext()
     const { slug } = useParams()
@@ -35,7 +35,6 @@ export default function Notice() {
     const navigate = useNavigate()
 
 
-
     // DETAILS CAPSULE
     useEffect(() => {
         const getData = async () => {
@@ -43,23 +42,20 @@ export default function Notice() {
             
             if (data) {
                 setResults(data)
-                setIsLoaded(true)
+                const photoItem = data.covers.find(item => item.type === 'photo');
+            
+                if (photoItem) {
+                    console.log('la');
+                    setImgBg(rootPath + photoItem.attachment)
+                } else {
+                    setImgBg(defaultImage)
+                }
 
-                data.covers.map(item => {
-                    if (item.type === 'picture') {
-                        setImgBg(rootPath + item.attachment)
-                    } else {
-                        setImgBg(defaultImage)
-                    }
-                })
+                setIsLoaded(true)
             }
         }
         getData()
     }, [slug])
-
-    useEffect(() => {
-        console.log(results)
-    }, [results])
 
 
     // ALL CAPSULES
@@ -98,7 +94,7 @@ export default function Notice() {
     if (isLoaded) {
         return (
             <motion.div className='mask overflow-hidden relative' initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}} >
-                <motion.div initial={{ scale: 1.2 }} animate={{ scale: 1, transition: { duration: 1, delay: 2 } }} exit={{ scale: 1, transition: { duration: 1 } }} className='h-full relative flex' style={{ background: `url(${imgBg }) 50% / cover no-repeat` }}>
+                <motion.div initial={{ scale: 1.2 }} animate={{ scale: 1, transition: { duration: 1, delay: 2 } }} exit={{ scale: 1, transition: { duration: 1 } }} className='h-full relative flex' style={{ background: `url(${ imgBg }) 50% / cover no-repeat` }}>
                     <div className='notice-filter absolute inset-0'></div>
                 </motion.div>
                 <div className="container mx-auto absolute inset-0 px-[30px] overflow-scroll">
