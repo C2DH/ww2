@@ -139,6 +139,12 @@ export default function SpaceTimeMap() {
                             </div>
                         }
 
+                        { viewState.style !== 'oldmap' &&
+                            <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: 'oldmap'}) }>
+                                <img src={map3} alt="map" className='rounded-[4px]'/>
+                            </div>
+                        }
+
                         <div>
                             <>
                                 <div className='h-[40px] w-[40px] bg-white rounded-t-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) + 1}) }>
@@ -224,6 +230,21 @@ const MapBox = ({ items, state, reference }) => {
         source: "geoportail"
     }
 
+    const oldMapSourceStyle = {
+        id: 'oldmap',
+        type: 'raster',
+        tileSize: 256,
+        tiles: [
+            '/tiles/oldmap/{z}/{x}/{y}.png'
+        ]
+    }
+
+    const oldMapLayerStyle = {
+        id: "oldmap-layer",
+        type: "raster",
+        source: "oldmap"
+    }
+
     useEffect(() => {
         if (selectedMarker.data && selectedMarker.id) {
             selectedMarker.data.covers.map(cover => {
@@ -259,6 +280,12 @@ const MapBox = ({ items, state, reference }) => {
                     {state.style === 'geoportail' && (
                         <Source {...sourceStyle}>
                             <Layer {...layerStyle} />
+                        </Source>
+                    )}
+
+                    {state.style === 'oldmap' && (
+                        <Source {...oldMapSourceStyle}>
+                            <Layer {...oldMapLayerStyle} />
                         </Source>
                     )}
                     
