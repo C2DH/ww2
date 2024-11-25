@@ -201,32 +201,18 @@ const MapBox = ({ items }) => {
                                 initial="initial"
                                 animate="animate"
                                 exit="exit"
-                                onClick={() => fly(marker.destination.lng, marker.destination.lat)}>
-                                <img
-                                    src={marker.img}
-                                    alt="marker"
-                                    className={classNames("cursor-pointer", {
-                                        "rotate-[320deg]": marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
+                                onClick={() => !isFlying && fly(marker.destination.lng, marker.destination.lat)}
+                            >
+                                <img src={marker.img} alt="marker" className={classNames("cursor-pointer", {"rotate-[320deg]": marker.origin === "russiaToLux" || marker.origin === "polskaToLux" })} />
+                                <div style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))"}}
+                                    className={classNames('bg-[#F4F4F4] w-auto h-[25px] absolute -translate-y-[50%] top-[10px] mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer', {
+                                        "left-[100%] lg:right-[105%] lg:left-auto": marker.origin === "luxToUk" || marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
+                                        "right-[100%] lg:left-[105%] lg:right-auto": marker.origin === "luxToRussia" || marker.origin === "luxToPolska" || marker.origin === "ukToLux",
+                                        "lg:top-[75px]": marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
+                                        "lg:top-0": marker.origin === "luxToRussia",
+                                        "lg:top-[10px]": marker.origin === "luxToPolska" || marker.origin === "ukToLux",
+                                        "lg:top-[3px]": marker.origin === "luxToUk",
                                     })}
-                                />
-                                <div
-                                    style={{
-                                        filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))",
-                                    }}
-                                    className={classNames(
-                                        'bg-[#F4F4F4] w-auto h-[25px] absolute -translate-y-[50%] top-[10px] mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer',
-                                        {
-                                            "left-[100%] lg:right-[105%] lg:left-auto":
-                                                marker.origin === "luxToUk" || marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
-                                            "right-[100%] lg:left-[105%] lg:right-auto":
-                                                marker.origin === "luxToRussia" || marker.origin === "luxToPolska" || marker.origin === "ukToLux",
-                                            "lg:top-[75px]":
-                                                marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
-                                            "lg:top-0": marker.origin === "luxToRussia",
-                                            "lg:top-[10px]": marker.origin === "luxToPolska" || marker.origin === "ukToLux",
-                                            "lg:top-[3px]": marker.origin === "luxToUk",
-                                        }
-                                    )}
                                 >
                                     {t(marker.country)}
                                 </div>
