@@ -26,12 +26,12 @@ import { AnimatePresence, motion } from "framer-motion"
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Map, { Marker } from 'react-map-gl';
 import * as maptilerClient from "@maptiler/client"
+import classNames from "classnames"
 
 export default function Home() {
     const [sharedState, setSharedState] = useSharedState()
     const [isLoaded, setIsLoaded] = useState(false); 
     const [data, setData] = useState(null)
-
 
     const getData = async () => {
         const data = await fetchData('story', {
@@ -48,8 +48,6 @@ export default function Home() {
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, [])
-
-
 
     useEffect(() => {
         getData()
@@ -68,35 +66,25 @@ const MapBox = ({ items }) => {
     const navigate = useNavigate()
     const [lng] = useState(6.131514)
     const [lat] = useState(49.815764)
-    const [zoom] = useState(8)
+    const [zoom, setZoom] = useState(8)
+    const [scroolZoom, setScrollZoom] = useState(true)
+    const [isFlying, setIsFlying] = useState(false)
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null })
+    const [markers, setMarkers] = useState([])
     const bounds = [
         [4.635609906406312, 49.24474658911654], // Southeast coordinate
         [7.7936412937252015, 50.38780761708563] // Northeast coordinate
     ]
-    const [markers, setMarkers] = useState([
-        {ukArrow: "", ukLng: "", ukLat: "" },
-        {russiaArrow: "", russiaLng: "", russiaLat: "" },
-        {polskaArrow: "", polskaLng: "", polskaLat: "" },
-        {ukToLuxArrow: "", ukToLuxArrowLng: "", ukToLuxArrowLat: "" }
-    ])
-
+     
     useEffect(() => {
-        if (isSmall) {
-            setMarkers([
-                {ukArrow: smallLeftArrow, ukLng: 5.659120160331707, ukLat: 50.40793013795516 },
-                {russiaArrow: smallRightArrow, russiaLng: 6.467898325775285, russiaLat: 50.24406234423884 },
-                {polskaArrow: smallRightArrow, polskaLng: 6.532067821847243, polskaLat: 50.40793013795516 },
-                {ukToLuxArrow: smallRightArrow, ukToLuxArrowLng: 6.532067821847243, ukToLuxArrowLat: 50.40793013795516 }
-            ])
-        } else {
-            setMarkers([
-                {ukArrow: UKArrowLong, ukLng: 5.377067446744771, ukLat: 50.17708409698924 },
-                {russiaArrow: russiaArrowLong, russiaLng: 7.104207203884845, russiaLat: 50.03469691527637 },
-                {polskaArrow: polskaArrowLong, polskaLng: 6.815322417081631, polskaLat: 50.347060676591056 },
-                {ukToLuxArrow: polskaArrowLong, ukToLuxArrowLng: 0.5, ukToLuxArrowLat: 51.5074 }
-            ])
-        }
+        setMarkers([
+            {origin: 'luxToUk', country: 'uk', img: isSmall ? smallLeftArrow : UKArrowLong, lat: isSmall ? 50.09985688348138 : 50.00708409698924, lng: isSmall ? 5.773948314338081 : 5.377067446744771, destination: {lat: 51.5074, lng: -0.1278 }},
+            {origin: 'luxToRussia', country: 'russia', img: isSmall ? smallRightArrow : russiaArrowLong, lat: isSmall ?  49.98162959665259 : 50.03469691527637, lng: isSmall ? 6.552160650142298 : 7.104207203884845, destination: {lat: 55.55709366783896, lng: 30.95355419000392 }},
+            {origin: 'luxToPolska', country: 'polska', img: isSmall ? smallRightArrow : polskaArrowLong, lat: 50.17060676591056, lng: 6.515322417081631, destination: {lat: 52.21820180325254, lng: 17.665013242195442 }},
+            {origin: 'ukToLux', country: 'luxembourg', img: isSmall ? smallRightArrow : polskaArrowLong, lat: 51.5074, lng: 0.5, destination: {lat: 49.815764, lng: 6.131514 }},
+            {origin: 'russiaToLux', country: 'luxembourg', img: isSmall ? smallLeftArrow : UKArrowLong, lat: 55.55709366783896, lng: 30.95355419000392, destination: {lat: 49.815764, lng: 6.131514 }},
+            {origin: 'polskaToLux', country: 'luxembourg', img: isSmall ? smallLeftArrow : UKArrowLong, lat: 52.34805169404136, lng: 18.280327255460616, destination: {lat: 49.815764, lng: 6.131514 }},
+        ])
     }, [isSmall])
 
     const calculatePixelPosition = (coordinates) => {
@@ -105,7 +93,22 @@ const MapBox = ({ items }) => {
     }
 
     const fly = (longitude, latitude) => {
-        mapRef.current.flyTo({ center: [longitude, latitude], essential: true, duration: 2000, curve: 2 })
+        if (isFlying) return
+        setIsFlying(true)
+        setZoom(0)
+        setScrollZoom(false)
+        mapRef.current.flyTo({ center: [longitude, latitude], essential: true, duration: 2500, curve: 2 })
+        setTimeout(() => {
+            setZoom(8)
+            setScrollZoom(true)
+            setIsFlying(false)
+        }, 3000)
+    }
+
+    const markerVariants = {
+        initial: { opacity: 0, scale: 0.8, y: 50 }, // État initial (avant l'apparition)
+        animate: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }, // État après l'apparition
+        exit: { opacity: 0, scale: 0.8, y: -50, transition: { duration: 0.3, ease: "easeIn" } }, // État lors de la disparition
     }
 
 
@@ -118,14 +121,14 @@ const MapBox = ({ items }) => {
                 mapStyle={apiStyleMapbox}
                 dragPan={true}
                 dragRotate={false} // 3D Relief : désactiver
-                scrollZoom={true} // Désactiver Zoom scroll
+                scrollZoom={scroolZoom}
+                minZoom={zoom} // Ne peut pas dézoomer en dessous de x8
                 initialViewState={{
                     longitude: lng,
                     latitude: lat,
                     zoom: zoom,
                     pitch: 30 // Inclinaison en degrés
                 }}
-                // minZoom={8} // Ne peut pas dézoomer en dessous de x8
                 // center={[6.090742202904814, 49.7627550671219]}
                 // maxBounds={bounds} // Bloquer le panning
             >
@@ -188,36 +191,51 @@ const MapBox = ({ items }) => {
                     )}
                 </AnimatePresence>
 
-
-                <Marker key={"great-britain"} longitude={markers[0].ukLng} latitude={markers[0].ukLat} anchor={"center"} >   
-                    <div className='relative z-[9999]' onClick={() => fly(-0.1278, 51.5074)}>
-                        <img src={markers[0].ukArrow} alt="marker" className="cursor-pointer" />
-                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] left-[100%] lg:right-[105%] lg:left-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }}>{ t('uk') }</div>
-                    </div>
-                </Marker>
-
-                <Marker key={"russia"} longitude={markers[1].russiaLng} latitude={markers[1].russiaLat} anchor={"center"}>   
-                    <div className='relative z-[9999]'>
-                        <img src={markers[1].russiaArrow} alt="marker" className="cursor-pointer" />
-                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ t('russia') }</div>
-                    </div>
-                </Marker>
-
-                <Marker key={"polska"} longitude={markers[2].polskaLng} latitude={markers[2].polskaLat} anchor={"center"}>   
-                    <div className='relative z-[9999]'>
-                        <img src={markers[2].polskaArrow} alt="marker" className="cursor-pointer" />
-                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ t('polska') }</div>
-                    </div>
-                </Marker>
-
-                <Marker key={"uk_to_lux"} longitude={markers[3].ukToLuxArrowLng} latitude={markers[3].ukToLuxArrowLat} anchor={"center"}>   
-                    <div className='relative z-[9999]' onClick={() => fly(6.131514, 49.815764)}>
-                        <img src={markers[2].polskaArrow} alt="marker" className="cursor-pointer" />
-                        <div className='bg-[#F4F4F4] w-auto h-[25px] absolute top-[8px] lg:top-0 -translate-y-[50%] right-[100%] lg:left-[105%] lg:right-auto mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer' style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))" }} >{ t('luxembourg') }</div>
-                    </div>
-                </Marker>
+                {/* MARKERS COUNTRY */}
+                <AnimatePresence>
+                    {!isFlying && markers.map((marker) => (
+                        <Marker key={marker.origin} longitude={marker.lng} latitude={marker.lat} anchor="center">
+                            <motion.div 
+                                className="relative z-[9999]" 
+                                variants={markerVariants}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                onClick={() => fly(marker.destination.lng, marker.destination.lat)}>
+                                <img
+                                    src={marker.img}
+                                    alt="marker"
+                                    className={classNames("cursor-pointer", {
+                                        "rotate-[320deg]": marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
+                                    })}
+                                />
+                                <div
+                                    style={{
+                                        filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))",
+                                    }}
+                                    className={classNames(
+                                        'bg-[#F4F4F4] w-auto h-[25px] absolute -translate-y-[50%] top-[10px] mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer',
+                                        {
+                                            "left-[100%] lg:right-[105%] lg:left-auto":
+                                                marker.origin === "luxToUk" || marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
+                                            "right-[100%] lg:left-[105%] lg:right-auto":
+                                                marker.origin === "luxToRussia" || marker.origin === "luxToPolska" || marker.origin === "ukToLux",
+                                            "lg:top-[75px]":
+                                                marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
+                                            "lg:top-0": marker.origin === "luxToRussia",
+                                            "lg:top-[10px]": marker.origin === "luxToPolska" || marker.origin === "ukToLux",
+                                            "lg:top-[3px]": marker.origin === "luxToUk",
+                                        }
+                                    )}
+                                >
+                                    {t(marker.country)}
+                                </div>
+                            </motion.div>
+                        </Marker>
+                    ))}
+                </AnimatePresence>
             </Map>
-        </motion.div>
+        </motion.div> 
     )
 }
 
