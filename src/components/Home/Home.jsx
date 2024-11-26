@@ -8,7 +8,6 @@ import { fetchData, truncateText } from "../../lib/utils";
 import { useLanguageContext } from "../../contexts/LanguageProvider"
 const apiKeyMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const apiStyleMapbox = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
-maptilerClient.config.apiKey = import.meta.env.VITE_API_MAPTILER
 
 // ASSETS
 import pinMarker from '../../assets/images/common/marker.svg'
@@ -25,7 +24,6 @@ import { AnimatePresence, motion } from "framer-motion"
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Map, { Marker } from 'react-map-gl';
-import * as maptilerClient from "@maptiler/client"
 import classNames from "classnames"
 
 export default function Home() {
@@ -114,8 +112,8 @@ const MapBox = ({ items }) => {
 
             if (origin === 'luxToUk') {
                 setBounds([[-6.38, 49.86], [1.77, 55.81]])
-                setZoom(5)
-            }
+                setZoom(3)
+            } 
         }, 3000)
     }
 
