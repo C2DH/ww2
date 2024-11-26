@@ -37,6 +37,6 @@ RUN npm run build
 # print out these env values to a info.json file
 RUN echo "{\"BUILD_DATE\": \"${BUILD_DATE}\", \"GIT_TAG\": \"${GIT_TAG}\", \"GIT_BRANCH\": \"${GIT_BRANCH}\", \"GIT_COMMIT_SHA\": \"${GIT_COMMIT_SHA}\", \"GIT_LAST_COMMIT_DATE\": \"${GIT_LAST_COMMIT_DATE}\"}" > dist/info.json
 
-FROM busybox
+FROM busybox:stable
 WORKDIR /app
 COPY --from=builder /app/dist ./

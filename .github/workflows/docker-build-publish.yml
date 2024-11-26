@@ -1,0 +1,42 @@
+name: Build and publish Docker image
+on:
+  # Trigger the workflow on push or pull request,
+  # for the develop branch and all new tags
+  push:
+    branches:
+      - develop
+      - feature/deploy
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Prepare environment variables
+        run: |
+          echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+          echo "GIT_LAST_COMMIT_DATE=$(git log -1 --format=%cd --date=format:%Y%m%d)" >> $GITHUB_ENV
+          echo "GIT_BRANCH=$(echo ${GITHUB_REF} | sed 's/refs\/heads\///')" >> $GITHUB_ENV
+          echo "GIT_COMMIT_SHA=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_ENV
+
+      - name: Build and publish Docker image
+        env:
+          BUILD_DATE: ${{ env.BUILD_DATE }}
+          GIT_TAG: 'latest'
+          GIT_BRANCH: ${{ env.GIT_BRANCH }}
+          GIT_COMMIT_SHA: ${{ env.GIT_COMMIT_SHA }}
+          GIT_LAST_COMMIT_DATE: ${{ env.GIT_LAST_COMMIT_DATE }}
+          VITE_API_KEY_MAPBOX: ${{ secrets.VITE_API_KEY_MAPBOX }}
+          VITE_API_STYLE_MAPBOX_BLUEPRINT: ${{ secrets.VITE_API_STYLE_MAPBOX_BLUEPRINT }}
+          VITE_API_STYLE_MAPBOX_MSF: ${{ secrets.VITE_API_STYLE_MAPBOX_MSF }}
+          VITE_API_STYLE_MAPBOX_GEO: ${{ secrets.VITE_API_STYLE_MAPBOX_GEO }}
+          VITE_API_MAPTILER: ${{ secrets.VITE_API_MAPTILER }}
+          VITE_ROOT: ${{ secrets.VITE_ROOT }}
+          VITE_EMAIL: ${{ secrets.VITE_EMAIL }}
+          VITE_VIDEO_TRAILER_HOME: ${{ secrets.VITE_VIDEO_TRAILER_HOME }}
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: c2dhunilu/ww2
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          buildargs: GIT_TAG,GIT_BRANCH,GIT_REVISION
+          tags: 'latest'
