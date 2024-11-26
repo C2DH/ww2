@@ -1,21 +1,19 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import Accordion from '../Accordion/Accordion'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import siteConfig from '../../../site.config'
-import axios from 'axios'
 import { fetchData } from '../../lib/utils'
+import { useLanguageContext } from '../../contexts/LanguageProvider'
 
 
 export default function Catalogue() {
 
     // Stocker un json dans le local storage pour gérer les progress bar
     // Quand j'ouvre la popup de la note je sette le localstorage
-    const { i18n, t } = useTranslation()
-    const { language } = useLanguageContext()
+    const { t } = useTranslation()
     const [lastRead, setLastRead] = useState('')
     const storedParams = localStorage.getItem('params')
     const [sharedState, setSharedState] = useSharedState()
@@ -24,13 +22,18 @@ export default function Catalogue() {
     const [readTheme3, setReadTheme3] = useState(50/100)
     const [readTheme4, setReadTheme4] = useState(85/100)
     const [isLoaded, setIsLoaded] = useState(false)
+    const [textCatalogue, setTextCatalogue] = useState()
+    const { language } = useLanguageContext()
     const [themes, setThemes] = useState([])
 
 
     useEffect(() => {
         const getData = async () => {
             const catalogue = await fetchData(`story/catalogue`)    
-            const allThemes = catalogue.stories
+            const allThemes = catalogue.stories.sort((a, b) => a.slug.localeCompare(b.slug))
+            const textCatalogue = catalogue.data.abstract
+
+            setTextCatalogue(textCatalogue)
             
             if (catalogue && allThemes.length > 0) {
                 const themesData = await Promise.all(
@@ -48,7 +51,6 @@ export default function Catalogue() {
 
 
     useEffect(() => {
-
         setSharedState({ ...sharedState, showCurtains: false });
     }, [])
 
@@ -63,7 +65,7 @@ export default function Catalogue() {
                     <div className='grid grid-cols-12 pt-[20px] 2xl:pt-[35px]'>
                         <div className="col-span-12 lg:col-span-8">
                             <h1 className='font-abril text-[40px] sm:text-[50px] 2xl:text-[70px]'>Catalogue</h1>
-                            <p className='pt-[15px] pr-[15px] text-[20px] md:text-[24px] 2xl:text-[28px] mb-[20px]'>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque.</p>                    
+                            <p className='pt-[15px] pr-[15px] text-[20px] md:text-[24px] 2xl:text-[28px] mb-[20px]'>{textCatalogue[language]}</p>                    
                         </div>
     
                         <div className="hidden lg:flex col-span-4 border-l border-black mt-[70px] mb-[45px] pl-[20px] flex-col justify-between">
@@ -106,8 +108,8 @@ export default function Catalogue() {
 
 const ProgressBar = ({ progress }) => {
     return (
-        <div className="progress-container">
-            <motion.div className='progress-bar' initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 1, delay: 1 }}></motion.div>
+        <div className="h-[20px] w-full bg-[#000000]/[0.15]">
+            <motion.div className='h-[20px] bg-[rgba(0,0,0,0.3)] w-full relative after:bg-[#6EDFFB] after:absolute after:top-1/2 after:left-0 after:transform after:-translate-y-1/2 after:h-[10px] after:w-full' initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 1, delay: 1 }}></motion.div>
         </div>
     )
 }

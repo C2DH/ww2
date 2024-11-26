@@ -16,7 +16,8 @@ import { useLanguageContext } from '../../contexts/LanguageProvider'
 
 // TRANSLATION
 import { useTranslation } from 'react-i18next'
-import axios from "axios";
+import axios from "axios"
+const email = import.meta.env.VITE_EMAIL
 
 
 export default function Menu() {
@@ -28,7 +29,7 @@ export default function Menu() {
     const [isLoading, setIsLoading] = useState(false)
     const { pathname } = useLocation()
     const {language, changeLanguage } = useLanguageContext()
-    const locations = ['/', '/spatiotemporal-map', '/^\/notice\/[a-zA-Z0-9_-]+$/']
+    const locations = ['/', '/spatiotemporal-map', '/^/notice/[a-zA-Z0-9_-]+$/']
     const isMatch = locations.some(location => {
         if (location.startsWith('/^') && location.endsWith('$/')) {
             const regex = new RegExp(location.slice(1, -1))
@@ -74,16 +75,16 @@ export default function Menu() {
             {isLoading &&            
                 <header 
                     style={{ background: `url(${bgBlack}) 50% / cover no-repeat`}}
-                    className={classNames('transition-all duration-[2000ms] overflow-hidden pb-[60px] text-white flex flex-col relative z-[100]', {
-                        'max-h-[100vh] h-[100vh]': openMenu,
-                        'max-h-[140px] h-[140px]': (!openMenu && isMatch),
-                        'max-h-[120px] h-[120px]': (!openMenu && !isMatch),
+                    className={classNames('transition-all  overflow-hidden pb-[60px] text-white flex flex-col relative z-[100]', {
+                        'max-h-[100vh] h-[100vh] duration-[2000ms]': openMenu,
+                        'max-h-[140px] h-[140px] duration-[3000ms]': (!openMenu && isMatch),
+                        'max-h-[120px] h-[120px] duration-[3000ms]': (!openMenu && !isMatch),
                     })} 
                 >
 
                     {/** HEADER */}
                     <div className="flex justify-between px-[30px] pt-[120px] sm:px-[90px] md:pt-[40px] lg:pt-[20px]">
-                        <Player />
+                        <Player status={'menu'}/>
                         <MenuLogo isOpenMenu={openMenu} setIsOpenMenu={setOpenMenu} translate={t} />
                         <LanguageSwitcher switchLanguage={changeLanguage} lang={language}/>
                     </div>
@@ -126,7 +127,7 @@ export default function Menu() {
                             <div className='flex text-[24px]'>
                                 <MenuItem path={'/about'} title={ t('about')} className={'tiret'} handleMenuItemClick={() => setOpenMenu(false) } />
                                 <MenuItem path={'/terms'} title={ t('conditions')} className={'tiret'} handleMenuItemClick={() => setOpenMenu(false) } />
-                                <MenuItem path={'/contact'} title={ t('contact')} handleMenuItemClick={() => setOpenMenu(false) } />
+                                <Link to={`mailto:${email}`}>Contact</Link>
                             </div>
                         </div>
                     </div>
@@ -145,7 +146,7 @@ const CustomLink = (props) => {
 const MenuItem = ({path, title = "", text = "", className = "", handleMenuItemClick}) => {
     return (
         <CustomLink to={path} onClick={handleMenuItemClick}>
-            <h3 className={`${className}`}>{title}</h3>
+            <h3 className={className}>{title}</h3>
             { text !== "" &&
                 <p className="hidden sm:block pt-[15px] pb-0 text-[20px] leading-none">{text}</p>
             }

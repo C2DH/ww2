@@ -8,42 +8,108 @@ import bgPaper from '../../assets/images/common/bg-paper.png'
 import classNames from "classnames"
 import { useTranslation } from "react-i18next"
 import { useSharedState } from "../../contexts/SharedStateProvider"
-import { useLanguageContext } from '../../contexts/LanguageProvider'
 import axios from "axios"
 import { Cite } from '@citation-js/core'
 import '@citation-js/plugin-csl'
-import { truncateText, cleanText } from '../../lib/utils'
+import { truncateText, cleanText, fetchData, fetchFacets } from '../../lib/utils'
 
 
 export default function Bibliography() {
 
-    const authors = ['a', 'b', 'c', 'd', 'e']
-    const notes = ['a', 'b', 'c', 'd', 'e'] 
-
     const { t } = useTranslation()
-    const { language } = useLanguageContext()
     const [sharedState, setSharedState] = useSharedState()
     const { pathname } = useLocation()
     const [isOpenMenu, setIsOpenMenu] = useState(false)
-    const [books, setBooks] = useState([])
+    const [documents, setDocuments] = useState([])
     const [offset, setOffset] = useState(0)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const [authors, setAuthors] = useState([])
+    const [notes, setNotes] = useState([])
 
-    const fetchBooks = async (offset = 0, limit = 10) => {
+    // const fetchBooks = async (offset = 0, limit = 10) => {
+    //     try {
+    //         const content = await axios.get(`/api/document/?filters={"type__in":["reference","book","manuscript"]}&facets=data__type&limit=${limit}&offset=${offset}`)
+        
+    //         const allAuthors = await axios.get(`/api/document/?filters={"type__in":["reference","book","manuscript"]}&facets=data__type&limit=1500`)
+    //         const collator = new Intl.Collator('fr', { sensitivity: 'base' })
+    //         const authorsTab = []
+    //         allAuthors.data.results.forEach(item => {
+    //             if (item.data.csljson.author) {
+    //                 item.data.csljson.author.forEach(author => {
+    //                     authorsTab.push(author)
+    //                 })
+    //             }
+    //         })
+
+    //         const uniqueAuthors = authorsTab.filter(
+    //             (author, index, self) =>
+    //               index === self.findIndex((a) => a.family === author.family)
+    //         )
+
+    //         uniqueAuthors.sort((a, b) => collator.compare(a.family, b.family))
+    //         setAuthors(uniqueAuthors)
+        
+    //         return content.data.results
+    //     } catch (error) {
+    //         setError(error)
+    //         return []
+    //     }
+    // };
+
+
+    const fetchDocuments = async (offset, limit) => {
         try {
-            const response = await axios.get(`api/document/?filters=%7B%22type__in%22:%5B%22reference%22,%22book%22,%22manuscript%22%5D%7D&facets=data__type&limit=${limit}&offset=${offset}&h=d5e2e995b3db151bf2ed6ed27ffa19713a0dd8bacd529494021ae0ff6b3f0185`)
-            return response.data.results
+            const data = await fetchData(
+                'document',
+                { type__in: ['reference', 'book', 'manuscript'] },
+                limit
+            )
+            return data ? data.results : []
         } catch (error) {
-            setError(error)
+            console.error('Erreur lors de la récupération des documents :', error)
             return []
         }
-    };
+    }
+
+
+    const fetchNotes = async (offset, limit) => {
+        try {
+            const data = await fetchFacets('document', 'stories')
+            return data ? data.facets : []
+        } catch (error) {
+            console.error('Erreur lors de la récupération des documents :', error)
+            return []
+        }
+    }
+
+    const allNotes = []
+
+    useEffect(() => {
+        const getNotes = async () => {
+            const fetchedNotes = await fetchNotes()
+            fetchedNotes.stories.forEach(note => {
+                if (note.stories) {
+                    console.log(note.stories)
+                    allNotes.push(note.stories)
+                }
+            })
+            setNotes(allNotes)
+        } 
+        getNotes()
+
+    }, [])
+
+
+    useEffect(() => {
+        console.log(notes)
+    }, [notes])
+
     
-    const loadMoreBooks = async () => {
+    const loadMoreDocuments = async () => {
         setLoading(true)
-        const newBooks = await fetchBooks(offset, 10)
-        setBooks((prevBooks) => [...prevBooks, ...newBooks])
+        const newDocuments = await fetchDocuments(offset, 10)
+        setDocuments((prevDocuments) => [...prevDocuments, ...newDocuments])
         setLoading(false)
     };
 
@@ -71,8 +137,7 @@ export default function Bibliography() {
     )
 
     useEffect(() => {
-        loadMoreBooks()
-        console.log(books)
+        loadMoreDocuments()
     }, [offset])
 
 
@@ -123,14 +188,14 @@ export default function Bibliography() {
                 {/** CONTENT */}
                 <div className="lg:overflow-scroll">
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                        { books.map((item, index) => {
+                        { documents.map((item, index) => {
                             const Wrapper = item.data.zotero.url !== "" ? 'a' : 'div';
                             const wrapperProps = item.data.zotero.url !== "" ? { href: item.data.zotero.url, target: "_blank"} : "";
                             return (
                                 <Wrapper {...wrapperProps}
                                     className={`block col-span-12 md:col-span-6 border border-black rounded-[5px] p-[10px] h-[240px] lg:h-[140px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow ${item.data.zotero.url !== "" ? 'cursor-pointer ' : '' }overflow-hidden`}
-                                    key={item.id}
-                                    ref={books.length === index + 1 ? lastBookRef : null}
+                                    key={`${item.id}-${index}`}
+                                    ref={documents.length === index + 1 ? lastBookRef : null}
                                 >
                                     <div className="col-span-6 lg:col-span-4">
                                         <h2 className='text-[24px] lg:text-[30px] pt-[10px] md:pt-0'>{ cleanText(truncateText(item.data.zotero.title, 100)) }</h2>

@@ -15,9 +15,7 @@ import img5 from '../../assets/images/historianWorkshop/img-5.png'
 import img6 from '../../assets/images/historianWorkshop/img-6.png'
 import img7 from '../../assets/images/historianWorkshop/img-7.png'
 import img8 from '../../assets/images/historianWorkshop/img-8.png'
-import i18next from 'i18next'
 import { useTranslation } from 'react-i18next'
-
 
 export default function HistorianWorkshop() {
 

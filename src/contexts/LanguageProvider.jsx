@@ -5,7 +5,7 @@ const LanguageContext = createContext(null)
 
 export function LanguageProvider({ children }) {
     
-    const { i18n, t } = useTranslation();
+    const { i18n } = useTranslation();
     const [ language, setLanguage ] = useState('fr_FR')
 
     const changeLanguage = (e) => {

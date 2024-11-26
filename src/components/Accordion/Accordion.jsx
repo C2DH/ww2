@@ -1,12 +1,11 @@
 import classNames from 'classnames'
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useLanguageContext } from '../../contexts/LanguageProvider';
 
 export default function Accordion({ items }) {
 
-    console.log('items', items)
     const { t } = useTranslation()
     const { language } = useLanguageContext()
 
@@ -25,21 +24,11 @@ export default function Accordion({ items }) {
     const getContentHeight = (index) => {
         return contentRefs.current[index] ? contentRefs.current[index].scrollHeight : '0px'
     }
-
-
-    // const handlePopup = ({id, theme}) => {
-    //     const params = {
-    //         noteId: id,
-    //         theme: parseInt(theme) + 1
-    //     }
-    // } 
-
+    
     return (        
         <div className='h-full'>
             {items.map((item, index) => {
-                console.log(item)
                 return (
-
                     <div key={ index }>
                         <div className={classNames("flex justify-between border-t border-black w-full hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] cursor-pointer", {
                             'border-b': index === currentTheme
@@ -66,15 +55,11 @@ export default function Accordion({ items }) {
                             }}
                         >
                             <div className={`accordion-content-inner ${currentTheme === index ? 'open' : ''} mb-[50px]`}>
-                                {item.stories.map((note, index) =>  
-
-                                  
-                                    <Link to={ `/note/${note.slug}` } key={ index } className="block text-[24px] lg:text-[28px] 2xl:text-[40px] uppercase pb-[20px] cursor-pointer" onClick={() => handlePopup({id: note.id, theme: currentTheme})}>
-                                        <span className='text-[28px] 2xl:text-[38px] font-light'>N{index < 10 ? '0' + (index + 1) : index }</span>
+                                {item.stories.map((note, index) =>
+                                    <Link to={ `/note/${note.slug}` } key={ index } className="block text-[24px] lg:text-[28px] 2xl:text-[40px] uppercase pb-[20px] cursor-pointer">
+                                        <span className='text-[28px] 2xl:text-[38px] font-light'>N{(index+1) < 10 ? '0' + (index + 1) : (index+1)}</span>
                                         <span className='font-abril'> { note.data.title[language]?.split('(')[0] }</span> 
                                     </Link>      
-                                        
-                                    
                                 )}
                             </div>
                         </div>
