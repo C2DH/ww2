@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - name: Prepare environment variables
         run: |
           echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
@@ -19,6 +19,7 @@ jobs:
           echo "GIT_COMMIT_SHA=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_ENV
 
       - name: Build and publish Docker image
+        uses: elgohr/Publish-Docker-Github-Action@v5
         env:
           BUILD_DATE: ${{ env.BUILD_DATE }}
           GIT_TAG: 'latest'
@@ -33,10 +34,9 @@ jobs:
           VITE_ROOT: ${{ secrets.VITE_ROOT }}
           VITE_EMAIL: ${{ secrets.VITE_EMAIL }}
           VITE_VIDEO_TRAILER_HOME: ${{ secrets.VITE_VIDEO_TRAILER_HOME }}
-        uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: c2dhunilu/ww2
-          token: ${{ secrets.DOCKERHUB_TOKEN }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          buildargs: GIT_TAG,GIT_BRANCH,GIT_REVISION
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          buildargs: GIT_TAG,GIT_BRANCH,GIT_REVISION,BUILD_DATE,GIT_LAST_COMMIT_DATE
           tags: 'latest'
