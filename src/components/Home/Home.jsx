@@ -109,12 +109,12 @@ const MapBox = ({ items }) => {
         mapRef.current.flyTo({ center: [longitude, latitude], essential: true, duration: 2500, curve: 2 })
         
         setTimeout(() => {
-            setZoom(8)
             setIsFlying(false)
             setInteractive(true)
 
             if (origin === 'luxToUk') {
                 setBounds([[-6.38, 49.86], [1.77, 55.81]])
+                setZoom(5)
             }
         }, 3000)
     }
