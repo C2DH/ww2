@@ -147,10 +147,7 @@ export default function Source({ data, handleSourcePopup }) {
 
                             {/** AUDIO */}
                             { data.type === 'audio' &&
-                                <>
-                                    <img src={ imageDefault } alt="" className='w-full' />
-                                    <Player url={ '' } controls={true} status={'audio'} />
-                                </>
+                                <Player url={ '' } controls={true} status={'audio'} />     
                             }
 
                             {/** GALLERY */}

@@ -39,17 +39,17 @@ export default function Note() {
             }
 
         {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
-            const response = await fetch('/data.json')
-            const jsonData = await response.json()
-            setJsonFile(jsonData)            
-            if (data) {
-                const updatedDocuments = Array.isArray(data.documents) ? [...data.documents, ...jsonData] : [...jsonData]
-                setData({ ...data, documents: updatedDocuments })
-                setIsLoaded(true);
-            }
-        }
+            // const response = await fetch('/data.json')
+            // const jsonData = await response.json()
+            // setJsonFile(jsonData)            
+            // if (data) {
+            //     const updatedDocuments = Array.isArray(data.documents) ? [...data.documents, ...jsonData] : [...jsonData]
+            //     setData({ ...data, documents: updatedDocuments })
+            //     setIsLoaded(true);
+            // }
         {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
-
+        
+    }
         getData();
     }, [isLoaded])
 

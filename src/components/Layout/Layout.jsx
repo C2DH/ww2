@@ -6,7 +6,9 @@ import Player from '../Player/Player'
 import { useEffect, useState } from "react"
 import classNames from "classnames"
 import { ForwardIcon } from "@heroicons/react/24/outline"
-const video = import.meta.env.VITE_VIDEO_TRAILER_HOME
+const trailer_FR = import.meta.env.VITE_VIDEO_TRAILER_HOME_FR
+const trailer_EN = import.meta.env.VITE_VIDEO_TRAILER_HOME_EN
+const trailer_DE = import.meta.env.VITE_VIDEO_TRAILER_HOME_DE
 
 export default function Layout() {
     const { pathname } = useLocation()
@@ -32,7 +34,7 @@ export default function Layout() {
         <>
             {(showIntro && pathname === '/' ) &&
                 <div className='h-screen absolute inset-0 z-[201] flex items-center justify-center bg-black'>
-                    <Player url={video} status={"trailer"} onEnded={handleIntroEnd} />
+                    <Player url={trailer_FR} status={"trailer"} onEnded={handleIntroEnd} />
                     <div onClick={handleIntroEnd} className="absolute top-[50%] -translate-y-[50%] right-[50px] cursor-pointer bg-black bg-opacity-50 p-2 rounded-full">
                         <ForwardIcon style={{ width: '50px', color: 'white'}}/>
                     </div>

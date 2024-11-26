@@ -51,6 +51,8 @@ export default function Home() {
     const [sharedState, setSharedState] = useSharedState()
     const [isLoaded, setIsLoaded] = useState(false); 
     const [data, setData] = useState(null)
+    const [visibleMarkers, setVisibleMarkers] = useState({origin : "toLux", destinations : ['toUk', 'toRussia', 'toPolska'] })
+
 
     const getData = async () => {
         const data = await fetchData('story', {
@@ -73,11 +75,11 @@ export default function Home() {
     }, [])
     
     return isLoaded && data && (
-        <MapBox items={data}/>
+        <MapBox items={data} visibleMarkers={visibleMarkers} setVisibleMarkers={setVisibleMarkers}/>
     )
 }
 
-const MapBox = ({ items }) => {
+const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
     const { t } = useTranslation()
     const { language } = useLanguageContext()
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
@@ -94,12 +96,10 @@ const MapBox = ({ items }) => {
 
     useEffect(() => {
         setMarkers([
-            {origin: 'toUk', country: 'uk', img: isSmall ? smallLeftArrow : UKArrowLong, lat: isSmall ? 50.09985688348138 : 50.00708409698924, lng: isSmall ? 5.773948314338081 : 5.377067446744771, destination: {lat: 51.5074, lng: -0.1278 }},
-            {origin: 'toRussia', country: 'russia', img: isSmall ? smallRightArrow : russiaArrowLong, lat: isSmall ?  49.98162959665259 : 50.03469691527637, lng: isSmall ? 6.552160650142298 : 7.104207203884845, destination: {lat: 55.55709366783896, lng: 30.95355419000392 }},
-            {origin: 'toPolska', country: 'polska', img: isSmall ? smallRightArrow : polskaArrowLong, lat: 50.17060676591056, lng: 6.515322417081631, destination: {lat: 52.21820180325254, lng: 17.665013242195442 }},
-            {origin: 'toLux', country: 'luxembourg', img: isSmall ? smallRightArrow : polskaArrowLong, lat: 51.5074, lng: 0.5, destination: {lat: 49.815764, lng: 6.131514 }},
-            {origin: 'toLux', country: 'luxembourg', img: isSmall ? smallLeftArrow : UKArrowLong, lat: 55.55709366783896, lng: 30.95355419000392, destination: {lat: 49.815764, lng: 6.131514 }},
-            {origin: 'toLux', country: 'luxembourg', img: isSmall ? smallLeftArrow : UKArrowLong, lat: 52.34805169404136, lng: 18.280327255460616, destination: {lat: 49.815764, lng: 6.131514 }},
+            {origin: 'toUk', country: 'Royaume Uni', img: isSmall ? smallLeftArrow : UKArrowLong },
+            {origin: 'toRussia', country: 'Russie', img: isSmall ? smallRightArrow : russiaArrowLong },
+            {origin: 'toPolska', country: 'Pologne', img: isSmall ? smallRightArrow : russiaArrowLong },
+            {origin: 'toLux', country: 'Luxembourg', img: isSmall ? smallRightArrow : polskaArrowLong }
         ])
     }, [isSmall])
 
@@ -118,34 +118,82 @@ const MapBox = ({ items }) => {
         }
     }
 
-    const fly = (longitude, latitude, origin) => {
+    const fly = (origin) => {
         if (isFlying) return
         setBounds(null)
         setIsFlying(true)
         setInteractive(false); 
 
         const p = items.reduce((carry, item) => {
-            return [...carry, ...item.covers.filter(marker => marker.type === 'entity' && marker.data.geojson?.geometry?.coordinates && marker.data.geojson?.properties?.country.fr_FR == BOUNDS[origin].country).map(marker => [marker.data.geojson.geometry.coordinates[0], marker.data.geojson.geometry.coordinates[1]])];
+            return [...carry, ...item.covers.filter(marker => marker.type === 'entity' && marker.data.geojson?.geometry?.coordinates && marker.data.geojson?.properties?.country.fr_FR == BOUNDS[origin].country).map(marker => [marker.data.geojson.geometry.coordinates[0], marker.data.geojson.geometry.coordinates[1]])]
         }, []);
 
-        mapRef.current.fitBounds(bbox(points(p)), {maxZoom: 12, padding: 50});
+        mapRef.current.fitBounds(bbox(points(p)), {maxZoom: 12, padding: 50, duration: 5000})
         
         setTimeout(() => {
             setIsFlying(false)
             setInteractive(true)
-            setBounds(BOUNDS[origin].bbox)
+
+            if (origin === 'toLux') {
+                setVisibleMarkers({origin: origin, destinations: ['toUk', 'toRussia', 'toPolska']})
+
+            } else {
+                setVisibleMarkers({origin: origin, destinations: ['toLux']})
+            }
+            // setBounds(BOUNDS[origin].bbox)
+
         }, 3000)
     }
 
     const markerVariants = {
         initial: { opacity: 0, scale: 0.8, y: 50 }, // État initial (avant l'apparition)
         animate: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }, // État après l'apparition
-        exit: { opacity: 0, scale: 0.8, y: -50, transition: { duration: 0.3, ease: "easeIn" } }, // État lors de la disparition
+        exit: { opacity: 0, scale: 0.8, y: -50, transition: { duration: 0.3, ease: "easeIn" } } // État lors de la disparition
     }
-
 
     return (
         <motion.div className='mask h-[calc(100dvh-80px)] sm:h-[calc(100vh-80px)] overflow-hidden' exit={{opacity: 0.999, transition: {duration: siteConfig.cloudsTransitionDuration}}}>
+
+            {/* MARKERS COUNTRY */}
+            <AnimatePresence>
+            
+            {!isFlying && markers
+                .filter(marker => visibleMarkers.destinations.includes(marker.origin))
+                .map((marker, index) => (
+                    <motion.div key={index}
+                        onClick={() => fly(marker.origin)}
+                        variants={markerVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        className={classNames("fixed z-[9999]", {
+                            "left-[50px] top-[120px]": marker.origin === "toUk",
+                            "right-[50px] top-[120px]": marker.origin === "toPolska",
+                            "right-[50px] top-[250px]": marker.origin === "toRussia",
+                            "right-[50px] bottom-[150px]": marker.origin === "toLux" && visibleMarkers.origin === "toUk",
+                            "left-[50px] bottom-[150px]": marker.origin === "toLux" && visibleMarkers.origin !== "toUk",
+                        })}
+                    >
+
+                 
+    
+                        <img src={marker.img} alt="marker" className={classNames("cursor-pointer", {
+                            "rotate-[180deg]": visibleMarkers.origin === "toRussia" || visibleMarkers.origin === "toPolska",
+                        })} />
+
+                        <div style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))"}}
+                            className={classNames('bg-[#F4F4F4] w-auto h-[25px] absolute -top-[3px] lg:-top-[40px] mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer', {
+                                "right-[20px] lg:right-0": marker.origin === "toRussia" || marker.origin === "toPolska" || (marker.origin === "toLux" && visibleMarkers.origin === "toUk"),
+                                "left-[20px] lg:left-0": (marker.origin === "toLux" && visibleMarkers.origin !== "toUk") || (marker.origin === "toUk" && visibleMarkers.origin == "toLux") 
+                            })}
+                        >
+                            {t(marker.country)}
+                        </div>
+                    </motion.div>
+                ))}
+            </AnimatePresence>
+
+
             <Map
                 ref={mapRef}
                 style={{ width: '100%', height: '100%' }}
@@ -220,35 +268,7 @@ const MapBox = ({ items }) => {
                     )}
                 </AnimatePresence>
 
-                {/* MARKERS COUNTRY */}
-                <AnimatePresence>
-                    {!isFlying && markers.map((marker, index) => (
-                        <Marker key={index} longitude={marker.lng} latitude={marker.lat} anchor="center">
-                            <motion.div 
-                                className="relative z-[9999]" 
-                                variants={markerVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                onClick={() => !isFlying && fly(marker.destination.lng, marker.destination.lat, marker.origin)}
-                            >
-                                <img src={marker.img} alt="marker" className={classNames("cursor-pointer", {"rotate-[320deg]": marker.origin === "russiaToLux" || marker.origin === "polskaToLux" })} />
-                                <div style={{ filter: "drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.5))"}}
-                                    className={classNames('bg-[#F4F4F4] w-auto h-[25px] absolute -translate-y-[50%] top-[10px] mx-[10px] lg:mx-0 flex justify-center items-center uppercase text-[20px] font-sofia px-[6px] whitespace-nowrap cursor-pointer', {
-                                        "left-[100%] lg:right-[105%] lg:left-auto": marker.origin === "luxToUk" || marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
-                                        "right-[100%] lg:left-[105%] lg:right-auto": marker.origin === "luxToRussia" || marker.origin === "luxToPolska" || marker.origin === "ukToLux",
-                                        "lg:top-[75px]": marker.origin === "russiaToLux" || marker.origin === "polskaToLux",
-                                        "lg:top-0": marker.origin === "luxToRussia",
-                                        "lg:top-[10px]": marker.origin === "luxToPolska" || marker.origin === "ukToLux",
-                                        "lg:top-[3px]": marker.origin === "luxToUk",
-                                    })}
-                                >
-                                    {t(marker.country)}
-                                </div>
-                            </motion.div>
-                        </Marker>
-                    ))}
-                </AnimatePresence>
+
             </Map>
         </motion.div> 
     )
