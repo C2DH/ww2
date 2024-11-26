@@ -24,6 +24,8 @@
     "@maptiler/client": "^1.8.1",
     "@react-three/drei": "^9.115.0",
     "@react-three/fiber": "^8.17.10",
+    "@turf/bbox": "^7.1.0",
+    "@turf/helpers": "^7.1.0",
     "@types/three": "^0.169.0",
     "axios": "^1.7.7",
     "base-64": "^1.0.0",

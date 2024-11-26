@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next"
 import siteConfig from '../../../site.config'
 import { fetchData, truncateText } from "../../lib/utils";
 import { useLanguageContext } from "../../contexts/LanguageProvider"
+import { bbox } from "@turf/bbox";
+import { points } from "@turf/helpers";
 const apiKeyMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const apiStyleMapbox = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
 
@@ -25,6 +27,25 @@ import { AnimatePresence, motion } from "framer-motion"
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Map, { Marker } from 'react-map-gl';
 import classNames from "classnames"
+
+const BOUNDS = {
+    'toLux': {
+        bbox: [[4.635609906406312, 49.24474658911654], [7.7936412937252015, 50.38780761708563]],
+        country: 'Luxembourg'
+    },
+    'toUk': {
+        bbox: [[-10.439758, 49.783564], [1.875916, 58.299816]],
+        country: 'Royaume Uni'
+    },
+    'toRussia': {
+        bbox: [[27.519882, 52.090495], [160.166371, 81.215593]],
+        country: 'Russie'
+    },
+    'toPolska': {
+        bbox: [[14.121395, 49.002038], [24.145134, 54.838998]],
+        country: 'Pologne'
+    }
+}
 
 export default function Home() {
     const [sharedState, setSharedState] = useSharedState()
@@ -64,7 +85,7 @@ const MapBox = ({ items }) => {
     const navigate = useNavigate()
     const [lng] = useState(6.131514)
     const [lat] = useState(49.815764)
-    const [zoom, setZoom] = useState(8)
+    const [zoom, setZoom] = useState(9)
     const [isFlying, setIsFlying] = useState(false)
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null })
     const [markers, setMarkers] = useState([])
@@ -73,12 +94,12 @@ const MapBox = ({ items }) => {
 
     useEffect(() => {
         setMarkers([
-            {origin: 'luxToUk', country: 'uk', img: isSmall ? smallLeftArrow : UKArrowLong, lat: isSmall ? 50.09985688348138 : 50.00708409698924, lng: isSmall ? 5.773948314338081 : 5.377067446744771, destination: {lat: 51.5074, lng: -0.1278 }},
-            {origin: 'luxToRussia', country: 'russia', img: isSmall ? smallRightArrow : russiaArrowLong, lat: isSmall ?  49.98162959665259 : 50.03469691527637, lng: isSmall ? 6.552160650142298 : 7.104207203884845, destination: {lat: 55.55709366783896, lng: 30.95355419000392 }},
-            {origin: 'luxToPolska', country: 'polska', img: isSmall ? smallRightArrow : polskaArrowLong, lat: 50.17060676591056, lng: 6.515322417081631, destination: {lat: 52.21820180325254, lng: 17.665013242195442 }},
-            {origin: 'ukToLux', country: 'luxembourg', img: isSmall ? smallRightArrow : polskaArrowLong, lat: 51.5074, lng: 0.5, destination: {lat: 49.815764, lng: 6.131514 }},
-            {origin: 'russiaToLux', country: 'luxembourg', img: isSmall ? smallLeftArrow : UKArrowLong, lat: 55.55709366783896, lng: 30.95355419000392, destination: {lat: 49.815764, lng: 6.131514 }},
-            {origin: 'polskaToLux', country: 'luxembourg', img: isSmall ? smallLeftArrow : UKArrowLong, lat: 52.34805169404136, lng: 18.280327255460616, destination: {lat: 49.815764, lng: 6.131514 }},
+            {origin: 'toUk', country: 'uk', img: isSmall ? smallLeftArrow : UKArrowLong, lat: isSmall ? 50.09985688348138 : 50.00708409698924, lng: isSmall ? 5.773948314338081 : 5.377067446744771, destination: {lat: 51.5074, lng: -0.1278 }},
+            {origin: 'toRussia', country: 'russia', img: isSmall ? smallRightArrow : russiaArrowLong, lat: isSmall ?  49.98162959665259 : 50.03469691527637, lng: isSmall ? 6.552160650142298 : 7.104207203884845, destination: {lat: 55.55709366783896, lng: 30.95355419000392 }},
+            {origin: 'toPolska', country: 'polska', img: isSmall ? smallRightArrow : polskaArrowLong, lat: 50.17060676591056, lng: 6.515322417081631, destination: {lat: 52.21820180325254, lng: 17.665013242195442 }},
+            {origin: 'toLux', country: 'luxembourg', img: isSmall ? smallRightArrow : polskaArrowLong, lat: 51.5074, lng: 0.5, destination: {lat: 49.815764, lng: 6.131514 }},
+            {origin: 'toLux', country: 'luxembourg', img: isSmall ? smallLeftArrow : UKArrowLong, lat: 55.55709366783896, lng: 30.95355419000392, destination: {lat: 49.815764, lng: 6.131514 }},
+            {origin: 'toLux', country: 'luxembourg', img: isSmall ? smallLeftArrow : UKArrowLong, lat: 52.34805169404136, lng: 18.280327255460616, destination: {lat: 49.815764, lng: 6.131514 }},
         ])
     }, [isSmall])
 
@@ -102,18 +123,17 @@ const MapBox = ({ items }) => {
         setBounds(null)
         setIsFlying(true)
         setInteractive(false); 
-        setZoom(0)
-        
-        mapRef.current.flyTo({ center: [longitude, latitude], essential: true, duration: 2500, curve: 2 })
+
+        const p = items.reduce((carry, item) => {
+            return [...carry, ...item.covers.filter(marker => marker.type === 'entity' && marker.data.geojson?.geometry?.coordinates && marker.data.geojson?.properties?.country.fr_FR == BOUNDS[origin].country).map(marker => [marker.data.geojson.geometry.coordinates[0], marker.data.geojson.geometry.coordinates[1]])];
+        }, []);
+
+        mapRef.current.fitBounds(bbox(points(p)), {maxZoom: 12, padding: 50});
         
         setTimeout(() => {
             setIsFlying(false)
             setInteractive(true)
-
-            if (origin === 'luxToUk') {
-                setBounds([[-6.38, 49.86], [1.77, 55.81]])
-                setZoom(3)
-            } 
+            setBounds(BOUNDS[origin].bbox)
         }, 3000)
     }
 
@@ -136,12 +156,8 @@ const MapBox = ({ items }) => {
                 dragPan={interactive}
                 doubleClickZoom={interactive}
                 keyboard={interactive}
-                minZoom={zoom} // Ne peut pas dézoomer en dessous de x8
                 maxBounds={bounds} // Bloquer le panning
                 initialViewState={{
-                    longitude: lng,
-                    latitude: lat,
-                    zoom: zoom,
                     pitch: 30 // Inclinaison en degrés
                 }}
                 // center={[6.090742202904814, 49.7627550671219]}
@@ -206,8 +222,8 @@ const MapBox = ({ items }) => {
 
                 {/* MARKERS COUNTRY */}
                 <AnimatePresence>
-                    {!isFlying && markers.map((marker) => (
-                        <Marker key={marker.origin} longitude={marker.lng} latitude={marker.lat} anchor="center">
+                    {!isFlying && markers.map((marker, index) => (
+                        <Marker key={index} longitude={marker.lng} latitude={marker.lat} anchor="center">
                             <motion.div 
                                 className="relative z-[9999]" 
                                 variants={markerVariants}
