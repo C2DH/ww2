@@ -1,109 +1,115 @@
-import { useCallback, useEffect, useRef, useState } from "react"
-import { Link, useLocation } from "react-router-dom"
-import Error from '../Error/Error'
-import Dropdown from "../Dropdown/Dropdown"
-import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop"
-import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop"
-import bgPaper from '../../assets/images/common/bg-paper.png'
-import classNames from "classnames"
-import { useTranslation } from "react-i18next"
-import { useSharedState } from "../../contexts/SharedStateProvider"
-import axios from "axios"
-import { Cite } from '@citation-js/core'
-import '@citation-js/plugin-csl'
-import { truncateText, cleanText, fetchData, fetchFacets } from '../../lib/utils'
+    import { useCallback, useEffect, useRef, useState } from "react"
+    import { Link, useLocation } from "react-router-dom"
+    import Error from '../Error/Error'
+    import Dropdown from "../Dropdown/Dropdown"
+    import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop"
+    import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop"
+    import bgPaper from '../../assets/images/common/bg-paper.png'
+    import classNames from "classnames"
+    import { useTranslation } from "react-i18next"
+    import { useSharedState } from "../../contexts/SharedStateProvider"
+    import axios from "axios"
+    import { Cite } from '@citation-js/core'
+    import '@citation-js/plugin-csl'
+    import { truncateText, cleanText, fetchData, fetchFacets } from '../../lib/utils'
+    import { useMenuHistorianContext } from "../../contexts/MenuHistorianProvider"
 
 
-export default function Bibliography() {
 
-    const { t } = useTranslation()
-    const [sharedState, setSharedState] = useSharedState()
-    const { pathname } = useLocation()
-    const [isOpenMenu, setIsOpenMenu] = useState(false)
-    const [documents, setDocuments] = useState([])
-    const [offset, setOffset] = useState(0)
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(null)
-    const [authors, setAuthors] = useState([])
-    const [notes, setNotes] = useState([])
+    export default function Bibliography() {
 
-    // const fetchBooks = async (offset = 0, limit = 10) => {
-    //     try {
-    //         const content = await axios.get(`/api/document/?filters={"type__in":["reference","book","manuscript"]}&facets=data__type&limit=${limit}&offset=${offset}`)
-        
-    //         const allAuthors = await axios.get(`/api/document/?filters={"type__in":["reference","book","manuscript"]}&facets=data__type&limit=1500`)
-    //         const collator = new Intl.Collator('fr', { sensitivity: 'base' })
-    //         const authorsTab = []
-    //         allAuthors.data.results.forEach(item => {
-    //             if (item.data.csljson.author) {
-    //                 item.data.csljson.author.forEach(author => {
-    //                     authorsTab.push(author)
-    //                 })
-    //             }
-    //         })
+        const { t } = useTranslation()
+        const [sharedState, setSharedState] = useSharedState()
+        const { pathname } = useLocation()
+        const [isOpenMenu, setIsOpenMenu] = useState(false)
+        const [documents, setDocuments] = useState([])
+        const [offset, setOffset] = useState(0)
+        const [loading, setLoading] = useState(false)
+        const [error, setError] = useState(null)
+        const [authors, setAuthors] = useState([])
+        const [notes, setNotes] = useState([])
+        const menuItems = useMenuHistorianContext()
 
-    //         const uniqueAuthors = authorsTab.filter(
-    //             (author, index, self) =>
-    //               index === self.findIndex((a) => a.family === author.family)
-    //         )
-
-    //         uniqueAuthors.sort((a, b) => collator.compare(a.family, b.family))
-    //         setAuthors(uniqueAuthors)
-        
-    //         return content.data.results
-    //     } catch (error) {
-    //         setError(error)
-    //         return []
-    //     }
-    // };
-
-
-    const fetchDocuments = async (offset, limit) => {
-        try {
-            const data = await fetchData(
-                'document',
-                { type__in: ['reference', 'book', 'manuscript'] },
-                limit
-            )
-            return data ? data.results : []
-        } catch (error) {
-            console.error('Erreur lors de la récupération des documents :', error)
-            return []
+        const fetchDocuments = async (offset, limit) => {
+            try {
+                const data = await fetchData(
+                    'document',
+                    { type__in: ['reference', 'book', 'manuscript'] },
+                    limit
+                )
+                return data ? data.results : []
+            } catch (error) {
+                console.error('Erreur lors de la récupération des documents :', error)
+                return []
+            }
         }
-    }
 
-
-    const fetchNotes = async (offset, limit) => {
-        try {
-            const data = await fetchFacets('document', 'stories')
-            return data ? data.facets : []
-        } catch (error) {
-            console.error('Erreur lors de la récupération des documents :', error)
-            return []
+        const fetchNotes = async () => {
+            try {
+                const data = await fetchFacets('document', 'stories')
+                return data ? data.facets : []
+            } catch (error) {
+                console.error('Erreur lors de la récupération des documents :', error)
+                return []
+            }
         }
-    }
 
-    const allNotes = []
+        const fetchNotesTitle = async (notesIdTab) => {
+            try {
+                const data = await fetchData('story', {
+                    id__in: notesIdTab
+                })
+                return data.results
+            } catch (error) {
+                console.error('Erreur lors de la récupération des documents :', error)
+                return []
+            }
+        }
 
-    useEffect(() => {
         const getNotes = async () => {
-            const fetchedNotes = await fetchNotes()
-            fetchedNotes.stories.forEach(note => {
+            const fetchedNotesId = await fetchNotes()
+            const allNotes = []
+        
+            fetchedNotesId.stories.forEach(note => {
                 if (note.stories) {
-                    console.log(note.stories)
                     allNotes.push(note.stories)
                 }
             })
-            setNotes(allNotes)
-        } 
-        getNotes()
+        
+            const relatedNotes = await fetchNotesTitle(allNotes)
+            setNotes(relatedNotes)
+        }
+        
+        const fetchAuthors = async () => {
+            try {
+                const fetchedAuthors = await fetchFacets('document', 'data__authors')
+                return fetchedAuthors ? fetchedAuthors.facets.data__authors : []
+            } catch (error) {
+                console.error('Erreur lors de la récupération des auteurs :', error)
+                return []
+            }   
+        }
 
-    }, [])
+        const getAuthors = async () => {
+            const authors = await fetchAuthors()
+            const allAuthors = []
+
+            authors.forEach(item => { 
+                if (item.data__authors) {
+                    item.data__authors.forEach(author => {
+                        allAuthors.push(author)
+                    })
+                }
+            })
+
+            setAuthors([...(new Set(allAuthors))].sort((a, b) => a.localeCompare(b)))
+        }
 
 
     useEffect(() => {
-        console.log(notes)
-    }, [notes])
+        getNotes()
+        getAuthors()
+    }, [])
 
     
     const loadMoreDocuments = async () => {
@@ -111,8 +117,7 @@ export default function Bibliography() {
         const newDocuments = await fetchDocuments(offset, 10)
         setDocuments((prevDocuments) => [...prevDocuments, ...newDocuments])
         setLoading(false)
-    };
-
+    }
 
     const observer = useRef()
 
@@ -141,26 +146,6 @@ export default function Bibliography() {
     }, [offset])
 
 
-    const menuItems = [
-        {
-            title: "Sources",
-            link: '/sources'
-        },
-        {
-            title: "Glossaire",
-            link: '/glossary'
-        },
-        {
-            title: "Institutions de recherche",
-            link: '/research-institutions'
-        },
-        {
-            title: "Bibliographie",
-            link: '/bibliography'
-        },
-    ]
-
-
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, [])
@@ -169,7 +154,7 @@ export default function Bibliography() {
         return <Error />
     } else {
         return (
-            <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
+            <LayoutHistorianWorkshop pageTitle={ t('menuItems.bibliography')}>
             
                 <HeaderHistorianWorkshop items={ menuItems } />
     
@@ -177,10 +162,10 @@ export default function Bibliography() {
                 <div className="hidden lg:block mt-[30px] xl:mt-[40px]">
                     <div className="grid grid-cols-12 gap-5 border-b border-black pb-[80px]">
                         <div className="col-span-5 relative">
-                            <Dropdown items={authors} text={'Auteur'} />
+                            <Dropdown items={authors} text={t('Auteurs')} theme={'authors'}/>
                         </div>
                         <div className="col-span-5 relative">
-                            <Dropdown items={notes} text={'Notes'} />
+                            <Dropdown items={notes} text={t('Notes')} theme={'notes'}/>
                         </div>
                     </div>
                 </div>
@@ -226,50 +211,46 @@ export default function Bibliography() {
                     "translate-y-[100%]": !isOpenMenu
                 })}>
                     <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
-                        {menuItems.map((item, index) => 
+                        {/* {menuItems.map((item, index) => 
                             <li key={index}>
                                 <Link key={index} to={item.link} className={classNames('navbar-title', {'active' : pathname === `${item.link}`})}>{item.title}</Link>
                             </li>
-                       )}
+                       )} */}
                     </ul>
                 </div>
     
             </LayoutHistorianWorkshop>
         )
     }
-
 }
-
-
-
 
 
 const DocumentReference = ({ doc = {} }) => {
     const { i18n } = useTranslation()
   
-    // if the `data.csljson` field is not present in the doc object, log an error and return null
     if (!doc.data?.csljson) {
-      console.error('data.csljson field not found in doc:', doc)
-      return null
+        console.error('data.csljson field not found in doc:', doc)
+        return null
     }
     const cite = new Cite(doc.data.csljson)
   
-    // format the reference using the `Cite` instance and the specified citation style (APA style in this case)
     let reference = cite.format('bibliography', {
-      template: 'apa',
-      format: 'html',
-      lang: i18n.language,
+        template: 'apa',
+        format: 'html',
+        lang: i18n.language,
     })
+
     if (typeof reference === 'string') {
-      reference = cleanText(reference.replace(
-        /(https?:\/\/[0-9a-zA-Z-./_:?=%&#;]+)/g,
-        (m, link) => `<a href="${link}" target="_blank">${link}</a>`,
-      ))
+        reference = cleanText(reference.replace(
+            /(https?:\/\/[0-9a-zA-Z-./_:?=%&#;]+)/g,
+            (m, link) => `<a href="${link}" target="_blank">${link}</a>`,
+        ))
     }
+
     return (
-      <div>
-        {reference !== null && <p className="text-[22px] leading-none font-light pt-[10px]" dangerouslySetInnerHTML={{ __html: reference }} />}
-      </div>
+        <div>
+            {reference !== null && <p className="text-[22px] leading-none font-light pt-[10px]" dangerouslySetInnerHTML={{ __html: reference }} />}
+        </div>
     )
-  }
+}
   

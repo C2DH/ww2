@@ -14,6 +14,7 @@ import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { AnimatePresence, motion } from 'framer-motion'
 import Source from '../Source/Source'
 import { useMediaQuery } from 'react-responsive'
+import { useMenuHistorianContext } from '../../contexts/MenuHistorianProvider'
 
 
 
@@ -33,27 +34,10 @@ export default function Sources() {
     const [hasMore, setHasMore] = useState(true)
     const [dataPopup, setDataPopup] = useState({ open: false, data: null })
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
+    const menuItems = useMenuHistorianContext()
 
-    const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
-    const menuItems = [
-        {
-            title: "Sources",
-            link: '/sources'
-        },
-        {
-            title: "Glossaire",
-            link: '/glossary'
-        },
-        {
-            title: "Institutions de recherche",
-            link: '/research-institutions'
-        },
-        {
-            title: "Bibliographie",
-            link: '/bibliography'
-        },
-    ]
-    
+
+    const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']  
     
     const fetchSources = async (offset = 0, limit = 20) => {
         try {

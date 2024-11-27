@@ -6,9 +6,12 @@ import Player from '../Player/Player'
 import { useEffect, useState } from "react"
 import classNames from "classnames"
 import { ForwardIcon } from "@heroicons/react/24/outline"
-const trailer_FR = import.meta.env.VITE_VIDEO_TRAILER_HOME_FR
-const trailer_EN = import.meta.env.VITE_VIDEO_TRAILER_HOME_EN
-const trailer_DE = import.meta.env.VITE_VIDEO_TRAILER_HOME_DE
+import { AnimatePresence, motion } from "framer-motion"
+const trailers = {
+    fr_FR: import.meta.env.VITE_VIDEO_TRAILER_HOME_FR,
+    en_EN: import.meta.env.VITE_VIDEO_TRAILER_HOME_EN,
+    de_DE: import.meta.env.VITE_VIDEO_TRAILER_HOME_DE,
+}
 
 export default function Layout() {
     const { pathname } = useLocation()
@@ -16,28 +19,44 @@ export default function Layout() {
     const {isOpenSource} = useSourceContext()
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
     const [showIntro, setShowIntro] = useState(false)
+    const languageTrailer = localStorage.getItem("i18nextLng")
+    const [showSkip, setShowSkip] = useState(true)
+    const trailerUrl = trailers[languageTrailer]
 
     const handleIntroEnd = () => {
         setShowIntro(false)
-        localStorage.setItem("introSeen", JSON.stringify({value: true, expire: new Date().getTime()}))
+        // localStorage.setItem("introSeen", JSON.stringify({value: true, expire: new Date().getTime()}))
     }
 
     useEffect(() => {
         const introSeen = localStorage.getItem("introSeen")
         const now = new Date().getTime()
-        if ((!introSeen && pathname === "/") || (now - parseInt(introSeen.expire) > 6 * 60 * 60 * 1000)) {
+        if ((!introSeen && pathname === "/") || (pathname === "/" && now - parseInt(introSeen.expire) > 6 * 60 * 60 * 1000)) {
             setShowIntro(true)
         }
     }, [pathname])
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+          setShowSkip(false)
+        }, 21000)
+    
+        return () => clearTimeout(timer)
+      }, [])
+
     return (
         <>
             {(showIntro && pathname === '/' ) &&
-                <div className='h-screen absolute inset-0 z-[201] flex items-center justify-center bg-black'>
-                    <Player url={trailer_FR} status={"trailer"} onEnded={handleIntroEnd} />
-                    <div onClick={handleIntroEnd} className="absolute top-[50%] -translate-y-[50%] right-[50px] cursor-pointer bg-black bg-opacity-50 p-2 rounded-full">
-                        <ForwardIcon style={{ width: '50px', color: 'white'}}/>
-                    </div>
+                <div className='hidden lg:block absolute top-0 left-0 z-[201] w-screen h-screen overflow-hidden'>
+                    <Player url={trailerUrl} status={"trailer"} onEnded={handleIntroEnd} />
+                    
+                    <AnimatePresence>
+                        {showSkip &&
+                            <motion.div initial={{ opacity: 0, scale: 1 }} animate={{ opacity: 1, scale: 0.9 }} exit={{ opacity: 0 }} onClick={handleIntroEnd} className="absolute top-[50%] -translate-y-[50%] right-[50px] cursor-pointer bg-black bg-opacity-50 p-2 rounded-full">
+                                <ForwardIcon style={{ width: '50px', color: 'white'}}/>
+                            </motion.div>
+                        }
+                    </AnimatePresence>
                 </div>  
             }
 

@@ -265,8 +265,6 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
                         </motion.div>
                     )}
                 </AnimatePresence>
-
-
             </Map>
         </motion.div> 
     )

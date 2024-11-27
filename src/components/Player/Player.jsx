@@ -3,12 +3,13 @@ import ReactPlayer from 'react-player'
 import "./Player.scss"
 import { useMediaQuery } from 'react-responsive'
 import classNames from 'classnames'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import sound_1 from '../../assets/sounds/sound-1.mp3'
 import sound_2 from '../../assets/sounds/sound-2.mp3'
 import { useMenuSoundContext } from '../../contexts/MenuProvider'
-import { ForwardIcon, PlayIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline'
+import { PlayIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline'
+import { AnimatePresence, motion } from 'framer-motion'
 
 
 export default function Player({ url, className, controls, status, onEnded, loop = false })  {
@@ -20,6 +21,7 @@ export default function Player({ url, className, controls, status, onEnded, loop
     const [isPlaying, setIsPlaying] = useState(false)
     const [isMuted, setIsMuted] = useState(true)
     const [skipVideo, setSkipVideo] = useState(false)
+    const [showIcons, setShowIcons] = useState(true)
     const playerRef = useRef(null)
     const playerMenuRef = useRef(null)
     const playerAudioRef = useRef(null)
@@ -39,6 +41,15 @@ export default function Player({ url, className, controls, status, onEnded, loop
         }
     }
 
+    useEffect(() => {
+
+        if(playerTrailerRef.current) {
+            console.log(playerTrailerRef)
+
+        }
+
+    }, [])
+
     const handleMediaPlay = () => {
         setIsPlaying(true);
         setIsMenuSoundPlay(false) // Stopper la musique de fond
@@ -49,6 +60,7 @@ export default function Player({ url, className, controls, status, onEnded, loop
         // setIsMenuSoundPlay(true) // Reprendre la musique de fond
     }
 
+
     useEffect(() => {
         if (pathname === "/") {
             setSound(sound_1)
@@ -56,6 +68,14 @@ export default function Player({ url, className, controls, status, onEnded, loop
             setSound(sound_2)
         }
     }, [pathname])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+          setShowIcons(false)
+        }, 21000)
+    
+        return () => clearTimeout(timer)
+      }, [])
 
 
     if (status === 'video') {
@@ -89,22 +109,32 @@ export default function Player({ url, className, controls, status, onEnded, loop
             </div>
         )
     }  else if (status === 'trailer' && !skipVideo) {
-        return (
-            <div className="relative w-full max-w-screen-2xl">
-                <div className="relative w-full pt-[56.25%]">
-                    <ReactPlayer url={ url } width={ '100%' } height={ '100%' } autoPlay controls={controls} loop={loop} className={ "absolute top-0 left-0" } playing={true} muted={isMuted} ref={playerTrailerRef} onEnded={ handleEnded } />
+        return (        
+            <div className='h-full w-full'>
+                <video
+                    autoPlay
+                    controls={controls} loop={loop}  muted={isMuted} ref={playerTrailerRef} onEnded={ handleEnded }
+                    style={{ height: "100%", width: "100%", objectFit: "cover" }}
+                >
+                    <source src={url} type="video/mp4" />
+                </video>
 
-                    <div className="absolute bottom-5 right-5 cursor-pointer bg-black bg-opacity-50 p-2 rounded-full"
-                        onClick={() => setIsMuted(!isMuted)}
-                    >
-                        {isMuted ? (
-                            <SpeakerXMarkIcon style={{ width: "30px", color: "white" }} />
-                        ) : (
-                            <SpeakerWaveIcon style={{ width: "30px", color: "white" }} />
-                        )}
-                    </div>
-                </div>      
-            </div>      
+
+                <AnimatePresence>
+                    {showIcons && (
+                        <motion.div initial={{ opacity: 0, scale: 1 }} animate={{ opacity: 1, scale: 0.9 }} exit={{ opacity: 0 }}
+                            className="absolute bottom-5 right-5 cursor-pointer bg-black bg-opacity-50 p-2 rounded-full"
+                            onClick={() => playerTrailerRef.current && setIsMuted(!isMuted)}
+                        >
+                            {isMuted ? (
+                                <SpeakerXMarkIcon style={{ width: "30px", color: "white" }} />
+                            ) : (
+                                <SpeakerWaveIcon style={{ width: "30px", color: "white" }} />
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
         )
     }  else if (status === 'audio') {
         return (

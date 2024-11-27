@@ -7,6 +7,7 @@ import classNames from 'classnames'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSharedState } from '../../contexts/SharedStateProvider'
+import { useMenuHistorianContext } from '../../contexts/MenuHistorianProvider'
 
 export default function ResearchInstitutions() {
 
@@ -14,24 +15,7 @@ export default function ResearchInstitutions() {
     const { t } = useTranslation()
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const { pathname } = useLocation()
-    const menuItems = [
-        {
-            title: "Sources",
-            link: '/sources'
-        },
-        {
-            title: "Glossaire",
-            link: '/glossary'
-        },
-        {
-            title: "Institutions de recherche",
-            link: '/research-institutions'
-        },
-        {
-            title: "Bibliographie",
-            link: '/bibliography'
-        },
-    ]
+    const menuItems = useMenuHistorianContext()
 
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
