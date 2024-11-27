@@ -25,7 +25,7 @@ export default function Layout() {
 
     const handleIntroEnd = () => {
         setShowIntro(false)
-        // localStorage.setItem("introSeen", JSON.stringify({value: true, expire: new Date().getTime()}))
+        localStorage.setItem("introSeen", JSON.stringify({value: true, expire: new Date().getTime()}))
     }
 
     useEffect(() => {

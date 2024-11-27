@@ -55,9 +55,19 @@ export async function fetchData(endpoint, params = {}, limit = "") {
     }
 }
 
-export async function fetchFacets(endpoint, facets) {
+export async function fetchFacets(endpoint, facets, filters) {
 
-    const url = `/api/${endpoint}/?facets=${facets}`
+    //https://ww2.lu/api/document/?facets=data__authors&limit=1&filters={"data__contains":{"authors":["Sonja Kmec"]}}
+
+    let url
+
+    if (filters) {
+        console.log('avec filtres')
+        url = `/api/${endpoint}/?facets=${facets}&filters={"data__contains":{"authors":[${filters}]}}`
+    } else {
+        console.log('pas de filtres ')
+        url = `/api/${endpoint}/?facets=${facets}`
+    }
     try {
         const response = await fetch(url)
         if (response.status === 200) {

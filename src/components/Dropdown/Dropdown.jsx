@@ -7,15 +7,14 @@ import { useTranslation } from 'react-i18next';
 export default function Dropdown({ items, text, theme, onChange}) {
     
     // console.log('items',items)
-
-    const [isOpen, setIsOpen] = useState(false)                                                                                                                                                                                                                                 
+    const [isOpen, setIsOpen] = useState(false)
     const { language } = useLanguageContext()
     const { t } = useTranslation()
 
     const handleItemClick = (item) => {
         onChange(item)
         setIsOpen(false)
-    };
+    }
 
     return (
         <div onClick={() => setIsOpen(!isOpen) } className={classNames("absolute z-[6] overflow-hidden py-[5px] px-[10px] border border-black cursor-pointer w-full rounded-[4px] bg-[#EFEFED] transition-all duration-[750ms]", {

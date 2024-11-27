@@ -8,7 +8,6 @@
     import classNames from "classnames"
     import { useTranslation } from "react-i18next"
     import { useSharedState } from "../../contexts/SharedStateProvider"
-    import axios from "axios"
     import { Cite } from '@citation-js/core'
     import '@citation-js/plugin-csl'
     import { truncateText, cleanText, fetchData, fetchFacets } from '../../lib/utils'
@@ -28,9 +27,16 @@
         const [error, setError] = useState(null)
         const [authors, setAuthors] = useState([])
         const [notes, setNotes] = useState([])
+        const [filters, setFilters] = useState()
         const menuItems = useMenuHistorianContext()
 
         const fetchDocuments = async (offset, limit) => {
+
+            console.log('filters',filters)
+            
+            // https://ww2.lu/api/document/?facets=data__authors&limit=1&filters={"data__contains":{"authors":["Sonja Kmec"]}}
+            // https://ww2.lu/api/document/?facets=data__authors&filters={"data__contains":{"authors":[1922, Robert Lewis Koehl]}}
+  
             try {
                 const data = await fetchData(
                     'document',
@@ -101,7 +107,6 @@
                     })
                 }
             })
-
             setAuthors([...(new Set(allAuthors))].sort((a, b) => a.localeCompare(b)))
         }
 
@@ -118,6 +123,11 @@
         setDocuments((prevDocuments) => [...prevDocuments, ...newDocuments])
         setLoading(false)
     }
+
+    const handleDropdownChange = (item) => {
+        setFilters(item)
+        console.log('item click',item)
+      };
 
     const observer = useRef()
 
@@ -143,7 +153,7 @@
 
     useEffect(() => {
         loadMoreDocuments()
-    }, [offset])
+    }, [offset, filters])
 
 
     useEffect(() => {
@@ -162,7 +172,7 @@
                 <div className="hidden lg:block mt-[30px] xl:mt-[40px]">
                     <div className="grid grid-cols-12 gap-5 border-b border-black pb-[80px]">
                         <div className="col-span-5 relative">
-                            <Dropdown items={authors} text={t('Auteurs')} theme={'authors'}/>
+                            <Dropdown items={authors} text={t('Auteurs')} theme={'authors'} onChange={handleDropdownChange} />
                         </div>
                         <div className="col-span-5 relative">
                             <Dropdown items={notes} text={t('Notes')} theme={'notes'}/>
@@ -211,11 +221,11 @@
                     "translate-y-[100%]": !isOpenMenu
                 })}>
                     <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
-                        {/* {menuItems.map((item, index) => 
+                        {menuItems.map((item, index) => 
                             <li key={index}>
                                 <Link key={index} to={item.link} className={classNames('navbar-title', {'active' : pathname === `${item.link}`})}>{item.title}</Link>
                             </li>
-                       )} */}
+                       )}
                     </ul>
                 </div>
     
