@@ -34,7 +34,7 @@ export default function Glossary() {
 
     const fetchTerms = async (offset = 0, limit = 10) => {
         try {
-            const response = await axios.get(`api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter&limit=${ limit }&offset=${ offset }&h=3d18dc9b8cf034e6dfccb472839498f014b8ee036d3b37393e3af8022ddadb2b`)
+            const response = await axios.get(`api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter&limit=${ limit }&offset=${ offset }`)
             return response.data.results
         } catch (error) {
             setError(error)

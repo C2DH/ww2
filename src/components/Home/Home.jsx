@@ -82,7 +82,7 @@ export default function Home() {
 const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
     const { t } = useTranslation()
     const { language } = useLanguageContext()
-    const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
+    const isSmall = useMediaQuery({ query: '(max-width: 1023px)'})
     const mapRef = useRef(null)
     const navigate = useNavigate()
     const [lng] = useState(6.131514)
@@ -133,16 +133,16 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
         setTimeout(() => {
             setIsFlying(false)
             setInteractive(true)
-
             if (origin === 'toLux') {
                 setVisibleMarkers({origin: origin, destinations: ['toUk', 'toRussia', 'toPolska']})
-
             } else {
                 setVisibleMarkers({origin: origin, destinations: ['toLux']})
             }
-            // setBounds(BOUNDS[origin].bbox)
-
         }, 3000)
+
+        setTimeout(() => {
+            setBounds(BOUNDS[origin].bbox)
+        }, 4000)
     }
 
     const markerVariants = {
@@ -167,16 +167,14 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
                         animate="animate"
                         exit="exit"
                         className={classNames("fixed z-[9999]", {
-                            "left-[50px] top-[120px]": marker.origin === "toUk",
-                            "right-[50px] top-[120px]": marker.origin === "toPolska",
-                            "right-[50px] top-[250px]": marker.origin === "toRussia",
+                            "left-[20px] lg:left-[50px] top-[50px] lg:top-[120px]": marker.origin === "toUk",
+                            "right-[20px] lg:right-[50px] top-[50px] lg:top-[120px]": marker.origin === "toPolska",
+                            "right-[20px] lg:right-[50px] top-[150px] lg:top-[250px]": marker.origin === "toRussia",
                             "right-[50px] bottom-[150px]": marker.origin === "toLux" && visibleMarkers.origin === "toUk",
                             "left-[50px] bottom-[150px]": marker.origin === "toLux" && visibleMarkers.origin !== "toUk",
                         })}
                     >
-
                  
-    
                         <img src={marker.img} alt="marker" className={classNames("cursor-pointer", {
                             "rotate-[180deg]": visibleMarkers.origin === "toRussia" || visibleMarkers.origin === "toPolska",
                         })} />
