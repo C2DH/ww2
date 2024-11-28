@@ -1,133 +1,134 @@
-    import { useCallback, useEffect, useRef, useState } from "react"
-    import { Link, useLocation } from "react-router-dom"
-    import Error from '../Error/Error'
-    import Dropdown from "../Dropdown/Dropdown"
-    import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop"
-    import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop"
-    import bgPaper from '../../assets/images/common/bg-paper.png'
-    import classNames from "classnames"
-    import { useTranslation } from "react-i18next"
-    import { useSharedState } from "../../contexts/SharedStateProvider"
-    import { Cite } from '@citation-js/core'
-    import '@citation-js/plugin-csl'
-    import { truncateText, cleanText, fetchData, fetchFacets } from '../../lib/utils'
-    import { useMenuHistorianContext } from "../../contexts/MenuHistorianProvider"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { Link, useLocation } from "react-router-dom"
+import Error from '../Error/Error'
+import Dropdown from "../Dropdown/Dropdown"
+import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianWorkshop"
+import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop"
+import bgPaper from '../../assets/images/common/bg-paper.png'
+import classNames from "classnames"
+import { useTranslation } from "react-i18next"
+import { useSharedState } from "../../contexts/SharedStateProvider"
+import { Cite } from '@citation-js/core'
+import '@citation-js/plugin-csl'
+import { truncateText, cleanText, fetchData, fetchFacets } from '../../lib/utils'
+import { useMenuHistorianContext } from "../../contexts/MenuHistorianProvider"
 
 
 
-    export default function Bibliography() {
+export default function Bibliography() {
 
-        const { t } = useTranslation()
-        const [sharedState, setSharedState] = useSharedState()
-        const { pathname } = useLocation()
-        const [isOpenMenu, setIsOpenMenu] = useState(false)
-        const [documents, setDocuments] = useState([])
-        const [offset, setOffset] = useState(0)
-        const [loading, setLoading] = useState(false)
-        const [error, setError] = useState(null)
-        const [authors, setAuthors] = useState([])
-        const [notes, setNotes] = useState([])
-        const [filters, setFilters] = useState()
-        const menuItems = useMenuHistorianContext()
+    const { t } = useTranslation()
+    const [sharedState, setSharedState] = useSharedState()
+    const { pathname } = useLocation()
+    const [isOpenMenu, setIsOpenMenu] = useState(false)
+    const [documents, setDocuments] = useState([])
+    const [offset, setOffset] = useState(0)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [authors, setAuthors] = useState([])
+    const [notes, setNotes] = useState([])
+    const [filters, setFilters] = useState([])
+    const menuItems = useMenuHistorianContext()
 
-        const fetchDocuments = async (offset, limit) => {
+    // https://ww2.lu/api/document/?facets=data__authors&filters={"data__contains":{"authors":["Sonja Kmec"]}
+    // https://ww2.lu/api/document/?facets=stories&filters={"data__contains":{"stories":["47"]}
 
-            console.log('filters',filters)
-            
-            // https://ww2.lu/api/document/?facets=data__authors&limit=1&filters={"data__contains":{"authors":["Sonja Kmec"]}}
-            // https://ww2.lu/api/document/?facets=data__authors&filters={"data__contains":{"authors":[1922, Robert Lewis Koehl]}}
-  
-            try {
-                const data = await fetchData(
-                    'document',
-                    { type__in: ['reference', 'book', 'manuscript'] },
-                    limit
-                )
+    //https://ww2.lu/api/document/?filters={%22type__in%22:[%22reference%22,%22book%22,%22manuscript%22]}&limit=10&offset=30
+
+    const fetchDocuments = async () => {  
+        try {
+            if (filters.length > 0) {
+                const data = await fetchFacets('document', 'data__authors', filters)
+                return data ? data.results : [];
+
+            } else {
+                const params = {
+                    type__in: ['reference', 'book', 'manuscript'],
+                }
+                const limit = 10;
+                const data = await fetchData('document', params, limit, offset);
                 return data ? data.results : []
-            } catch (error) {
-                console.error('Erreur lors de la récupération des documents :', error)
-                return []
             }
+        } catch (error) {
+            console.error('Erreur lors de la récupération des documents :', error)
+            return []
         }
+    }
 
-        const fetchNotes = async () => {
-            try {
-                const data = await fetchFacets('document', 'stories')
-                return data ? data.facets : []
-            } catch (error) {
-                console.error('Erreur lors de la récupération des documents :', error)
-                return []
-            }
+    const fetchNotes = async () => {
+        try {
+            const data = await fetchFacets('document', 'stories')
+            return data ? data.facets : []
+        } catch (error) {
+            console.error('Erreur lors de la récupération des notes :', error)
+            return []
         }
+    }
 
-        const fetchNotesTitle = async (notesIdTab) => {
-            try {
-                const data = await fetchData('story', {
-                    id__in: notesIdTab
-                })
-                return data.results
-            } catch (error) {
-                console.error('Erreur lors de la récupération des documents :', error)
-                return []
-            }
-        }
-
-        const getNotes = async () => {
-            const fetchedNotesId = await fetchNotes()
-            const allNotes = []
-        
-            fetchedNotesId.stories.forEach(note => {
-                if (note.stories) {
-                    allNotes.push(note.stories)
-                }
+    const fetchNotesTitle = async (notesIdTab) => {
+        try {
+            const data = await fetchData('story', {
+                id__in: notesIdTab
             })
-        
-            const relatedNotes = await fetchNotesTitle(allNotes)
-            setNotes(relatedNotes)
+
+            return data.results
+        } catch (error) {
+            console.error('Erreur lors de la récupération des documents :', error)
+            return []
         }
-        
-        const fetchAuthors = async () => {
-            try {
-                const fetchedAuthors = await fetchFacets('document', 'data__authors')
-                return fetchedAuthors ? fetchedAuthors.facets.data__authors : []
-            } catch (error) {
-                console.error('Erreur lors de la récupération des auteurs :', error)
-                return []
-            }   
-        }
+    }
 
-        const getAuthors = async () => {
-            const authors = await fetchAuthors()
-            const allAuthors = []
-
-            authors.forEach(item => { 
-                if (item.data__authors) {
-                    item.data__authors.forEach(author => {
-                        allAuthors.push(author)
-                    })
-                }
-            })
-            setAuthors([...(new Set(allAuthors))].sort((a, b) => a.localeCompare(b)))
-        }
-
-
-    useEffect(() => {
-        getNotes()
-        getAuthors()
-    }, [])
-
+    const getNotes = async () => {
+        const fetchedNotesId = await fetchNotes()
+        const allNotes = []
     
+        fetchedNotesId.stories.forEach(note => {
+            if (note.stories) {
+                allNotes.push(note.stories)
+            }
+        })
+    
+        const relatedNotes = await fetchNotesTitle(allNotes)
+        setNotes(relatedNotes)
+    }
+    
+    const fetchAuthors = async () => {
+        try {
+            const fetchedAuthors = await fetchFacets('document', 'data__authors')
+            return fetchedAuthors ? fetchedAuthors.facets.data__authors : []
+        } catch (error) {
+            console.error('Erreur lors de la récupération des auteurs :', error)
+            return []
+        }   
+    }
+
+    const getAuthors = async () => {
+        const authors = await fetchAuthors()
+        const allAuthors = []
+
+        authors.forEach(item => { 
+            if (item.data__authors) {
+                item.data__authors.forEach(author => {
+                    allAuthors.push(author)
+                })
+            }
+        })
+        setAuthors([...(new Set(allAuthors))].sort((a, b) => a.localeCompare(b)))
+    }
+
     const loadMoreDocuments = async () => {
         setLoading(true)
-        const newDocuments = await fetchDocuments(offset, 10)
+        const newDocuments = await fetchDocuments(offset, 10, filters)
+        console.log('newDoc', newDocuments)
         setDocuments((prevDocuments) => [...prevDocuments, ...newDocuments])
         setLoading(false)
     }
 
     const handleDropdownChange = (item) => {
-        setFilters(item)
-        console.log('item click',item)
-      };
+        console.log('dropdown change',  item)
+        setFilters([item])
+        setDocuments([])
+    }
 
     const observer = useRef()
 
@@ -152,9 +153,13 @@
     )
 
     useEffect(() => {
+        getNotes()
+        getAuthors()
+    }, [])
+
+    useEffect(() => {
         loadMoreDocuments()
     }, [offset, filters])
-
 
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
@@ -193,7 +198,7 @@
                                     ref={documents.length === index + 1 ? lastBookRef : null}
                                 >
                                     <div className="col-span-6 lg:col-span-4">
-                                        <h2 className='text-[24px] lg:text-[30px] pt-[10px] md:pt-0'>{ cleanText(truncateText(item.data.zotero.title, 100)) }</h2>
+                                        <h2 className='text-[24px] lg:text-[30px] leading-none pt-[10px] md:pt-0'>{ cleanText(truncateText(item.data.zotero.title, 100)) }</h2>
                                         <hr className="border-black"/>
 
                                         <DocumentReference doc={item}/>
@@ -202,7 +207,7 @@
                                 </Wrapper>
                             )
                         } )}
-                    </div>
+                    </div>  
                 </div>
     
     
@@ -259,7 +264,7 @@ const DocumentReference = ({ doc = {} }) => {
 
     return (
         <div>
-            {reference !== null && <p className="text-[22px] leading-none font-light pt-[10px]" dangerouslySetInnerHTML={{ __html: reference }} />}
+            {reference !== null && <p className="text-[22px] leading-none font-light pt-[10px]" dangerouslySetInnerHTML={{ __html: truncateText(reference, 420) }} />}
         </div>
     )
 }

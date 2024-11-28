@@ -32,42 +32,50 @@ export function cleanText(text) {
         .replace('?', ' ')
 }
 
-export async function fetchData(endpoint, params = {}, limit = "") {
-    const filters = params ? JSON.stringify(params) : null;
+export async function fetchData(endpoint, filters = {}, limit = 10, offset = 0) {
 
-    const searchParams = new URLSearchParams({
-        filters: filters,
-        limit: 100,
-    })
+    const searchParams = new URLSearchParams()
 
-    const url = `/api/${endpoint}/?${searchParams.toString()}${limit === "" ? "" : `&limit=${limit}`}`
+    if (filters && Object.keys(filters).length > 0) {
+        searchParams.append("filters", JSON.stringify(filters))
+    }
+
+    if (limit) {
+        searchParams.append("limit", limit)
+    }
+    if (offset) {
+        searchParams.append("offset", offset)
+    }
+
+    const url = `/api/${endpoint}/?${searchParams.toString()}`
 
     try {
-        const response = await fetch(url)
+        const response = await fetch(url);
 
         if (response.status === 200) {
-            return response.json()
+            return await response.json()
         }
-
     } catch (error) {
         console.error('Erreur lors de la récupération des données: ', error)
-        throw error
     }
 }
 
 export async function fetchFacets(endpoint, facets, filters) {
 
-    //https://ww2.lu/api/document/?facets=data__authors&limit=1&filters={"data__contains":{"authors":["Sonja Kmec"]}}
+    // https://ww2.lu/api/document/?facets=data__authors&filters={"data__contains":{"authors":["Sonja Kmec"]}}
+    // https://ww2.lu//api/document/?facets=data__authors&filters={"data__contains":{"authors":1922, Robert Lewis Koehl}}
 
     let url
 
     if (filters) {
-        console.log('avec filtres')
-        url = `/api/${endpoint}/?facets=${facets}&filters={"data__contains":{"authors":[${filters}]}}`
+            const filterObject = { data__contains: { authors: filters } };
+            const filterString = encodeURIComponent(JSON.stringify(filterObject));
+            url = `/api/${endpoint}/?facets=${facets}&filters=${filterString}`;
     } else {
-        console.log('pas de filtres ')
         url = `/api/${endpoint}/?facets=${facets}`
     }
+
+
     try {
         const response = await fetch(url)
         if (response.status === 200) {
