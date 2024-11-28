@@ -6,8 +6,8 @@ import { useLanguageContext } from '../../contexts/LanguageProvider'
 export default function Dropdown({ items, text, theme, onChange}) {
     
     const [isOpen, setIsOpen] = useState(false)
-    const { language } = useLanguageContext()
-    const [author, setAuthor] = useState("")
+    const {language} = useLanguageContext()
+    const [author, setAuthor] = useState()
 
     const handleItemClick = (item) => {
         onChange(item)
@@ -21,7 +21,7 @@ export default function Dropdown({ items, text, theme, onChange}) {
     }
 
     const handleRemoveAuthor = () => {
-        setAuthor("")
+        setAuthor(null)
         onChange("")
     }
 
@@ -33,10 +33,16 @@ export default function Dropdown({ items, text, theme, onChange}) {
         >
             <div className='flex justify-between items-center'>
                 <div className='relative block uppercase text-[24px]'>
-                    <span className='mr-5'>{ author ? author : text }</span>
-                    { author && (
-                        <XCircleIcon style={{ width: '15px' }} onClick={(e) => { e.stopPropagation(); handleRemoveAuthor(); }} className="absolute top-0 right-0 hover:text-red-500" />
-                    )}
+                    { author &&
+                        <>
+                            <span className='mr-5'>{ author }</span>
+                            <XCircleIcon style={{ width: '15px' }} onClick={(e) => { e.stopPropagation(); handleRemoveAuthor(); }} className="absolute top-0 right-0 hover:text-red-500" />
+                        </>
+                    }
+
+                    {!author &&
+                        <span className='mr-5'>{ text }</span>
+                    }
                 </div>
                 { isOpen ? <ChevronDownIcon style={{ width: '10px', height: '30px' }} /> : <ChevronUpIcon style={{ width: '30px', height: '30px' }} /> }
             </div>
@@ -51,7 +57,7 @@ export default function Dropdown({ items, text, theme, onChange}) {
                         )
                     } else if (theme === 'notes') {
                         return (
-                            <span key={index} className="block uppercase" onClick={() => handleItemClick(item)}># { item.data.title[language] }</span>
+                            <span key={index} className="block uppercase"   ># { item.data.title[language] }</span>
                         )
                     }
                 })}

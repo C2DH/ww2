@@ -34,7 +34,14 @@ export default function Bibliography() {
     // https://ww2.lu/api/document/?facets=data__authors&filters={"data__contains":{"authors":["Sonja Kmec"]}}
     // https://ww2.lu/api/document/?facets=stories&filters={"data__contains":{"stories":["47"]}
 
-    //https://ww2.lu/api/document/?filters={%22type__in%22:[%22reference%22,%22book%22,%22manuscript%22]}&limit=10&offset=30
+    // https://ww2.lu/api/document/?filters={%22type__in%22:[%22reference%22,%22book%22,%22manuscript%22]}&limit=10&offset=30
+
+
+    // Filtre par note
+    //{"stories__slug": “slug-de--la-note”}
+
+    // Filtre note et auteurs
+    // {"stories__slug": "note-05-theme-02", "data__contains": {"authors":["Fernand Mertens"]}}
 
 
     const fetchDocuments = async () => {  
@@ -104,17 +111,25 @@ export default function Bibliography() {
     }
 
     const loadMoreDocuments = async () => {
-
         setLoading(true)
         const newDocuments = await fetchDocuments()
+        console.log('new documents', newDocuments)
+
+
         setDocuments((prevDocuments) => [...prevDocuments, ...newDocuments])
         setLoading(false)
     }
 
-    const handleDropdownChange = (item) => {
-        setFilters([item])
+    const handleDropdownChange = (item) => {            
         setDocuments([])
         setOffset(0)
+        
+        if (item) {
+            setFilters([item])
+        } else {
+            setFilters([])
+            fetchDocuments()
+        }
     }
 
     const observer = useRef()
@@ -124,17 +139,20 @@ export default function Bibliography() {
         
         if (observer.current) {
             observer.current.disconnect()
-        } 
+        }
 
         observer.current = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
                 setOffset((prevOffset) => prevOffset + 10)
             }
         })
-
+        
         if (node) {
+            if (documents.length >= 10) {
             observer.current.observe(node)
+            }
         } 
+    
     },[loading])
 
     useEffect(() => {
@@ -146,7 +164,9 @@ export default function Bibliography() {
         if (offset === 0) {
             setDocuments([])
         }
+
         loadMoreDocuments()
+        
     }, [offset, filters])
 
     useEffect(() => {
