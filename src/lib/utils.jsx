@@ -32,7 +32,7 @@ export function cleanText(text) {
         .replace('?', ' ')
 }
 
-export async function fetchData(endpoint, filters = {}, limit = 10, offset = 0) {
+export async function fetchData(endpoint, filters = {}, limit, offset = 0) {
 
     const searchParams = new URLSearchParams()
 
@@ -60,33 +60,31 @@ export async function fetchData(endpoint, filters = {}, limit = 10, offset = 0) 
     }
 }
 
-export async function fetchFacets(endpoint, facets, filters) {
+export async function fetchFacets(endpoint, facets, filters = {}) {
+    const searchParams = new URLSearchParams()
 
-    // https://ww2.lu/api/document/?facets=data__authors&filters={"data__contains":{"authors":["Sonja Kmec"]}}
-    // https://ww2.lu//api/document/?facets=data__authors&filters={"data__contains":{"authors":1922, Robert Lewis Koehl}}
-
-    let url
-
-    if (filters) {
-            const filterObject = { data__contains: { authors: filters } };
-            const filterString = encodeURIComponent(JSON.stringify(filterObject));
-            url = `/api/${endpoint}/?facets=${facets}&filters=${filterString}`;
-    } else {
-        url = `/api/${endpoint}/?facets=${facets}`
+    if (facets) {
+        searchParams.append('facets', facets)
     }
 
+    if (filters && Object.keys(filters).length > 0) {
+        searchParams.append('filters', JSON.stringify(filters))
+    }
+
+    const url = `/api/${endpoint}/?${searchParams.toString()}`
+    console.log('url', url)
 
     try {
         const response = await fetch(url)
-        if (response.status === 200) {
-            return response.json()
-        }
 
+        if (response.status === 200) {
+            return await response.json()
+        } 
     } catch (error) {
         console.error('Erreur lors de la récupération des données: ', error)
-        throw error
     }
 }
+
 
 
 
