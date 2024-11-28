@@ -28,14 +28,12 @@ export default function Bibliography() {
     const [notes, setNotes] = useState([])
     const [filters, setFilters] = useState([])
     const menuItems = useMenuHistorianContext()
-    const [hasMore, setHasMore] = useState(true);
 
+    // const [filters, setFilters] = useState({ authors: null, notes: null })
 
     // https://ww2.lu/api/document/?facets=data__authors&filters={"data__contains":{"authors":["Sonja Kmec"]}}
     // https://ww2.lu/api/document/?facets=stories&filters={"data__contains":{"stories":["47"]}
-
     // https://ww2.lu/api/document/?filters={%22type__in%22:[%22reference%22,%22book%22,%22manuscript%22]}&limit=10&offset=30
-
 
     // Filtre par note
     //{"stories__slug": “slug-de--la-note”}
@@ -45,12 +43,13 @@ export default function Bibliography() {
 
 
     const fetchDocuments = async () => {  
+        console.log('filters',filters)
+
         try {
             if (filters.length > 0) {
                 const params = { data__contains: { authors: filters } }
                 const data = await fetchFacets('document', 'data__authors', params)
                 return data ? data.results : []
-
             } else {
                 const params = { type__in: ['reference', 'book', 'manuscript'] }
                 const limit = 10
@@ -113,14 +112,11 @@ export default function Bibliography() {
     const loadMoreDocuments = async () => {
         setLoading(true)
         const newDocuments = await fetchDocuments()
-        console.log('new documents', newDocuments)
-
-
         setDocuments((prevDocuments) => [...prevDocuments, ...newDocuments])
         setLoading(false)
     }
 
-    const handleDropdownChange = (item) => {            
+    const handleDropdownAuthor = (item) => {            
         setDocuments([])
         setOffset(0)
         
@@ -149,9 +145,9 @@ export default function Bibliography() {
         
         if (node) {
             if (documents.length >= 10) {
-            observer.current.observe(node)
+                observer.current.observe(node)
             }
-        } 
+        }
     
     },[loading])
 
@@ -173,7 +169,6 @@ export default function Bibliography() {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, [])
 
-   
     return (
         <LayoutHistorianWorkshop pageTitle={ t('menuItems.bibliography')}>
         
@@ -183,10 +178,10 @@ export default function Bibliography() {
             <div className="hidden lg:block mt-[30px] xl:mt-[40px]">
                 <div className="grid grid-cols-12 gap-5 border-b border-black pb-[80px]">
                     <div className="col-span-5 relative">
-                        <Dropdown items={authors} text={t('Auteurs')} theme={'authors'} onChange={handleDropdownChange} />
+                        <Dropdown items={authors} text={t('Auteurs')} theme={'authors'} onChange={handleDropdownAuthor} />
                     </div>
                     <div className="col-span-5 relative">
-                        <Dropdown items={notes} text={t('Notes')} theme={'notes'}/>
+                        <Dropdown items={notes} text={t('Notes')} theme={'notes'} />
                     </div>
                 </div>
             </div>

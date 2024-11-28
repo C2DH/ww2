@@ -13,7 +13,7 @@ export default function HeaderHistorianWorkshop({items}) {
                 </div>
 
                 <div className="col-span-12 lg:col-span-5 2xl:col-span-3 text-[20px]">
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris.</p>
+                    <p></p>
                 </div>
             </div>
 
