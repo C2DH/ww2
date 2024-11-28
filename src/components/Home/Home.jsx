@@ -156,10 +156,9 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
 
             {/* MARKERS COUNTRY */}
             <AnimatePresence>
-            
-            {!isFlying && markers
-                .filter(marker => visibleMarkers.destinations.includes(marker.origin))
-                .map((marker, index) => (
+                {!isFlying && markers
+                    .filter(marker => visibleMarkers.destinations.includes(marker.origin))
+                    .map((marker, index) => (
                     <motion.div key={index}
                         onClick={() => fly(marker.origin)}
                         variants={markerVariants}
@@ -192,9 +191,10 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
             </AnimatePresence>
 
 
+            
             <Map
                 ref={mapRef}
-                style={{ width: '100%', height: '100%' }}
+                style={{ width: '100%', height: '100%'}}
                 mapboxAccessToken={apiKeyMapbox}
                 mapStyle={apiStyleMapbox}
                 dragRotate={false} // 3D Relief : désactiver
@@ -206,65 +206,61 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
                 initialViewState={{
                     pitch: 30 // Inclinaison en degrés
                 }}
-                // center={[6.090742202904814, 49.7627550671219]}
             >
                 {/* MARKERS */}
                 {items.map((item, index) => {
                    return item.covers.filter(marker => marker.type === 'entity' && marker.data.geojson?.geometry?.coordinates).map(marker => 
-                        <Marker 
-                            key={index} 
-                            longitude={marker.data.geojson.geometry.coordinates[0]} 
-                            latitude={marker.data.geojson.geometry.coordinates[1]}
-                        >
-                            <div className="relative">
-                                <img src={pinMarker} alt="marker" className="cursor-pointer relative z-[1]" onClick={() => { setSelectedMarker({ id: index, data: item }) }} />
-                            </div>
-                        </Marker>
+                   
+                        <div key={index} className="relative">
+
+                            <Marker 
+                                key={index} 
+                                longitude={marker.data.geojson.geometry.coordinates[0]} 
+                                latitude={marker.data.geojson.geometry.coordinates[1]}
+                                style={{ zIndex: selectedMarker.id === index ? 9999 : 1 }}
+                            >
+                                <div className="relative">
+                                    <img src={pinMarker} alt="marker" className="cursor-pointer relative z-[1]" onClick={() => { setSelectedMarker({ id: index, data: item }) }}/>
+
+                                    {/* POPUP */}
+                                    <AnimatePresence>
+                                        {selectedMarker.id === index && selectedMarker.data && (
+                                            <motion.div
+                                                key={selectedMarker.id}
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.8 }}
+                                                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                                                className="absolute top-0 right-0  z-[9999] bg-white rounded-[6px] shadow-lg p-[3px]"
+                                                style={{filter: 'drop-shadow(23px 30px 15px rgba(0, 0, 0, 0.65))'}}
+                                            >
+                                                <div className="flex w-[275px] h-[110px] items-center justify-center cursor-pointer p-[6px] rounded-[6px]">
+                                                    <div className="border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative">
+                                                        <div onClick={() => {
+                                                            mapRef.current.flyTo({ zoom: zoom + 2, speed: 0.2, curve: 1 });
+                                                            navigate(`/notice/${selectedMarker.data.slug}`);
+                                                        }}>
+                                                            <div className="flex">
+                                                                <span className="font-abril block pr-[10px]">{selectedMarker.id + 1 < 10 ? '0' + (selectedMarker.id + 1) : selectedMarker.id + 1}</span>
+                                                                <div>
+                                                                    <h3 className="font-abril text-[16px] pb-[8px]">{truncateText(selectedMarker.data.data.title[language] ?? "", 40)}</h3>
+                                                                    <p className="text-[16px] font-sofia leading-none uppercase">{truncateText(selectedMarker.data.data.abstract[language] ?? "", 70)}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <XMarkIcon className="absolute top-[2px] right-[4px]" style={{ width: '15px'}} onClick={() => setSelectedMarker({ id: null, data: null })}/>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </Marker>
+                        </div>
                     )
                 })}
 
-                {/* POPUP */}
-                <AnimatePresence>
-                    {selectedMarker && selectedMarker.data && (
-                        <motion.div
-                            key={selectedMarker.id}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ duration: 0.4, ease: 'easeInOut' }}
-                            className="absolute z-[1000] bg-white rounded-[6px] shadow-lg p-[3px]"
-                            style={{
-                                left: `${calculatePixelPosition().x}px`,
-                                top: `${calculatePixelPosition().y}px`,
-                                filter: calculatePixelPosition().filter
-                            }}
-                        >
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                transition={{ duration: 0.4, ease: 'easeInOut' }}
-                                className="flex w-[275px] h-[110px] items-center justify-center cursor-pointer p-[6px] rounded-[6px]"
-                            >
-                                <div className="border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative">
-                                    <div onClick={() => {
-                                        mapRef.current.flyTo({ zoom: zoom + 2, speed: 0.2, curve: 1 });
-                                        navigate(`/notice/${selectedMarker.data.slug}`);
-                                    }}>
-                                        <div className="flex">
-                                            <span className="font-abril block pr-[10px]">{selectedMarker.id + 1 < 10 ? '0' + (selectedMarker.id + 1) : selectedMarker.id + 1}</span>
-                                            <div>
-                                                <h3 className="font-abril text-[16px] pb-[8px]">{truncateText(selectedMarker.data.data.title[language] ?? "", 40)}</h3>
-                                                <p className="text-[16px] font-sofia leading-none uppercase">{truncateText(selectedMarker.data.data.abstract[language] ?? "", 70)}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <XMarkIcon className="absolute top-[2px] right-[4px]" style={{ width: '15px'}} onClick={() => setSelectedMarker({ id: null, data: null })}/>
-                                </div>
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+
             </Map>
         </motion.div> 
     )
