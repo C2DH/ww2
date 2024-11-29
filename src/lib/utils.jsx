@@ -32,7 +32,7 @@ export function cleanText(text) {
         .replace('?', ' ')
 }
 
-export async function fetchData(endpoint, filters = {}, limit, offset = 0) {
+export async function fetchData(endpoint, filters = {}, limit, offset = 0, facets = false) {
 
     const searchParams = new URLSearchParams()
 
@@ -45,6 +45,9 @@ export async function fetchData(endpoint, filters = {}, limit, offset = 0) {
     }
     if (offset) {
         searchParams.append("offset", offset)
+    }
+    if (facets) {
+        searchParams.append("facets", facets);
     }
 
     const url = `/api/${endpoint}/?${searchParams.toString()}`

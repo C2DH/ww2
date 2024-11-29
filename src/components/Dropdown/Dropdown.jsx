@@ -47,6 +47,13 @@ export default function Dropdown({ items, text, theme, onChange}) {
                         </>
                     }
 
+                    { author && theme == 'tags' && 
+                        <>
+                            <span className='mr-5'>{ author }</span>
+                            <XCircleIcon style={{ width: '15px' }} onClick={(e) => { e.stopPropagation(); handleRemoveAuthor(); }} className="absolute top-0 right-0 hover:text-red-500" />
+                        </>
+                    }
+
                     {!author &&
                         <span className='mr-5'>{ text }</span>
                     }
@@ -66,6 +73,10 @@ export default function Dropdown({ items, text, theme, onChange}) {
                     } else if (theme === 'notes') {
                         return (
                             <span key={index} className="block uppercase" onClick={() => handleItemClick(item)}># { item.data.title[language] }</span>
+                        )
+                    } else if (theme === 'tags') {
+                        return (
+                            <span key={index} className="block uppercase" onClick={() => handleItemClick(item)}># { item }</span>
                         )
                     }
                 })}
