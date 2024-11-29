@@ -72,7 +72,7 @@ export default function Menu() {
 
     return (
         <>
-            {isLoading &&            
+            {isLoading && results &&           
                 <header 
                     style={{ background: `url(${bgBlack}) 50% / cover no-repeat`}}
                     className={classNames('transition-all  overflow-hidden pb-[60px] text-white flex flex-col relative z-[100]', {

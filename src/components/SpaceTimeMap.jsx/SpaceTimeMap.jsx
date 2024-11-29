@@ -1,7 +1,9 @@
 import map1 from '../../assets/images/spaceTimeMap/map-1.png'
 import map2 from '../../assets/images/spaceTimeMap/map-2.png'
 import map3 from '../../assets/images/spaceTimeMap/map-3.png'
+import map4 from '../../assets/images/spaceTimeMap/map-4.png'
 import pinMarker from '../../assets/images/spaceTimeMap/marker-red.svg'
+// import pinMarker from '../../assets/images/spaceTimeMap/puce.jpg'
 
 import {useEffect, useRef, useState } from 'react'
 
@@ -54,6 +56,13 @@ export default function SpaceTimeMap() {
 
     const dataFiltered = []
 
+    const handleZoomState = (newZoom) => {
+        setViewState((prevState) => ({
+            ...prevState,
+            zoom: newZoom,
+        }));
+    };
+
     // ALL LOCATIONS WITH DATE
     useEffect(() => {
         const getData = async () => {
@@ -92,18 +101,37 @@ export default function SpaceTimeMap() {
 
 
     const handleMap = (element) => {
+        console.log('element',element)
         if (element.style) {
             setViewState((prevState) => ({ ...prevState, style: element.style }));
+        }
+
+        if (element.style === "oldmap") {
+            setViewState((prevState) => ({ ...prevState, minZoom: 14 }))
+        
+            mapRef.current.fitBounds(
+                [
+                    [6.12, 49.60], // Southwest corner (longitude, latitude)
+                    [6.14, 49.62]  // Northeast corner (longitude, latitude)
+                ],
+                {
+                    padding: 20, // Optional: Add padding around the bounds
+                    duration: 5000 // Optional: Animation duration in milliseconds
+                }
+            );
+            
+        } else {
+            setViewState((prevState) => ({ ...prevState, minZoom: 8 }))
         }
 
         // if (element.zoom && element.zoom >= 8) {
         if (element.zoom && element.zoom >= 8 && element.zoom <= 18) {
             setViewState((prevState) => ({ ...prevState, zoom: element.zoom }))
             const map = mapRef.current.getMap()
-            map.flyTo({center: [viewState.longitude, viewState.latitude], zoom: element.zoom})
+            // map.flyTo({center: [viewState.longitude, viewState.latitude], zoom: element.zoom})
+            map.flyTo({ zoom: element.zoom})
         }
     }
-
 
     const handleFilterChange = (newFilters) => {
         const { min, max } = newFilters
@@ -115,7 +143,7 @@ export default function SpaceTimeMap() {
         return (
 
             <motion.div className='h-full w-full' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                <MapBox items={data} state={viewState} reference={mapRef}/>
+                <MapBox items={data} state={viewState} reference={mapRef} onZoomChange={handleZoomState}/>
 
                 {/** Map style and zoom */}
                 <div className='absolute top-[40px] right-[20px]'>
@@ -140,8 +168,8 @@ export default function SpaceTimeMap() {
                         }
 
                         { viewState.style !== 'oldmap' &&
-                            <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: 'oldmap'}) }>
-                                <img src={map3} alt="map" className='rounded-[4px]'/>
+                            <div className='w-[60px] h-[60px] border border-white rounded-[4px] cursor-pointer' onClick={() => handleMap({style: 'oldmap', zoom: viewState.zoom >= 14 ? viewState.zoom : 14}) }>
+                                <img src={map4} alt="map" className='rounded-[4px]'/>
                             </div>
                         }
 
@@ -204,7 +232,7 @@ export default function SpaceTimeMap() {
 }
 
 
-const MapBox = ({ items, state, reference }) => {
+const MapBox = ({ items, state, reference, onZoomChange }) => {
     const { language } = useLanguageContext()
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null })
     const [openLocation, setOpenLocation] = useState(false)
@@ -213,6 +241,21 @@ const MapBox = ({ items, state, reference }) => {
     const [date, setDate] = useState(null)
     const [city, setCity] = useState(null)
     const {setIsOpenSource} = useSourceContext()
+
+    useEffect(() => {
+        console.log('state', state)
+    }, [state])
+
+
+    const handleMapScroll = () => {
+        const map = reference.current.getMap(); // Accéder à l'instance Mapbox
+        const newZoom = map.getZoom(); // Obtenir le niveau de zoom actuel
+
+        // Mettre à jour le zoom dans le parent
+        if (onZoomChange) {
+            onZoomChange(newZoom);
+        }
+    };
    
 
     const sourceStyle = {
@@ -242,8 +285,7 @@ const MapBox = ({ items, state, reference }) => {
     const oldMapLayerStyle = {
         id: "oldmap-layer",
         type: "raster",
-        minzoom: 16,
-
+        minzoom: 14,
         source: "oldmap"
     }
 
@@ -275,9 +317,11 @@ const MapBox = ({ items, state, reference }) => {
                         zoom: state.zoom,
                         pitch: 30 // Inclinaison en degrés
                     }}
-                    minZoom={8} // Ne peut pas dézoomer en dessous de x8
+                    minZoom={state.minZoom} // Ne peut pas dézoomer en dessous de x8
+                    maxZoom={state.maxZoom}
                     dragRotate={true} // 3D Relief : désactiver
                     scrollZoom={true} // Désactiver Zoom scroll
+                    onZoomEnd={handleMapScroll}
                 >
                     {state.style === 'geoportail' && (
                         <Source {...sourceStyle}>

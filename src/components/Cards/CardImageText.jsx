@@ -8,9 +8,7 @@ import { useMediaQuery } from 'react-responsive';
 const rootPath = import.meta.env.VITE_ROOT
 
 
-export default function CardImageText({ title = "", myRef, data }) {
-
-    console.log(data.attachment)
+export default function CardImageText({ title = "", myRef, data, onClick }) {
 
     const [openSource, setOpenSource] = useState(false)
     const [setSelectedData] = useState({})
@@ -20,11 +18,9 @@ export default function CardImageText({ title = "", myRef, data }) {
         <>
             <div 
                 className="col-span-12 md:col-span-6 xl:col-span-4 border border-black rounded-[5px] p-[10px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow h-[130px] overflow-hidden cursor-pointer" 
-                ref={myRef}  
-                onClick={() => {
-                    setSelectedData(data)
-                    setOpenSource(true) 
-                }}>
+                ref={myRef} 
+                onClick={onClick}
+            >
                 <div className="grid grid-cols-12 gap-x-[20px]">
                     
                     <div className="col-span-4">

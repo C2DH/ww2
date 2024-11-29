@@ -153,7 +153,6 @@ export default function HistorianWorkshop() {
                         <h1 className='text-[40px] font-abril text-blue pt-[40px] w-[80%] leading-none'>Atelier de l'historien</h1>
                         <p className='text-white text-[24px] pt-[15px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
                         <div className='py-[20px] text-white text-[38px]'>
-                            <Link to={'/historical-index'} className='uppercase block pt-[10px]'>Index historique</Link>
                             <Link to={'/sources'} className='uppercase block pt-[10px]'>Sources</Link>
                             <Link to={'/research-institutions'} className='uppercase block pt-[10px]'>Institutions de recherche</Link>
                             <Link to={'/glossary'} className='uppercase block pt-[10px]'>Glossaire</Link>

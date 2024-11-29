@@ -31,6 +31,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 export default function Source({ data, handleSourcePopup }) {
 
+    console.log(data)
+
     const { t } = useTranslation()
     const rootPath = import.meta.env.VITE_ROOT
     const { language } = useLanguageContext()
@@ -39,6 +41,8 @@ export default function Source({ data, handleSourcePopup }) {
     const [pageWidth, setPageWidth] = useState(window.innerWidth * 0.9)
     const [modelHeight, setModelHeight] = useState('500px')
     const { pathname } = useLocation()
+
+    console.log(data)
 
 
     const onDocumentLoadSuccess = ({ numPages }) => {
@@ -116,12 +120,12 @@ export default function Source({ data, handleSourcePopup }) {
                             })}
 
                             { data.type === 'picture' &&                            
-                                <ImageZoom image={ rootPath + data.data.resolutions.preview.url }/>
+                                <ImageZoom image={ rootPath + data.attachment } alt={data.title}/>
                             }
 
                             {/** VIDEO */}
-                            { data.type === 'video' && data.data.videoResolutions.sd360p.url &&
-                                <Player url={ data.data.videoResolutions.sd360p.url } controls={true} status={'video'}/>
+                            { data.type === 'video' && data.data.videoResolutions.hsl.alternate &&
+                                <Player url={ data.data.videoResolutions.hsl.alternate[language] } controls={true} status={'video'}/>
                             }
 
                             {/** PDF */}
@@ -147,10 +151,7 @@ export default function Source({ data, handleSourcePopup }) {
 
                             {/** AUDIO */}
                             { data.type === 'audio' &&
-                                <>
-                                    <img src={ imageDefault } alt="" className='w-full' />
-                                    <Player url={ '' } controls={true} status={'audio'} />
-                                </>
+                                <Player url={ '' } controls={true} status={'audio'} />     
                             }
 
                             {/** GALLERY */}
@@ -185,7 +186,6 @@ export default function Source({ data, handleSourcePopup }) {
                         }
 
                         {data.covers?.map(item => {
-                            console.log('item',item.data.title)
                             if (item.data.type === 'event') {
                                 return (
                                     <>
@@ -214,7 +214,7 @@ export default function Source({ data, handleSourcePopup }) {
 }
 
 
-const ImageZoom = ({ image }) => {
+const ImageZoom = ({ image, alt }) => {
     const [stateZoom, setStateZoom] = useState(null)
 
     function handleTransform(e){
@@ -226,7 +226,7 @@ const ImageZoom = ({ image }) => {
             {() => (
                 <>
                     <TransformComponent>
-                        <img src={ image } alt="test" className='w-full max-h-[400px] 2xl:max-h-[750px] object-cover'/>
+                        <img src={ image } alt={ alt } className='w-full max-h-[400px] 2xl:max-h-[750px] object-cover'/>
                     </TransformComponent>
                     <Controls zoom={stateZoom}/>
                 </>

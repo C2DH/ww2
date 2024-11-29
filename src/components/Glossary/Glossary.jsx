@@ -12,7 +12,7 @@ import { useSharedState } from "../../contexts/SharedStateProvider";
 import axios from "axios";
 import { useLanguageContext } from "../../contexts/LanguageProvider";
 import Error from "../Error/Error";
-
+import { useMenuHistorianContext } from "../../contexts/MenuHistorianProvider";
 
 export default function Glossary() {
     
@@ -24,17 +24,16 @@ export default function Glossary() {
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenFilters, setIsOpenFilters] = useState(false)
     const { pathname } = useLocation()
-    
+    const menuItems = useMenuHistorianContext()
     const [terms, setTerms] = useState([]);
     const [offset, setOffset] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null)
 
 
-
     const fetchTerms = async (offset = 0, limit = 10) => {
         try {
-            const response = await axios.get(`api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter&limit=${ limit }&offset=${ offset }&h=3d18dc9b8cf034e6dfccb472839498f014b8ee036d3b37393e3af8022ddadb2b`)
+            const response = await axios.get(`api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter&limit=${ limit }&offset=${ offset }`)
             return response.data.results
         } catch (error) {
             setError(error)
@@ -79,25 +78,6 @@ export default function Glossary() {
 
     {/* TODO: Mettre à jour les tags  */}
     const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
-
-    const menuItems = [
-        {
-            title: "Sources",
-            link: '/sources'
-        },
-        {
-            title: "Glossaire",
-            link: '/glossary'
-        },
-        {
-            title: "Institutions de recherche",
-            link: '/research-institutions'
-        },
-        {
-            title: "Bibliographie",
-            link: '/bibliography'
-        },
-    ]
 
     let allFirstLetters = []
     let selectedLetters = []

@@ -33,5 +33,11 @@
     "filters": "filter",
     "book": "Buch",
     "manuscript": "Manuskript",
-    "historian_description": "Am 10. September 1944 stürmten luxemburgische Widerstandskämpfer in die bis dahin von der Nazi-Verwaltung besetzte Abgeordnetenkammer und versuchten, in den Besitz der dort aufbewahrten Dokumente zu gelangen. Verfolgen wir ihren Weg durch die unmittelbaren Archive der Annexion, indem wir die Bibliografie und die Quellen zu Luxemburg während des Zweiten Weltkriegs konsultieren."
+    "historian_description": "Am 10. September 1944 stürmten luxemburgische Widerstandskämpfer in die bis dahin von der Nazi-Verwaltung besetzte Abgeordnetenkammer und versuchten, in den Besitz der dort aufbewahrten Dokumente zu gelangen. Verfolgen wir ihren Weg durch die unmittelbaren Archive der Annexion, indem wir die Bibliografie und die Quellen zu Luxemburg während des Zweiten Weltkriegs konsultieren.",
+    "Luxembourg": "Luxemburg",
+    "Royaume Uni": "England",
+    "Pologne": "Polen",
+    "Russie": "Russland",
+    "Notes": "Notizen",
+    "Auteurs": "Autoren"
 }

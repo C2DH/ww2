@@ -32,43 +32,59 @@ export function cleanText(text) {
         .replace('?', ' ')
 }
 
-export async function fetchData(endpoint, params = {}, limit = "") {
-    const filters = params ? JSON.stringify(params) : null;
+export async function fetchData(endpoint, filters = {}, limit, offset = 0) {
 
-    const searchParams = new URLSearchParams({
-        filters: filters,
-        limit: 100,
-    })
+    const searchParams = new URLSearchParams()
 
-    const url = `/api/${endpoint}/?${searchParams.toString()}${limit === "" ? "" : `&limit=${limit}`}`
+    if (filters && Object.keys(filters).length > 0) {
+        searchParams.append("filters", JSON.stringify(filters))
+    }
+
+    if (limit) {
+        searchParams.append("limit", limit)
+    }
+    if (offset) {
+        searchParams.append("offset", offset)
+    }
+
+    const url = `/api/${endpoint}/?${searchParams.toString()}`
+
+    try {
+        const response = await fetch(url);
+
+        if (response.status === 200) {
+            return await response.json()
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données: ', error)
+    }
+}
+
+export async function fetchFacets(endpoint, facets, filters = {}) {
+    const searchParams = new URLSearchParams()
+
+    if (facets) {
+        searchParams.append('facets', facets)
+    }
+
+    if (filters && Object.keys(filters).length > 0) {
+        searchParams.append('filters', JSON.stringify(filters))
+    }
+
+    const url = `/api/${endpoint}/?${searchParams.toString()}`
+    console.log('url', url)
 
     try {
         const response = await fetch(url)
 
         if (response.status === 200) {
-            return response.json()
-        }
-
+            return await response.json()
+        } 
     } catch (error) {
         console.error('Erreur lors de la récupération des données: ', error)
-        throw error
     }
 }
 
-export async function fetchFacets(endpoint, facets) {
-
-    const url = `/api/${endpoint}/?facets=${facets}`
-    try {
-        const response = await fetch(url)
-        if (response.status === 200) {
-            return response.json()
-        }
-
-    } catch (error) {
-        console.error('Erreur lors de la récupération des données: ', error)
-        throw error
-    }
-}
 
 
 
