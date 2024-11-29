@@ -26,7 +26,7 @@ export default function Bibliography() {
     const [loading, setLoading] = useState(false)
     const [authors, setAuthors] = useState([])
     const [notes, setNotes] = useState([])
-    const [filters, setFilters] = useState([])
+    const [filters, setFilters] = useState({authors: false, notes: false})
     const menuItems = useMenuHistorianContext()
 
     // const [filters, setFilters] = useState({ authors: null, notes: null })
@@ -43,19 +43,15 @@ export default function Bibliography() {
 
 
     const fetchDocuments = async () => {  
-        console.log('filters',filters)
-
         try {
-            if (filters.length > 0) {
-                const params = { data__contains: { authors: filters } }
-                const data = await fetchFacets('document', 'data__authors', params)
-                return data ? data.results : []
-            } else {
-                const params = { type__in: ['reference', 'book', 'manuscript'] }
-                const limit = 10
-                const data = await fetchData('document', params, limit, offset)
-                return data ? data.results : []
-            }
+            let params = { type__in: ['reference', 'book', 'manuscript'] };
+            if (filters.authors) params = { ...params, data__contains: { authors: [filters.authors] } };
+            if (filters.notes) params = { ...params, stories__slug: filters.notes.slug };
+            const limit = 10
+            const data = await fetchData('document', params, limit, offset)
+            await getNotes();
+            await getAuthors();
+            return data ? data.results : []
         } catch (error) {
             console.error('Erreur lors de la récupération des documents :', error)
             return []
@@ -64,8 +60,11 @@ export default function Bibliography() {
 
     const fetchNotes = async () => {
         try {
+            let params = { type__in: ['reference', 'book', 'manuscript'] };
+            if (filters.authors) params = { ...params, data__contains: { authors: [filters.authors] } };
+
             const notesIdTab = []
-            const allNotes = await fetchFacets('document', 'stories')
+            const allNotes = await fetchFacets('document', 'stories', params)
 
             allNotes.facets.stories.map(note => {
                 notesIdTab.push(note.stories)
@@ -81,8 +80,11 @@ export default function Bibliography() {
     }
     
     const fetchAuthors = async () => {
+        let params = { type__in: ['reference', 'book', 'manuscript'] };
+        if (filters.notes) params = { ...params, stories__slug: filters.notes.slug };
+        
         try {
-            const fetchedAuthors = await fetchFacets('document', 'data__authors')
+            const fetchedAuthors = await fetchFacets('document', 'data__authors', params)
             return fetchedAuthors ? fetchedAuthors.facets.data__authors : []
         } catch (error) {
             console.error('Erreur lors de la récupération des auteurs :', error)
@@ -121,9 +123,21 @@ export default function Bibliography() {
         setOffset(0)
         
         if (item) {
-            setFilters([item])
+            setFilters(prevFilters => ({ ...prevFilters, authors: item }))
         } else {
-            setFilters([])
+            setFilters(prevFilters => ({ ...prevFilters, authors: false }))
+            fetchDocuments()
+        }
+    }
+
+    const handleDropdownNote = (item) => {    
+        setDocuments([])
+        setOffset(0)
+        
+        if (item) {
+            setFilters(prevFilters => ({ ...prevFilters, notes: item }))
+        } else {
+            setFilters(prevFilters => ({ ...prevFilters, notes: false }))
             fetchDocuments()
         }
     }
@@ -181,7 +195,7 @@ export default function Bibliography() {
                         <Dropdown items={authors} text={t('Auteurs')} theme={'authors'} onChange={handleDropdownAuthor} />
                     </div>
                     <div className="col-span-5 relative">
-                        <Dropdown items={notes} text={t('Notes')} theme={'notes'} />
+                        <Dropdown items={notes} text={t('Notes')} theme={'notes'} onChange={handleDropdownNote} />
                     </div>
                 </div>
             </div>
