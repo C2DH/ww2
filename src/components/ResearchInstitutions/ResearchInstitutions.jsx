@@ -8,6 +8,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import { useMenuHistorianContext } from '../../contexts/MenuHistorianProvider'
+import { fetchData } from '../../lib/utils'
 
 export default function ResearchInstitutions() {
 
@@ -16,6 +17,30 @@ export default function ResearchInstitutions() {
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const { pathname } = useLocation()
     const menuItems = useMenuHistorianContext()
+    const [results, setResults] = useState([])
+
+
+    const fetchInstitutions = async () => {
+        try {
+            const params = { data__type : "institution" }
+            const data = await fetchData('document', params)
+            console.log(data)
+            return data ? data.results : []
+        } catch (error) {
+            console.error('Erreur lors de la récupération des documents :', error)
+            return []
+        }
+    }
+
+    const getInstitutions = async () => {
+        const institutions = await fetchInstitutions()
+        setResults(institutions)
+    }
+
+    useEffect(() => {
+        getInstitutions()
+    }, [])
+
 
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
@@ -30,9 +55,9 @@ export default function ResearchInstitutions() {
             {/** Content */}
             <div className="lg:overflow-scroll">
                 <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                    { [...Array(60)].map((item, index) => {
+                    { results?.map((item, index) => {
                         return (
-                            <CardLink key={index} link={ 'https://google.fr' }/>
+                            <CardLink key={index} data={ item }/>
                         )
                     })}
                 </div>

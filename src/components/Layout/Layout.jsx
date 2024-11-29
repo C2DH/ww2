@@ -9,7 +9,7 @@ import { ForwardIcon } from "@heroicons/react/24/outline"
 import { AnimatePresence, motion } from "framer-motion"
 const trailers = {
     fr_FR: import.meta.env.VITE_VIDEO_TRAILER_HOME_FR,
-    en_EN: import.meta.env.VITE_VIDEO_TRAILER_HOME_EN,
+    en_GB: import.meta.env.VITE_VIDEO_TRAILER_HOME_EN,
     de_DE: import.meta.env.VITE_VIDEO_TRAILER_HOME_DE,
 }
 

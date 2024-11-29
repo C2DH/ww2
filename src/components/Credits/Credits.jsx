@@ -10,11 +10,17 @@ import { Link, useNavigate } from 'react-router-dom'
 import logoGouv from '../../assets/images/menu/logo-gouv.svg'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
 import Player from '../Player/Player'
-import { ArrowUturnLeftIcon, ForwardIcon } from "@heroicons/react/24/outline";
-const video = import.meta.env.VITE_VIDEO_TRAILER_HOME
+import { ForwardIcon } from "@heroicons/react/24/outline";
+
+const trailersCredits = {
+    fr_FR: import.meta.env.VITE_VIDEO_TRAILER_CREDIT_FR,
+    en_GB: import.meta.env.VITE_VIDEO_TRAILER_CREDIT_EN,
+    de_DE: import.meta.env.VITE_VIDEO_TRAILER_CREDIT_DE,
+}
 
 
 export default function Credits() {
+
 
     const { t } = useTranslation()
     const [sharedState, setSharedState] = useSharedState()
@@ -24,8 +30,11 @@ export default function Credits() {
     const [animationEnded, setAnimationEnded] = useState(false)
     const [skipVideo, setSkipVideo] = useState(false)
     const navigate = useNavigate()
-    const [animationDuration, setAnimationDuration] = useState(20); // Valeur par défaut de la durée de l'animation
-    const { width } = useWindowSize();
+    const [animationDuration, setAnimationDuration] = useState(20)
+    const { width } = useWindowSize()
+
+    console.log(language)
+
 
     useEffect(() => {
         if (width <= 768) {
@@ -104,7 +113,7 @@ export default function Credits() {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 1 }} // Durée de l'animation de fade-in
                     >
-                        <Player url={video} status={"trailer"} loop={true} />
+                        <Player url={trailersCredits[language]} status={"trailer"} loop={true} />
                         <div onClick={handleSkipVideo} className="absolute top-[50%] -translate-y-[50%] right-[50px] cursor-pointer bg-black bg-opacity-50 p-2 rounded-full" >
                             <ForwardIcon style={{ width: '50px', color: 'white' }} />
                         </div>
