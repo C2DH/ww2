@@ -401,13 +401,13 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                                     {selectedMarker.data.covers.map(cover => {
                                         if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
                                             return (
-                                                <>
+                                                <div key={cover.id}>
                                                     <img key={cover.id} src={cover.data.resolutions.medium.url ? rootPath + cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
                                                     <Link  className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer" onClick={() => setOpenSource(true)}>
                                                         <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
                                                         <span className='block icon-arrow'></span>
                                                     </Link>
-                                                </>
+                                                </div>
                                             )
                                         }
 
@@ -443,7 +443,14 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                             <div className='px-[20px] md:px-0'>
 
                                 {/* Location */}
-                                <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.data.title[language]}</h2>
+                                {selectedMarker.data.covers.map(cover => {
+                                    if (cover.type === "entity") {
+                                        return (
+                                            <h2 key={cover.id} className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{cover.data.title[language]}</h2>
+                                        )
+                                    }
+
+                                })}
 
                                 {city &&
                                     <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ city }, </span>
@@ -452,15 +459,24 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                                     <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ date }</span>
                                 }
 
-                                <img src={selectedMarker.data.data.type === "event" && selectedMarker.data.data.resolutions.medium.url ? selectedMarker.data.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                {description &&
+                                        <p className='text-[28px] pb-[40px] md:pb-[10px] mt-[30px]'>{ description }</p>
+                                    }
 
-                                <Link
-                                    className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
-                                    onClick={() => setOpenSource(true)}
-                                >
-                                    <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
-                                    <span className='block icon-arrow'></span>
-                                </Link>
+                                {selectedMarker.data.covers.map(cover => {
+                                    if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
+                                        return (
+                                            <div key={cover.id}>
+                                                <img key={cover.id} src={cover.data.resolutions.medium.url ? rootPath + cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                                <Link  className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer" onClick={() => setOpenSource(true)}>
+                                                    <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
+                                                    <span className='block icon-arrow'></span>
+                                                </Link>
+                                            </div>
+                                        )
+                                    }
+
+                                })}
                             </div>
                         </motion.div>
                     }
