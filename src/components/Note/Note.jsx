@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import Source from '../Source/Source'
 import bgPaper from '../../assets/images/common/bg-paper.png'
@@ -24,7 +24,6 @@ export default function Note() {
     const navigate = useNavigate()
     const rootPath = import.meta.env.VITE_ROOT
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
-
 
     // DETAILS NOTE
     useEffect(() => {
@@ -111,8 +110,8 @@ export default function Note() {
     
                         <div className="flex lg:justify-between lg:border-b border-black pt-[10px] md:pt-[20px] 2xl:pt-[60px]">
                             <div className="hidden lg:block uppercase">
-                                <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span>
-                                <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data.title[language] }</span>
+                                {/* <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span> */}
+                                <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data?.title[language].replace(/^Note \d+\s*-?\s*/, '') }</span>
                             </div>
                             <div className='hidden lg:flex items-center lg:items-end text-[22px] lg:text-[24px] uppercase lg:leading-[48px] cursor-pointer pl-[20px] lg:pl-0'>   
                                 <span className='pr-[10px] lg:pr-[20px]' onClick={() => navigateNote(-1)}>{ t('prev') }</span>
@@ -121,17 +120,19 @@ export default function Note() {
                         </div>
 
                         <div className='lg:hidden border-b border-black pb-[20px] pt-[10px] text-[24px] md:text-[38px] uppercase'>
-                            <span className="relative after:content-[''] after:absolute after:left-[35px] md:after:left-[50px] after:bottom-[50%] after:translate-y-[50%] after:h-[30px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span>
-                            <span className="leading-none font-abril pl-[10px] md:pl-[15px]">{ data.data.title[language] }</span>
+                            {/* <span className="relative after:content-[''] after:absolute after:left-[35px] md:after:left-[50px] after:bottom-[50%] after:translate-y-[50%] after:h-[30px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span> */}
+                            <span className="leading-none font-abril pl-[10px] md:pl-[15px]">{ data.data?.title[language].replace(/^Note \d+\s*-?\s*/, '') }</span>
                         </div>
     
                         <div className="flex flex-col lg:flex-row overflow-scroll lg:min-h-[calc(100%-120px)]" id="text">
                             <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
                                 
                                 {/** CONTENT - REFERENCES */}
-                                <div className='text-[28px]' id="content">
-                                    <ContentDisplay data={data.contents} />
-                                </div>
+                                {data.contents &&
+                                    <div className='text-[28px]' id="content">
+                                        <ContentDisplay data={data.contents} />
+                                    </div>
+                                }
             
 
                                 {/** RELATED NOTES */}
@@ -139,12 +140,11 @@ export default function Note() {
                                     <div className='ml-[20px] mt-[30px] pb-[10px]'>
                                         <span className='uppercase font-abril text-[20px] border-b border-black block pb-[10px]'>{ t('links')} :</span>
                                         <div className='text-[24px] pt-[15px]'>
-                                            {data.stories?.map(story => {
-                                                <Link className=' uppercase'>
-                                                {/* <span className='font-normal'>{ data.data.title[language]?.split('(')[1]?.replace(')',"") }</span> 
-                                                <span className='font-abril pl-[10px]'>{ data.data.title[language]?.split('(')[0] }</span> */}
+                                            {data.stories?.map(story => 
+                                                <Link to={`/note/${story.slug}`} key={story.id} className='block uppercase'>
+                                                    <span className='font-abril pl-[10px]'>{ story.data.title[language] }</span>
                                                 </Link>
-                                            })}
+                                            )}
                                         </div>
                                     </div>
                                 }
@@ -154,7 +154,6 @@ export default function Note() {
                             <div className="lg:w-1/2 lg:ml-[50px] py-[40px] lg:overflow-y-auto flex-grow border-t lg:border-none border-black">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     { data.documents.map((document, index) => 
-                                        
                                         <div key={document.id}>
                                             
                                             { ((document.type === 'image' || document.type === 'photo') && document.data?.resolutions) &&
@@ -166,7 +165,7 @@ export default function Note() {
                                                 </div>  
                                             }
 
-                                            { (document.type === 'image' && document.attachment.split('.')[1] === 'pdf') && 
+                                            { (document.type === 'image' && document.attachment.split('.')[1] === 'pdf' && !document.data?.resolutions) && 
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={  document.data.resolutions?.preview?.url ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
@@ -175,18 +174,18 @@ export default function Note() {
                                                 </div>
                                             }
 
-                                            { document.type === 'video' && document.data.videoResolutions.sd360p.url &&
+                                            { document.type === 'video' &&
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }> 
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url !== "" ? document.data.resolutions?.preview?.url : defaultImage } alt={document.data.title[language]} />
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data?.resolutions?.medium?.url ? document.data?.resolutions?.preview?.url : defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <VideoCameraIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
 
-                                            { document.type === 'book' &&
+                                            { (document.type === 'book' || document.type === 'reference') &&
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={document.data.title[language]} />
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={document.data} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <BookOpenIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
@@ -276,7 +275,7 @@ const ContentDisplay = ({ data }) => {
     return (
         <div>
             { parsedData.modules.map((module, index) => (
-                <div key={index}>{module.text.content[language]}</div>
+                <div key={index} className={`${index !== 0 ? 'mt-[30px]' : ''}`}>{module?.text?.content[language]}</div>
             ))}
         </div>
     );  

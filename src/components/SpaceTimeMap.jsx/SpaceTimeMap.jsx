@@ -70,23 +70,17 @@ export default function SpaceTimeMap() {
                 mentioned_to__slug: 'spatiotemporal-map'
             })
 
+
             if (locations.results.length > 0) {
-                locations.results.map(location =>
-                    location.covers.map(item => {
-                        if (item.data && item.data.type == "event") {
-
-                            // POUR TESTER
-                            if (item.id === 1425) {
-                                item.data.start_date = '1940-01-01'
-                                console.log(item.data.start_date )
-                            }
-
+                locations.results.forEach(location => {
+                    location.covers.forEach(item => {
+                        if (item.data && item.type == "glossary") {
                             if (new Date(item.data.start_date) >= filters.min && new Date(item.data.end_date) <= filters.max ) {
                                 dataFiltered.push(location)
                             }
                         }
                     })
-                )
+                })
                 setData(dataFiltered)
                 setIsLoaded(true)
             }
@@ -240,6 +234,7 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
     const [date, setDate] = useState(null)
     const [city, setCity] = useState(null)
+    const [description, setDescription] = useState(null )
     const {setIsOpenSource} = useSourceContext()
 
     useEffect(() => {
@@ -292,11 +287,13 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
     useEffect(() => {
         if (selectedMarker.data && selectedMarker.id) {
             selectedMarker.data.covers.map(cover => {
-                if (cover.data.type === "event") {
-                    setDate(formatDate(cover.data.start_date, language));
+                if (cover.type === "glossary") {
+                    console.log(cover)
+                    setDate(formatDate(cover.data.start_date, language))
                 }
                 if (cover.data.type === "place") {
-                    setCity(cover.data.geojson.properties.city[language]);
+                    setCity(cover.data.geojson.properties.city[language])
+                    setDescription(cover.data.description[language])
                 }
             })
         }
@@ -390,8 +387,16 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
 
                                 <div className='px-[20px] md:px-0'>
 
+
                                     {/* Location */}
-                                    <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.data.title[language]}</h2>
+                                    {selectedMarker.data.covers.map(cover => {
+                                        if (cover.type === "entity") {
+                                            return (
+                                                <h2 key={cover.id} className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{cover.data.title[language]}</h2>
+                                            )
+                                        }
+
+                                    })}
 
                                     {city &&
                                         <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ city }, </span>
@@ -400,7 +405,11 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                                         <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ date }</span>
                                     }
 
-                                    <img src={selectedMarker.data.data.type === "event" && selectedMarker.data.data.resolutions.medium.url ? selectedMarker.data.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                    {description &&
+                                        <p className='text-[28px] pb-[40px] md:pb-[10px] mt-[30px]'>{ description }</p>
+                                    }
+
+                                    {/* <img src={selectedMarker.data.data.type === "event" && selectedMarker.data.data.resolutions.medium.url ? selectedMarker.data.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' /> */}
 
                                     <Link
                                         className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"

@@ -206,6 +206,10 @@ export default function Sources() {
 
 
     const clickButton = (type) => {
+
+        console.log('ici')
+        console.log('type', type)
+
         if (!filters.types.includes(type)) {
             setFilters(prevFilters => ({
                 ...prevFilters,
@@ -253,7 +257,8 @@ export default function Sources() {
                 <div className='lg:overflow-scroll'>
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
                         { sources.map((source, index) => {
-                            if (source.type === 'video' || source.type === 'picture') { 
+                            console.log('source',source)
+                            if (source.type === 'video' || source.type === 'picture' || source.type === "audio") { 
                                 return (
                                     <CardImageText 
                                         myRef={sources.length === index + 1 ? lastSourceRef : null}
@@ -320,7 +325,7 @@ export default function Sources() {
                     })}>
                         <div className='flex flex-col shrink-0'>
                             {types?.map((type, index) => 
-                                <ButtonFilter key={index} title={type.type} number={type.count} types={filters.types} handleClick={() => clickButton(type.category)} /> 
+                                <ButtonFilter key={index} title={type.type} number={types.find(item => item.type == type.type)?.count ?? 0} types={filters.types} handleClick={() => {clickButton(type.type); handleMenu("filter")}} /> 
                             )}
                         </div>
                     </div>

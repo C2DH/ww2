@@ -20,6 +20,22 @@ export default function Accordion({ items }) {
         }
     }
 
+    console.log('items', items)
+
+
+    const sortedItems = items.map(item => {
+        const sortedStories = item.data.chapters.map(chapterId => 
+            item.stories.find(story => story.id === chapterId)
+        )
+    
+        return {
+            ...item,
+            stories: sortedStories
+        }
+    })
+
+    
+
     // Calculer la taille du bloc
     const getContentHeight = (index) => {
         return contentRefs.current[index] ? contentRefs.current[index].scrollHeight : '0px'
@@ -27,7 +43,7 @@ export default function Accordion({ items }) {
     
     return (        
         <div className='h-full'>
-            {items.map((item, index) => {
+            {sortedItems.map((item, index) => {
                 return (
                     <div key={ index }>
                         <div className={classNames("flex justify-between border-t border-black w-full hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] cursor-pointer", {
@@ -54,11 +70,12 @@ export default function Accordion({ items }) {
                                 height: currentTheme === index ? getContentHeight(index) : '0px',
                             }}
                         >
+
                             <div className={`accordion-content-inner ${currentTheme === index ? 'open' : ''} mb-[50px]`}>
-                                {item.stories.map((note, index) =>
-                                    <Link to={ `/note/${note.slug}` } key={ index } className="block text-[24px] lg:text-[28px] 2xl:text-[40px] uppercase pb-[20px] cursor-pointer">
+                                {item.stories.map((note, index) => 
+                                    <Link to={ `/note/${note?.slug}`} state={{number: index}} key={ index } className="block text-[24px] lg:text-[28px] 2xl:text-[40px] uppercase pb-[20px] cursor-pointer">
                                         <span className='text-[28px] 2xl:text-[38px] font-light'>N{(index+1) < 10 ? '0' + (index + 1) : (index+1)}</span>
-                                        <span className='font-abril'> { note.data.title[language]?.split('(')[0] }</span> 
+                                        <span className='font-abril'> { note?.data.title[language].replace(/^Note \d+\s*-?\s*/, '') }</span> 
                                     </Link>      
                                 )}
                             </div>

@@ -141,8 +141,12 @@ export default function Source({ data, handleSourcePopup }) {
                             }
 
                             {/** VIDEO */}
-                            { data.type === 'video' && data.data.videoResolutions.hsl.alternate &&
+                            { (data.type === 'video' && data.data?.videoResolutions?.hsl?.alternate) &&
                                 <Player url={ data.data.videoResolutions.hsl.alternate[language] } controls={true} status={'video'}/>
+                            }
+
+                            { data.type === 'video' && data.attachment &&
+                                <Player url={ data.attachment } controls={true} status={'video'}/>
                             }
 
                             {/** PDF */}
@@ -221,6 +225,13 @@ export default function Source({ data, handleSourcePopup }) {
                             <>
                                 <hr className='w-1/2'/>
                                 <Link to={data.data.zotero.url} target="_blank" className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Lien : <span className='hover:text-blue transition-all duration-500'>{ data.data.zotero.url }</span></Link>
+                            </>
+                        }
+
+                        { (data.type === "video" && data.data.provenance) &&
+                            <>
+                                <p className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>{data.data.provenance}</p>
+                                <hr className='w-1/2'/>
                             </>
                         }
                     </div>

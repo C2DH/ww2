@@ -42,8 +42,8 @@ export default function Catalogue() {
                     })
                 )
     
-                setThemes(themesData);
-                setIsLoaded(true);
+                setThemes(themesData)
+                setIsLoaded(true)
             }
         }
         getData();

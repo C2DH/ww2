@@ -1,4 +1,4 @@
-import { BookOpenIcon, VideoCameraIcon, PhotoIcon } from '@heroicons/react/24/outline'
+import { BookOpenIcon, VideoCameraIcon, PhotoIcon, MusicalNoteIcon } from '@heroicons/react/24/outline'
 
 import { cleanText } from "../../lib/utils"
 import { AnimatePresence, motion } from 'framer-motion';
@@ -34,7 +34,7 @@ export default function CardImageText({ title = "", myRef, data, onClick }) {
                             data.data.resolutions.medium.url ? (
                                 <img src={data.data.resolutions.medium.url} alt="" className="rounded-[2px] w-full h-[110px] object-cover" />
                             ) : (
-                                <div className="bg-gray-200 lg:h-[110px] flex items-center justify-center rounded-[2px]">
+                                <div className="bg-gray-200 h-[110px] flex items-center justify-center rounded-[2px]">
                                     <VideoCameraIcon style={{ width: '30px', height: '30px' }} />
                                 </div>
                             )
@@ -44,11 +44,19 @@ export default function CardImageText({ title = "", myRef, data, onClick }) {
                             data.attachment ? (
                                 <img src={rootPath + data.attachment} alt="" className="rounded-[2px] w-full h-[110px] object-cover" />
                             ) : (
-                                <div className="bg-gray-200 lg:h-[110px] flex items-center justify-center rounded-[2px]">
+                                <div className="bg-gray-200 h-[110px] flex items-center justify-center rounded-[2px]">
                                     <PhotoIcon style={{ width: '30px', height: '30px' }} />
                                 </div>
                             )
                         )}
+
+                        {data.type === "audio" && (
+                    
+                                <div className="bg-gray-200 h-[110px] flex items-center justify-center rounded-[2px]">
+                                    <MusicalNoteIcon style={{ width: '30px', height: '30px' }} />
+                                </div>
+                            
+                        )}    
                     </div>
 
                     <div className="col-span-8">
