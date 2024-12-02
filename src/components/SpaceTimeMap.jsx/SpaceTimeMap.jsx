@@ -29,7 +29,7 @@ import { MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import SourceComponent from '../Source/Source'
 import { useSourceContext } from '../../contexts/SourceProvider'
 
-
+const rootPath = import.meta.env.VITE_ROOT
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const styleBlueprint = import.meta.env.VITE_API_STYLE_MAPBOX_BLUEPRINT
 const styleMSF = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
@@ -402,7 +402,7 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                                         if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
                                             return (
                                                 <>
-                                                    <img key={cover.id} src={cover.data.resolutions.medium.url ? cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                                    <img key={cover.id} src={cover.data.resolutions.medium.url ? rootPath + cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
                                                     <Link  className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer" onClick={() => setOpenSource(true)}>
                                                         <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
                                                         <span className='block icon-arrow'></span>
