@@ -40,6 +40,8 @@ export default function Layout() {
         const timer = setTimeout(() => {
           setShowSkip(false)
         }, 21000)
+
+        console.log('isSmall', isSmall)
     
         return () => clearTimeout(timer)
       }, [])
@@ -62,7 +64,7 @@ export default function Layout() {
 
             {(pathname === '/' || pathname === '/spatiotemporal-map' || pathname.includes('/notice/')) ? (
                 <div className={classNames('absolute inset-0 transition-all duration-[2500ms] flex z-[200] top-[80px]', {
-                    'translate-y-0': !openMenu,
+                    'translate-y-0': !openMenu && !isSmall,
                     'translate-y-full': openMenu,
                     '-translate-y-[80px]': isOpenSource && isSmall
                     }

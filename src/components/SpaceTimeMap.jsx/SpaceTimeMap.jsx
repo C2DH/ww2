@@ -60,8 +60,9 @@ export default function SpaceTimeMap() {
         setViewState((prevState) => ({
             ...prevState,
             zoom: newZoom,
-        }));
-    };
+        }))
+    }
+
 
     // ALL LOCATIONS WITH DATE
     useEffect(() => {
@@ -229,20 +230,24 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
     const [openLocation, setOpenLocation] = useState(false)
     const [openSource, setOpenSource] = useState(false)
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
-    const [date, setDate] = useState(null)
+    const [dateStart, setDateStart] = useState(null)
+    const [dateEnd, setDateEnd] = useState(null)
     const [city, setCity] = useState(null)
     const [description, setDescription] = useState(null )
     const {setIsOpenSource} = useSourceContext()
 
-    const handleMapScroll = () => {
-        const map = reference.current.getMap(); // Accéder à l'instance Mapbox
-        const newZoom = map.getZoom(); // Obtenir le niveau de zoom actuel
+    useEffect(() => {
+        console.log('selected', selectedMarker)
+    }, [selectedMarker])
 
-        // Mettre à jour le zoom dans le parent
+    const handleMapScroll = () => {
+        const map = reference.current.getMap()
+        const newZoom = map.getZoom()
+
         if (onZoomChange) {
             onZoomChange(newZoom);
         }
-    };
+    }
    
 
     const sourceStyle = {
@@ -280,7 +285,8 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
         if (selectedMarker.data && selectedMarker.id) {
             selectedMarker.data.covers.map(cover => {
                 if (cover.type === "glossary") {
-                    setDate(formatDate(cover.data.start_date, language))
+                    setDateStart(formatDate(cover.data.start_date, language))
+                    setDateEnd(formatDate(cover.data.end_date, language))
                     setDescription(cover.data.description[language])
                 }
                 if (cover.data.type === "place") {
@@ -379,7 +385,7 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
 
                                     {/* Location */}
                                     {selectedMarker.data.covers.map(cover => {
-                                        if (cover.type === "entity") {
+                                        if (cover.type === "glossary") {
                                             return (
                                                 <h2 key={cover.id} className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{cover.data.title[language]}</h2>
                                             )
@@ -387,21 +393,26 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
 
                                     })}
 
-                                    {city &&
-                                        <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ city }, </span>
-                                    }
-                                    {date &&
-                                        <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ date }</span>
+                                    {description &&
+                                        <p className='text-[28px] pb-[40px] md:pb-[10px] font-light'>{ description }</p>
                                     }
 
-                                    {description &&
-                                        <p className='text-[28px] pb-[40px] md:pb-[10px] mt-[30px]'>{ description }</p>
+                                    {city &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ city }, </span>
+                                    }
+
+                                    {dateStart &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateStart } - </span>
+                                    }
+
+                                    {dateEnd &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateEnd }</span>
                                     }
 
                                     {selectedMarker.data.covers.map(cover => {
                                         if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
                                             return (
-                                                <div key={cover.id}>
+                                                <div key={cover.id} className='mt-[30px]'>
                                                     <img key={cover.id} src={cover.data.resolutions.medium.url ? rootPath + cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
                                                     <Link  className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer" onClick={() => setOpenSource(true)}>
                                                         <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
@@ -444,39 +455,44 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
 
                                 {/* Location */}
                                 {selectedMarker.data.covers.map(cover => {
-                                    if (cover.type === "entity") {
-                                        return (
-                                            <h2 key={cover.id} className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{cover.data.title[language]}</h2>
-                                        )
+                                        if (cover.type === "glossary") {
+                                            return (
+                                                <h2 key={cover.id} className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{cover.data.title[language]}</h2>
+                                            )
+                                        }
+
+                                    })}
+
+                                    {description &&
+                                        <p className='text-[28px] pb-[40px] md:pb-[10px] font-light'>{ description }</p>
                                     }
 
-                                })}
-
-                                {city &&
-                                    <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ city }, </span>
-                                }
-                                {date &&
-                                    <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ date }</span>
-                                }
-
-                                {description &&
-                                        <p className='text-[28px] pb-[40px] md:pb-[10px] mt-[30px]'>{ description }</p>
+                                    {city &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ city }, </span>
                                     }
 
-                                {selectedMarker.data.covers.map(cover => {
-                                    if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
-                                        return (
-                                            <div key={cover.id}>
-                                                <img key={cover.id} src={cover.data.resolutions.medium.url ? rootPath + cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
-                                                <Link  className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer" onClick={() => setOpenSource(true)}>
-                                                    <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
-                                                    <span className='block icon-arrow'></span>
-                                                </Link>
-                                            </div>
-                                        )
+                                    {dateStart &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateStart } - </span>
                                     }
 
-                                })}
+                                    {dateEnd &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateEnd }</span>
+                                    }
+
+                                    {selectedMarker.data.covers.map(cover => {
+                                        if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
+                                            return (
+                                                <div key={cover.id} className='mt-[30px]'>
+                                                    <img key={cover.id} src={cover.data.resolutions.medium.url ? rootPath + cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                                    <Link  className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer" onClick={() => setOpenSource(true)}>
+                                                        <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
+                                                        <span className='block icon-arrow'></span>
+                                                    </Link>
+                                                </div>
+                                            )
+                                        }
+
+                                    })}
                             </div>
                         </motion.div>
                     }

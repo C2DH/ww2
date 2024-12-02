@@ -115,12 +115,31 @@ export async function getAllNotes() {
 
 
 
+// export function formatDate(input, lang) {
+//     const date = new Date(input)
+//     return date.toLocaleDateString(lang.replace('_', '-'), {
+//         month: 'long',
+//         year: 'numeric'
+//     })
+// }
+
+
 export function formatDate(input, lang) {
     const date = new Date(input)
-    return date.toLocaleDateString(lang.replace('_', '-'), {
-        month: 'long',
-        year: 'numeric'
-    })
+    console.log(lang)
+    if (lang === 'fr_FR' || lang === 'de_DE') {
+        return date.toLocaleDateString(lang.replace('_', '-'), {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        })
+    } else if (lang === 'en_GB') {
+        return date.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        })
+    }
 }
 
 

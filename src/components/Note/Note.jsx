@@ -155,8 +155,9 @@ export default function Note() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     { data.documents.map((document, index) => 
                                         <div key={document.id}>
-                                            
-                                            { ((document.type === 'image' || document.type === 'photo') && document.data?.resolutions) &&
+                                        <h1>{document.id}</h1>
+
+                                            { ((document.type === 'image' || document.type === 'photo') && document.attachment.split('.')[1] !== 'pdf') &&
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
@@ -165,7 +166,16 @@ export default function Note() {
                                                 </div>  
                                             }
 
-                                            { (document.type === 'image' && document.attachment.split('.')[1] === 'pdf' && !document.data?.resolutions) && 
+                                            {/* { ((document.type === 'image' || document.type === 'photo') && document.attachment.split('.')[1] === 'pdf') &&
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <PhotoIcon style={{ width: '40px', color: 'white'}} />
+                                                    </div>
+                                                </div>  
+                                            } */}
+
+                                            { ((document.type === 'image' || document.type === 'photo' ) && document.attachment.split('.')[1] === 'pdf') && 
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
                                                     <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={  document.data.resolutions?.preview?.url ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
