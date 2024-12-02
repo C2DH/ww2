@@ -33,9 +33,6 @@ export default function Credits() {
     const [animationDuration, setAnimationDuration] = useState(20)
     const { width } = useWindowSize()
 
-    console.log(language)
-
-
     useEffect(() => {
         if (width <= 768) {
           setAnimationDuration(width / 10)

@@ -75,7 +75,6 @@ export async function fetchFacets(endpoint, facets, filters = {}) {
     }
 
     const url = `/api/${endpoint}/?${searchParams.toString()}`
-    console.log('url', url)
 
     try {
         const response = await fetch(url)

@@ -66,11 +66,9 @@ export default function SpaceTimeMap() {
     // ALL LOCATIONS WITH DATE
     useEffect(() => {
         const getData = async () => {
-            const locations = await fetchData(`story`, {
-                mentioned_to__slug: 'spatiotemporal-map'
-            })
+            const locations = await fetchData(`story`, {mentioned_to__slug: 'spatiotemporal-map'}, 100)
 
-
+            console.log(locations.results)
             if (locations.results.length > 0) {
                 locations.results.forEach(location => {
                     location.covers.forEach(item => {
@@ -95,7 +93,6 @@ export default function SpaceTimeMap() {
 
 
     const handleMap = (element) => {
-        console.log('element',element)
         if (element.style) {
             setViewState((prevState) => ({ ...prevState, style: element.style }));
         }
@@ -137,7 +134,7 @@ export default function SpaceTimeMap() {
         return (
 
             <motion.div className='h-full w-full' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                <MapBox items={data} state={viewState} reference={mapRef} onZoomChange={handleZoomState}/>
+                <MapBox items={data} state={viewState} reference={mapRef} onZoomChange={handleZoomState} />
 
                 {/** Map style and zoom */}
                 <div className='absolute top-[40px] right-[20px]'>
@@ -237,11 +234,6 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
     const [description, setDescription] = useState(null )
     const {setIsOpenSource} = useSourceContext()
 
-    useEffect(() => {
-        console.log('state', state)
-    }, [state])
-
-
     const handleMapScroll = () => {
         const map = reference.current.getMap(); // Accéder à l'instance Mapbox
         const newZoom = map.getZoom(); // Obtenir le niveau de zoom actuel
@@ -288,17 +280,15 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
         if (selectedMarker.data && selectedMarker.id) {
             selectedMarker.data.covers.map(cover => {
                 if (cover.type === "glossary") {
-                    console.log(cover)
                     setDate(formatDate(cover.data.start_date, language))
+                    setDescription(cover.data.description[language])
                 }
                 if (cover.data.type === "place") {
                     setCity(cover.data.geojson.properties.city[language])
-                    setDescription(cover.data.description[language])
                 }
             })
         }
-    }, [selectedMarker])
-
+    }, [selectedMarker, language])
 
     return (
         <>
@@ -387,7 +377,6 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
 
                                 <div className='px-[20px] md:px-0'>
 
-
                                     {/* Location */}
                                     {selectedMarker.data.covers.map(cover => {
                                         if (cover.type === "entity") {
@@ -409,15 +398,20 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                                         <p className='text-[28px] pb-[40px] md:pb-[10px] mt-[30px]'>{ description }</p>
                                     }
 
-                                    {/* <img src={selectedMarker.data.data.type === "event" && selectedMarker.data.data.resolutions.medium.url ? selectedMarker.data.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' /> */}
+                                    {selectedMarker.data.covers.map(cover => {
+                                        if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
+                                            return (
+                                                <>
+                                                    <img key={cover.id} src={cover.data.resolutions.medium.url ? cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                                    <Link  className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer" onClick={() => setOpenSource(true)}>
+                                                        <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
+                                                        <span className='block icon-arrow'></span>
+                                                    </Link>
+                                                </>
+                                            )
+                                        }
 
-                                    <Link
-                                        className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
-                                        onClick={() => setOpenSource(true)}
-                                    >
-                                        <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
-                                        <span className='block icon-arrow'></span>
-                                    </Link>
+                                    })}
                                 </div>
                             </motion.div>
                         }

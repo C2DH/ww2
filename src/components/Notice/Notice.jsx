@@ -45,14 +45,10 @@ export default function Notice() {
                 setResults(data)
                 const photoItem = data.covers.find(item => item.type === 'photo')            
                 if (photoItem) {
-                    console.log('la');
                     setImgBg(rootPath + photoItem.attachment)
                 } else {
                     setImgBg(defaultImage)
                 }
-
-                console.log('data', data)
-
                 setIsLoaded(true)
             }
         }

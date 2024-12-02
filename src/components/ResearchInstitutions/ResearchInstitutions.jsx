@@ -24,7 +24,6 @@ export default function ResearchInstitutions() {
         try {
             const params = { data__type : "institution" }
             const data = await fetchData('document', params)
-            console.log(data)
             return data ? data.results : []
         } catch (error) {
             console.error('Erreur lors de la récupération des documents :', error)

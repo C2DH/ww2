@@ -20,9 +20,6 @@ export default function Accordion({ items }) {
         }
     }
 
-    console.log('items', items)
-
-
     const sortedItems = items.map(item => {
         const sortedStories = item.data.chapters.map(chapterId => 
             item.stories.find(story => story.id === chapterId)

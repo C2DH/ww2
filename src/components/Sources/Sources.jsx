@@ -186,9 +186,6 @@ export default function Sources() {
     }
 
     const handleSourcePopup = (source) => {
-
-        console.log('dataPopup',dataPopup)
-
         if (!dataPopup.open) {
             setDataPopup(prevSource => ({
                 ...prevSource, 
@@ -206,9 +203,6 @@ export default function Sources() {
 
 
     const clickButton = (type) => {
-
-        console.log('ici')
-        console.log('type', type)
 
         if (!filters.types.includes(type)) {
             setFilters(prevFilters => ({
@@ -257,7 +251,6 @@ export default function Sources() {
                 <div className='lg:overflow-scroll'>
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
                         { sources.map((source, index) => {
-                            console.log('source',source)
                             if (source.type === 'video' || source.type === 'picture' || source.type === "audio") { 
                                 return (
                                     <CardImageText 

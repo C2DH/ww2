@@ -55,10 +55,6 @@ export default function Source({ data, handleSourcePopup }) {
     }
 
     useEffect(() => {
-        console.log('data', data)
-    }, [data])
-
-    useEffect(() => {
         const handleResize = () => {
             const width = window.innerWidth;
             if (width > 1280) {
@@ -305,7 +301,6 @@ const Model3D = ({ model }) => {
 }
   
 const ModelViewer = ({ model, height }) => {
-    console.log('height',height)
     return (
         <Canvas camera={{ position: [0, 0, 5], fov: 60 }} style={{ width: '100%', height: height }} >
             

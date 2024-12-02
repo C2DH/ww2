@@ -4,8 +4,6 @@ import { useLanguageContext } from "../../contexts/LanguageProvider";
 
 export default function CardLink({ data }) {
 
-    console.log(data)
-
     const { language } = useLanguageContext()
 
     return (
