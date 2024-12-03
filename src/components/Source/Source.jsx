@@ -110,8 +110,6 @@ export default function Source({ data, handleSourcePopup }) {
                         
                         <div className="pb-[20px] pt-[20px] 2xl:pb-[40px] 2xl:pt-[80px] relative">
                         
-
-
                             {/** IMAGE */}
                             {data.covers?.map(item => {
                                 if (item.type === 'glossary') {
@@ -122,7 +120,7 @@ export default function Source({ data, handleSourcePopup }) {
                             })}
 
                             { ((data.type === 'image' || data.type === 'photo') && data.data?.resolutions?.preview?.url && data.attachment.split('.')[1] !== "pdf") &&                        
-                                <ImageZoom image={ rootPath + data.attachment } alt={data.title}/>
+                                <ImageZoom image={ rootPath + data.data.resolutions.preview.url } alt={data.title}/>
                             }
 
                             { (data.type === 'image' && data.data?.resolutions?.preview?.url && data.attachment.split('.')[1] === "pdf") &&                        

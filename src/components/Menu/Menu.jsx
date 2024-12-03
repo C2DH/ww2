@@ -116,7 +116,7 @@ export default function Menu() {
                             </div>
                             <div>
                                 <Link to='https://mcult.gouvernement.lu/fr.html' target='_blank'>
-                                    <img src={ logoGouv } alt="Logo Université" className="w-[40%]" />
+                                    <img src={ logoGouv } alt="Logo Université" className="w-[225px]" />
                                 </Link>
                             </div>
                         </div>

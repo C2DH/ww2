@@ -41,7 +41,7 @@ export default function CardImageText({ title = "", myRef, data, onClick }) {
 
                         {data.type === "photo" && (
                             data.attachment ? (
-                                <img src={rootPath + data.attachment} alt="" className="rounded-[2px] w-full h-[110px] object-cover" />
+                                <img src={rootPath + data.data.resolutions.thumbnail.url} alt="" className="rounded-[2px] w-full h-[110px] object-cover" />
                             ) : (
                                 <div className="bg-gray-200 h-[110px] flex items-center justify-center rounded-[2px]">
                                     <PhotoIcon style={{ width: '30px', height: '30px' }} />

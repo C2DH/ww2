@@ -72,7 +72,7 @@ export default function Dropdown({ items, text, theme, onChange}) {
                         )
                     } else if (theme === 'notes') {
                         return (
-                            <span key={index} className="block uppercase" onClick={() => handleItemClick(item)}># { item.data.title[language] }</span>
+                            <span key={index} className="block uppercase" onClick={() => handleItemClick(item)}># { item.data?.title ? item.data.title[language] : "" }</span>
                         )
                     } else if (theme === 'tags') {
                         return (
