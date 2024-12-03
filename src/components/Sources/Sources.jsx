@@ -6,7 +6,7 @@ import ButtonFilter from '../ButtonFilter/ButtonFilter'
 import LayoutHistorianWorkshop from '../LayoutHistorianWorkshop/LayoutHistorianWorkshop'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import axios from 'axios'
@@ -17,6 +17,7 @@ import { useMediaQuery } from 'react-responsive'
 import { useMenuHistorianContext } from '../../contexts/MenuHistorianProvider'
 import { fetchData, fetchFacets } from '../../lib/utils'
 
+
 const computeTags = (response) => {
     return [...(new Set(response.reduce((carry, item) => {
         if (item.data__zotero__tags?.length > 0) {
@@ -25,6 +26,7 @@ const computeTags = (response) => {
         return carry;
     }, [])))];
 }
+
 
 export default function Sources() {
     const [sharedState, setSharedState] = useSharedState()
@@ -41,30 +43,24 @@ export default function Sources() {
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenFilters, setIsOpenFilters] = useState(false)
     const [filters, setFilters] = useState({types: [], note: false})
-    const [filteredSources, setFilteredSources] = useState([])
     const [hasMore, setHasMore] = useState(true)
     const [dataPopup, setDataPopup] = useState({ open: false, data: null })
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
     const menuItems = useMenuHistorianContext()
-    const { search } = useLocation()
-
 
 
     //https://ww2.lu/api/document/?filters={"stories__slug":"N1-PAD-C01-place-couvent-de-cinqfontaines-troisvierges-luxembourg"}
     
-    const queryParams = new URLSearchParams(search);
-    const filtersFromUrl = queryParams.get('filters') ? JSON.parse(queryParams.get('filters')) : null
+
+    const [searchParams] = useSearchParams();
+    const filtersParams = JSON.parse(decodeURIComponent(searchParams.get('filters') || '{}'))
 
     const fetchSources = async (offset = 0, limit = 24) => {
         try {
-            if (queryParams.size > 0) {
-                let params = filtersFromUrl
-                const response = await fetchData('/document', params)
-                console.log('response',response.results)
-                // setSources(response.results)
-                await getNotes();
-                await getTypes();
-                return response.results ?? []
+            if (filtersParams.stories__slug) {
+                const filteredSources = await fetchData('document', filtersParams, limit, offset)
+                console.log('test', filteredSources)
+                return filteredSources.results ?? []
             } else {
                 let params = {type__in: ['audio', 'video', 'picture', 'book', 'manuscript']};
                 if (filters.types.length > 0) params = {type__in: filters.types}
@@ -139,6 +135,7 @@ export default function Sources() {
         if (!hasMore && !force) return
         setLoading(true)
         const newSources = await fetchSources(offset)
+        console.log('newsouyrces', newSources)
         setSources((prevSources) => [...prevSources, ...newSources])
         setLoading(false)
     };
@@ -166,10 +163,9 @@ export default function Sources() {
         },[loading, hasMore]
     )
 
-
     useEffect(() => {
         loadMoreSources()
-    }, [offset, queryParams])
+    }, [offset])
 
     useEffect(() => {
         setHasMore(true);

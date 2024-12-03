@@ -397,7 +397,7 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                                         <p className='text-[28px] pb-[40px] md:pb-[10px] font-light'>{ description }</p>
                                     }
 
-                                    {city &&
+                                    {/* {city &&
                                         <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ city }, </span>
                                     }
 
@@ -407,7 +407,7 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
 
                                     {dateEnd &&
                                         <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateEnd }</span>
-                                    }
+                                    } */}
 
                                     {selectedMarker.data.covers.map(cover => {
                                         if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
@@ -466,7 +466,7 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                                     {description &&
                                         <p className='text-[28px] pb-[40px] md:pb-[10px] font-light'>{ description }</p>
                                     }
-
+{/* 
                                     {city &&
                                         <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ city }, </span>
                                     }
@@ -477,7 +477,7 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
 
                                     {dateEnd &&
                                         <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateEnd }</span>
-                                    }
+                                    } */}
 
                                     {selectedMarker.data.covers.map(cover => {
                                         if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {

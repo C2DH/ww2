@@ -199,7 +199,7 @@ export default function Source({ data, handleSourcePopup }) {
                             {/** AUDIO */}
                             { (data.type === 'audio' && data.attachment) &&
                                 <>
-                                    <img src={imageDefault } alt={ "default image"}/>
+                                    {/* <img src={imageDefault } alt={ "default image"}/> */}
                                     <Player url={ rootPath + data.attachment } controls={true} status={'audio'} />     
                                 </>
                             }
@@ -258,7 +258,7 @@ export default function Source({ data, handleSourcePopup }) {
                                 <hr className='w-1/2'/>
                                 <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Source : {data.data.provenance ? data.data.provenance : "NC"}</span>
                                 <hr className='w-1/2'/>
-                                <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Copyrights : {data.data.copyrights ? data.data.copyrights : "NC" }</span>
+                                {/* <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Copyrights : {data.data.copyrights ? data.data.copyrights : "NC" }</span> */}
                             </>
                         }
 
@@ -270,7 +270,7 @@ export default function Source({ data, handleSourcePopup }) {
                                 <hr className='w-1/2'/>
                                 <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Source : {data.data.provenance ? data.data.provenance : "NC"}</span>
                                 <hr className='w-1/2'/>
-                                <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Copyrights : {data.data.copyrights ? data.data.copyrights : "NC" }</span>
+                                {/* <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Copyrights : {data.data.copyrights ? data.data.copyrights : "NC" }</span> */}
                             </>
                         }
 
@@ -283,7 +283,7 @@ export default function Source({ data, handleSourcePopup }) {
                                 <hr className='w-1/2'/>
                                 <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Source : {data.data.provenance ? data.data.provenance : "NC"}</span>
                                 <hr className='w-1/2'/>
-                                <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Copyrights : {data.data.copyrights ? data.data.copyrights : "NC" }</span>
+                                {/* <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Copyrights : {data.data.copyrights ? data.data.copyrights : "NC" }</span> */}
                             </>
                         }
 
@@ -295,7 +295,7 @@ export default function Source({ data, handleSourcePopup }) {
                                 <hr className='w-1/2'/>
                                 <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Source : {data.data.provenance ? data.data.provenance : "NC"}</span>
                                 <hr className='w-1/2'/>
-                                <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Copyrights : {data.data.copyrights ? data.data.copyrights : "NC" }</span>
+                                    {/* <span className='block lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>Copyrights : {data.data.copyrights ? data.data.copyrights : "NC" }</span> */}
                             </>
                         }
                     </div>

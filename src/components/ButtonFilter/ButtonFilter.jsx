@@ -12,6 +12,8 @@ export default function ButtonFilter({ title, number, types, handleClick }) {
             setTitleBtn(t('book'))
         } else if (title === "manuscript")  {
             setTitleBtn(t('manuscript'))
+        } else if (title === 'picture') {
+            setTitleBtn(t('picture'))
         } else {
             setTitleBtn(title)
         }

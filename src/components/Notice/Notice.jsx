@@ -22,6 +22,7 @@ import defaultImage from '../../assets/images/common/default.png'
 const rootPath = import.meta.env.VITE_ROOT
 
 
+
 export default function Notice() {
     
     const { t } = useTranslation()
@@ -153,7 +154,13 @@ export default function Notice() {
                         <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3">
 
                             {/* TODO: Ajouter le tag ppur filtrer sur la page sources */}
-                            <Link to={`/sources?filters=${encodeURIComponent(JSON.stringify({ stories__slug: "N1-PAD-C01-place-couvent-de-cinqfontaines-troisvierges-luxembourg" }))}`}  className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('about') }</Link>
+                            <Link
+  to={`/sources?filters=${encodeURIComponent(JSON.stringify({ stories__slug: slug }))}`}
+  className="block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white"
+>
+  {t('about')}
+</Link>
+                            {/* <Link to={`/sources?filters=${encodeURIComponent(JSON.stringify({ stories__slug: "N1-PAD-C01-place-couvent-de-cinqfontaines-troisvierges-luxembourg" }))}`}  className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('about') }</Link> */}
 
                             {/* TODO: Ajouter le tag ppur filtrer sur la page index historique */}
                             <Link to={'/glossary'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('menuItems.glossary')}</Link>
