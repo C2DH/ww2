@@ -85,7 +85,7 @@ export default function Sources() {
 
     const fetchNotes = async () => {
         try {
-            let params = { type__in: ['audio', 'video', 'picture', 'book', 'manuscript'] };
+            let params = { type__in: ['audio', 'video', 'photo', 'book', 'manuscript'] };
             if (filters.types.length > 0) params = {type__in: filters.types}
 
             const notesIdTab = []
@@ -106,7 +106,7 @@ export default function Sources() {
 
     const fetchTypes = async () => {
         try {
-            let params = { type__in: ['audio', 'video', 'picture', 'book', 'manuscript'] };
+            let params = { type__in: ['audio', 'video', 'photo', 'book', 'manuscript'] };
             if (filters.note) params = { ...params, stories__slug: filters.note.slug };
 
             const allTypes = await fetchFacets('document', 'type', params)
@@ -255,7 +255,7 @@ export default function Sources() {
                 <div className='lg:overflow-scroll'>
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
                         { sources.map((source, index) => {
-                            if (source.type === 'video' || source.type === 'picture' || source.type === "audio") { 
+                            if (source.type === 'video' || source.type === 'photo' || source.type === "audio") { 
                                 return (
                                     <CardImageText 
                                         myRef={sources.length === index + 1 ? lastSourceRef : null}

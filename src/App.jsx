@@ -8,6 +8,7 @@ import Credits from "./components/Credits/Credits"
 import Notice from "./components/Notice/Notice"
 import Menu from "./components/Menu/Menu"
 import Terms from "./components/Terms/Terms"
+import Contact from "./components/Contact/Contact"
 import { AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useSharedState } from './contexts/SharedStateProvider'
@@ -67,6 +68,7 @@ export default function App() {
                                         <Route path='/credits' element={ <Credits /> }/>
                                         <Route path='/about' element={ <About /> }/>
                                         <Route path='/terms' element={ <Terms /> }/>
+                                        <Route path='/contact' element={ <Contact /> }/>
                                         <Route path="*" element={ <NotFound /> }/>
                                     </Route>
                                 </Routes>

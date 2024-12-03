@@ -6,7 +6,7 @@ import Player from '../Player/Player'
 // ASSETS
 import bgBlack from '../../assets/images/common/bg-black.jpg'
 import logo from '../../assets/images/common/logo.png'
-import logoGouv from '../../assets/images/menu/logo-gouv.svg'
+import logoGouv from '../../assets/images/menu/logo-gouv.png'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
 
 // CONTEXT
@@ -116,7 +116,7 @@ export default function Menu() {
                             </div>
                             <div>
                                 <Link to='https://mcult.gouvernement.lu/fr.html' target='_blank'>
-                                    <img src={ logoGouv } alt="Logo Université" />
+                                    <img src={ logoGouv } alt="Logo Université" className="w-[40%]" />
                                 </Link>
                             </div>
                         </div>
@@ -127,7 +127,7 @@ export default function Menu() {
                             <div className='flex text-[24px]'>
                                 <MenuItem path={'/about'} title={ t('about')} className={'tiret'} handleMenuItemClick={() => setOpenMenu(false) } />
                                 <MenuItem path={'/terms'} title={ t('conditions')} className={'tiret'} handleMenuItemClick={() => setOpenMenu(false) } />
-                                <Link to={`mailto:${email}`}>Contact</Link>
+                                <MenuItem path={'/contact'} title={ t('contact')} handleMenuItemClick={() => setOpenMenu(false) } />
                             </div>
                         </div>
                     </div>

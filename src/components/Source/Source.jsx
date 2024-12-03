@@ -121,7 +121,7 @@ export default function Source({ data, handleSourcePopup }) {
                                 }
                             })}
 
-                            { ((data.type === 'image' || data.type === 'picture') && data.data?.resolutions?.preview?.url && data.attachment.split('.')[1] !== "pdf") &&                        
+                            { ((data.type === 'image' || data.type === 'photo') && data.data?.resolutions?.preview?.url && data.attachment.split('.')[1] !== "pdf") &&                        
                                 <ImageZoom image={ rootPath + data.attachment } alt={data.title}/>
                             }
 
@@ -220,9 +220,9 @@ export default function Source({ data, handleSourcePopup }) {
                             }
 
                             {/** 3D */}
-                            { data.type === '3d' &&
+                            {/* { data.type === '3d' &&
                                 <ModelViewer model="/assets/images/3D/avatar_1.glb" height={modelHeight} />  
-                            }
+                            } */}
                         </div>
                     </div>
 
@@ -250,7 +250,7 @@ export default function Source({ data, handleSourcePopup }) {
                             </>
                         }
 
-                        { (data.type === "image" || data.type === "picture") &&
+                        { (data.type === "image" || data.type === "photo") &&
                             <>
                                 <h1 className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>{ data.data.title[language] }</h1>
                                 <hr className='w-1/2'/>

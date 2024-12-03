@@ -266,30 +266,30 @@ export default function Note() {
 }
 
 
-const ContentDisplay = ({ data }) => {
-    const { language } = useLanguageContext(); // Si nécessaire
-    let parsedData
+    const ContentDisplay = ({ data }) => {
+        const { language } = useLanguageContext(); // Si nécessaire
+        let parsedData
 
-    try {
-        parsedData = JSON.parse(data)
-    } catch (error) {
-        console.error("Erreur lors du parsing des données :", error)
-        return <p>Erreur : Les données sont invalides.</p>
-    }
+        try {
+            parsedData = JSON.parse(data)
+        } catch (error) {
+            console.error("Erreur lors du parsing des données :", error)
+            return <p>Erreur : Les données sont invalides.</p>
+        }
 
-    if (!parsedData?.modules || !Array.isArray(parsedData.modules)) {
-        console.error("Modules manquants ou mal formés :", parsedData)
-        return <p>Erreur : Aucun texte à afficher.</p>
-    }
+        if (!parsedData?.modules || !Array.isArray(parsedData.modules)) {
+            console.error("Modules manquants ou mal formés :", parsedData)
+            return <p>Erreur : Aucun texte à afficher.</p>
+        }
 
-    return (
-        <div>
-            { parsedData.modules.map((module, index) => (
-                <div key={index} className={`${index !== 0 ? 'mt-[30px]' : ''}`}>{module?.text?.content[language]}</div>
-            ))}
-        </div>
-    );  
-};
+        return (
+            <div>
+                { parsedData.modules.map((module, index) => (
+                    <div key={index} className={`${index !== 0 ? 'mt-[30px]' : ''}`}>{module?.text?.content[language]}</div>
+                ))}
+            </div>
+        );  
+    };
 
 
 
