@@ -37,6 +37,7 @@ export default function Source({ data, handleSourcePopup }) {
     const [pageWidth, setPageWidth] = useState(window.innerWidth * 0.9)
     const [modelHeight, setModelHeight] = useState('500px')
     const { pathname } = useLocation()
+    const [isLoading, setIsLoading] = useState(true); 
 
 
     console.log('source popup', data)
@@ -85,6 +86,9 @@ export default function Source({ data, handleSourcePopup }) {
         <div style={{ backgroundImage: `url(${patternBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className={classNames('w-full h-full lg:relative lg:top-0 absolute', {
             "-top-[120px]": !pathname === 'spatiotemporal-map',
         })}>
+
+            {/* {isLoading && <Loader />} */}
+
             <div className={classNames('hidden lg:block absolute top-[40px] left-[40px] text-[30px] text-white z-[100]', {
                 'top-[80px]': pathname === '/spatiotemporal-map'
             })}>
@@ -106,6 +110,8 @@ export default function Source({ data, handleSourcePopup }) {
                         
                         <div className="pb-[20px] pt-[20px] 2xl:pb-[40px] 2xl:pt-[80px] relative">
                         
+
+
                             {/** IMAGE */}
                             {data.covers?.map(item => {
                                 if (item.type === 'glossary') {
@@ -115,7 +121,7 @@ export default function Source({ data, handleSourcePopup }) {
                                 }
                             })}
 
-                            { (data.type === 'image' && data.data?.resolutions?.preview?.url && data.attachment.split('.')[1] !== "pdf") &&                        
+                            { ((data.type === 'image' || data.type === 'picture') && data.data?.resolutions?.preview?.url && data.attachment.split('.')[1] !== "pdf") &&                        
                                 <ImageZoom image={ rootPath + data.attachment } alt={data.title}/>
                             }
 
@@ -209,7 +215,7 @@ export default function Source({ data, handleSourcePopup }) {
                             }
 
                             {/** BOOK */}
-                            { (data.type === 'book' || data.type === "reference") &&
+                            { (data.type === 'book' || data.type === "reference" || data.type === "manuscript") &&
                                 <img src={ imageDefault } alt="" className='w-full' />
                             }
 
@@ -234,7 +240,7 @@ export default function Source({ data, handleSourcePopup }) {
                             }    
                         })}
 
-                        { (data.type === "book" || data.type === "reference") &&
+                        { (data.type === "book" || data.type === "reference"  || data.type === "manuscript") &&
                             <>
                                 <h1 className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>{ data.data.zotero.title }</h1>
                                 <hr className='w-1/2'/>
@@ -244,7 +250,7 @@ export default function Source({ data, handleSourcePopup }) {
                             </>
                         }
 
-                        { data.type === "image" &&
+                        { (data.type === "image" || data.type === "picture") &&
                             <>
                                 <h1 className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>{ data.data.title[language] }</h1>
                                 <hr className='w-1/2'/>
@@ -381,4 +387,13 @@ const ModelViewer = ({ model, height }) => {
             <OrbitControls enablePan enableZoom enableRotate />
         </Canvas>
     )
+}
+
+
+export function Loader() {
+    return (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+        </div>
+    );
 }

@@ -51,6 +51,8 @@ export async function fetchData(endpoint, filters = {}, limit, offset = 0, facet
     }
 
     const url = `/api/${endpoint}/?${searchParams.toString()}`
+    console.log('url', url)
+
 
     try {
         const response = await fetch(url);
@@ -63,7 +65,7 @@ export async function fetchData(endpoint, filters = {}, limit, offset = 0, facet
     }
 }
 
-export async function fetchFacets(endpoint, facets, filters = {}) {
+export async function fetchFacets(endpoint, facets, filters = {}, limit = "") {
     const searchParams = new URLSearchParams()
 
     if (facets) {
@@ -74,7 +76,11 @@ export async function fetchFacets(endpoint, facets, filters = {}) {
         searchParams.append('filters', JSON.stringify(filters))
     }
 
-    const url = `/api/${endpoint}/?${searchParams.toString()}`
+    let url = `/api/${endpoint}/?${searchParams.toString()}`
+
+    if (limit) {
+        url = url + `&limit=${limit}`
+    }
 
     try {
         const response = await fetch(url)

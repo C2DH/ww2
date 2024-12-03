@@ -13,6 +13,7 @@ import axios from "axios";
 import { useLanguageContext } from "../../contexts/LanguageProvider";
 import Error from "../Error/Error";
 import { useMenuHistorianContext } from "../../contexts/MenuHistorianProvider";
+import { fetchFacets } from "../../lib/utils";
 
 export default function Glossary() {
     
@@ -29,12 +30,26 @@ export default function Glossary() {
     const [offset, setOffset] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null)
+    const contentRef = useRef(null);
 
 
-    const fetchTerms = async (offset = 0, limit = 10) => {
+    // const fetchTerms = async () => {
+    //     try {
+    //         const response = await axios.get(`api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter`)
+    //         console.log(response)
+    //         return response.data.results ? response.data.results : []
+    //     } catch (error) {
+    //         setError(error)
+    //         return []
+    //     }
+    // }
+
+
+    const fetchTerms = async () => {
         try {
-            const response = await axios.get(`api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter&limit=${ limit }&offset=${ offset }`)
-            return response.data.results
+            let params = { type: "glossary" }
+            const response = await fetchFacets('document', 'data__letter', params, 1000)
+            return response.results
         } catch (error) {
             setError(error)
             return []
@@ -44,7 +59,7 @@ export default function Glossary() {
 
     const loadMoreTerms = async () => {
         setLoading(true)
-        const newTerms = await fetchTerms(offset, 10)
+        const newTerms = await fetchTerms()
         setTerms((prevTerms) => [...prevTerms, ...newTerms])
         setLoading(false)
     };
@@ -94,6 +109,10 @@ export default function Glossary() {
         } else {
             setIsOpenMenu(false)
             setIsOpenFilters(!isOpenFilters)
+            if (contentRef.current) {
+                contentRef.current.scrollTop = 0; // Pour les conteneurs défilants
+                window.scrollTo(0, 0); // Optionnel si vous voulez aussi remettre le scroll global à 0
+            }
         }
     }
 
@@ -130,7 +149,7 @@ export default function Glossary() {
                 </div>
                 
                 {/** CONTENT */}
-                <div className="lg:overflow-scroll">
+                <div className="lg:overflow-scroll" ref={contentRef}>
                     <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
                         { filteredTerms.map((term, index) => 
                             <CardText key={term.id} ref={filteredTerms.length === index + 1 ? lastTermRef : null} title={term.data.title[language]} text={term.data.description[language]} />
@@ -175,7 +194,7 @@ export default function Glossary() {
                         "translate-y-[100%]": !isOpenFilters
                     })}>
                         <div className='flex flex-wrap justify-center gap-2'>
-                            <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} />
+                            <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => { setFilter(filter !== letter ? letter : ''); handleMenu('filter')} } />
                         </div>
                     </div>
                 }

@@ -46,30 +46,46 @@ export default function Sources() {
     const [dataPopup, setDataPopup] = useState({ open: false, data: null })
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
     const menuItems = useMenuHistorianContext()
+    const { search } = useLocation()
 
-    //const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']  
+
+
+    //https://ww2.lu/api/document/?filters={"stories__slug":"N1-PAD-C01-place-couvent-de-cinqfontaines-troisvierges-luxembourg"}
     
+    const queryParams = new URLSearchParams(search);
+    const filtersFromUrl = queryParams.get('filters') ? JSON.parse(queryParams.get('filters')) : null
+
     const fetchSources = async (offset = 0, limit = 24) => {
         try {
-            /* const response = await axios.get(`api/document/?filters=%7B%22type__in%22%3A%5B%22audio%22%2C%22video%22%2C%22picture%22%2C%22book%22%2C%22manuscript%22%5D%7D&facets=type&limit=${limit}&offset=${offset}`) */
-            let params = {type__in: ['audio', 'video', 'picture', 'book', 'manuscript']};
-            if (filters.types.length > 0) params = {type__in: filters.types}
-            if (filters.note) params = { ...params, stories__slug: filters.note.slug };
-
-            const response = await fetchData('/document', params, limit, offset, 'type')
-
-            await getNotes();
-            await getTypes();
-
-            if (response.results.length < limit) {
-                setHasMore(false);
+            if (queryParams.size > 0) {
+                let params = filtersFromUrl
+                const response = await fetchData('/document', params)
+                console.log('response',response.results)
+                // setSources(response.results)
+                await getNotes();
+                await getTypes();
+                return response.results ?? []
+            } else {
+                let params = {type__in: ['audio', 'video', 'picture', 'book', 'manuscript']};
+                if (filters.types.length > 0) params = {type__in: filters.types}
+                if (filters.note) params = { ...params, stories__slug: filters.note.slug };
+    
+                const response = await fetchData('/document', params, limit, offset, 'type')
+    
+                await getNotes();
+                await getTypes();
+    
+                if (response.results.length < limit) {
+                    setHasMore(false);
+                }
+                return response.results
             }
-            return response.results
         } catch (error) {
             setHasMore(false)
             return []
         }
     }
+
 
     const fetchNotes = async () => {
         try {
@@ -150,9 +166,10 @@ export default function Sources() {
         },[loading, hasMore]
     )
 
+
     useEffect(() => {
         loadMoreSources()
-    }, [offset])
+    }, [offset, queryParams])
 
     useEffect(() => {
         setHasMore(true);
@@ -161,15 +178,6 @@ export default function Sources() {
         loadMoreSources(true);
     }, [filters])
     
-    /* useEffect(() => {
-        if (filters.types.length > 0) {
-            const filteredSources = sources.filter(source => filters.types.includes(source.type))
-            setFilteredSources(filteredSources)
-        } else {
-            setFilteredSources(sources)
-        }
-    }, [sources, filters]) */    
-
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, [])

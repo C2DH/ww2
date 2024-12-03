@@ -142,7 +142,7 @@ export default function Note() {
                                         <div className='text-[24px] pt-[15px]'>
                                             {data.stories?.map(story => 
                                                 <Link to={`/note/${story.slug}`} key={story.id} className='block uppercase'>
-                                                    <span className='font-abril pl-[10px]'>{ story.data.title[language] }</span>
+                                                    <span className='font-abril hover:text-blue transition-all duration-500'>{ story.data.title[language].replace(/^Note \d+\s*-?\s*/, '') }</span>
                                                 </Link>
                                             )}
                                         </div>
