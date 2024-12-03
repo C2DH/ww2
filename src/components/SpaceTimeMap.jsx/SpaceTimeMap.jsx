@@ -68,8 +68,6 @@ export default function SpaceTimeMap() {
     useEffect(() => {
         const getData = async () => {
             const locations = await fetchData(`story`, {mentioned_to__slug: 'spatiotemporal-map'}, 100)
-
-            console.log(locations.results)
             if (locations.results.length > 0) {
                 locations.results.forEach(location => {
                     location.covers.forEach(item => {
@@ -235,10 +233,6 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
     const [city, setCity] = useState(null)
     const [description, setDescription] = useState(null )
     const {setIsOpenSource} = useSourceContext()
-
-    useEffect(() => {
-        console.log('selected', selectedMarker)
-    }, [selectedMarker])
 
     const handleMapScroll = () => {
         const map = reference.current.getMap()

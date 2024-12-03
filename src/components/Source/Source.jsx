@@ -19,7 +19,7 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useBounds, Bounds, useGLTF } from '@react-three/drei'
 import * as THREE from 'three';
 import { Link, useLocation } from 'react-router-dom'
-import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline'
+import { BookOpenIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, SpeakerWaveIcon } from '@heroicons/react/24/outline'
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -38,9 +38,6 @@ export default function Source({ data, handleSourcePopup }) {
     const [modelHeight, setModelHeight] = useState('500px')
     const { pathname } = useLocation()
     const [isLoading, setIsLoading] = useState(true); 
-
-
-    console.log('source popup', data)
 
     const onDocumentLoadSuccess = ({ numPages }) => {
       setNumPages(numPages);
@@ -168,7 +165,7 @@ export default function Source({ data, handleSourcePopup }) {
                                 <Player url={ data.data.videoResolutions.hsl.url } controls={true} status={'video'}/>
                             }
 
-                            { data.type === 'video' && data.attachment &&
+                            { (data.type === 'video' && data.attachment) &&
                                 <Player url={ data.attachment } controls={true} status={'video'}/>
                             }
 
@@ -196,10 +193,10 @@ export default function Source({ data, handleSourcePopup }) {
 
                             {/** AUDIO */}
                             { (data.type === 'audio' && data.attachment) &&
-                                <>
-                                    {/* <img src={imageDefault } alt={ "default image"}/> */}
+                                <div className='flex flex-col items-center justify-center'>
+                                    <SpeakerWaveIcon style={{ width: '60px', color: 'white'}} className='mb-[50px]' />
                                     <Player url={ rootPath + data.attachment } controls={true} status={'audio'} />     
-                                </>
+                                </div>
                             }
 
                             {/** GALLERY */}
@@ -213,8 +210,10 @@ export default function Source({ data, handleSourcePopup }) {
                             }
 
                             {/** BOOK */}
-                            { (data.type === 'book' || data.type === "reference" || data.type === "manuscript") &&
-                                <img src={ imageDefault } alt="" className='w-full' />
+                            { (data.type === 'book' || data.type === "manuscript") &&
+                                <div className='flex flex-col items-center justify-center'>
+                                    <BookOpenIcon style={{ width: '60px', color: 'white'}} className='mb-[50px]' />
+                                </div>
                             }
 
                             {/** 3D */}

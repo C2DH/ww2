@@ -32,11 +32,6 @@ export default function Contact() {
     }, [])
 
     useEffect(() => {
-        console.log('data', data)
-    }, [data])
-
-
-    useEffect(() => {
         setSharedState({ ...sharedState, showCurtains: false })
     }, [])
 

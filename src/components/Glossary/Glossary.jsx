@@ -68,7 +68,6 @@ export default function Glossary() {
                 notesIdTab.push(note.stories)
             })
             const data = await fetchData('story', { id__in: notesIdTab }, 100)
-            console.log('data',data)
             return data ? data.results : []
         } catch (error) {
             console.error('Erreur lors de la récupération des notes :', error)

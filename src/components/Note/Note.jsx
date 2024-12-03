@@ -55,10 +55,6 @@ export default function Note() {
     }, [])
 
 
-    useEffect(() => {
-        console.log('documents',data.documents)
-    }, [data])
-
     // NAVIGATE NOTES
     const navigateNote = (direction) => {
         if (notes.length === 0 || !data) return
@@ -111,7 +107,7 @@ export default function Note() {
                         <div className="flex lg:justify-between lg:border-b border-black pt-[10px] md:pt-[20px] 2xl:pt-[60px]">
                             <div className="hidden lg:block uppercase">
                                 {/* <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span> */}
-                                <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data?.title[language].replace(/^Note \d+\s*-?\s*/, '') }</span>
+                                <h1 className="hidden lg:inline-block text-[40px] font-abril">{ data.data?.title[language].replace(/^Note \d+\s*-?\s*/, '') }</h1>
                             </div>
                             <div className='hidden lg:flex items-center lg:items-end text-[22px] lg:text-[24px] uppercase lg:leading-[48px] cursor-pointer pl-[20px] lg:pl-0'>   
                                 <span className='pr-[10px] lg:pr-[20px]' onClick={() => navigateNote(-1)}>{ t('prev') }</span>
@@ -127,14 +123,47 @@ export default function Note() {
                         <div className="flex flex-col lg:flex-row overflow-scroll lg:min-h-[calc(100%-120px)]" id="text">
                             <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
                                 
-                                {/** CONTENT - REFERENCES */}
+                                {/** CONTENT */}
                                 {data.contents &&
                                     <div className='text-[28px]' id="content">
                                         <ContentDisplay data={data.contents} />
                                     </div>
                                 }
-            
 
+                                {/** REFERENCES */}
+                                {data.documents.some((document) => document.type === "reference") && (
+                                    <div className="ml-[20px] mt-[30px] pb-[10px]">
+                                        <span className="uppercase font-abril text-[20px] border-b border-black block pb-[10px]">
+                                            {t('references')}:
+                                        </span>
+                                        <ul className="ml-[20px] mt-[20px] list-disc">
+                                            {data.documents
+                                                .filter((document) => document.type === "reference")
+                                                .map((document) => (
+                                                    <li key={document.id} className="text-[24px] font-normal">
+                                                        {document.data.zotero.url ? (
+                                                            <Link to={document.data.zotero.url} target="_blank" className="hover:text-blue duration-750 transition-all">
+                                                                {document.data.authors.length > 0 && (
+                                                                    <span>{document.data.authors.join(', ')}</span>
+                                                                )}
+                                                                <em className="italic">{` ${document.data.zotero.title}, `}</em>
+                                                                {`${document.data.zotero.date}, p.${document.data.zotero.pages}`}
+                                                            </Link>
+                                                        ) : (
+                                                            <div>
+                                                                {document.data?.authors?.length > 0 && (
+                                                                    <span>{document.data.authors.join(', ')}</span>
+                                                                )}
+                                                                <em className="italic">{` ${document.data.zotero.title}, `}</em>
+                                                                {`${document.data.zotero.date}, p.${document.data.zotero.pages}`}
+                                                            </div>
+                                                        )}
+                                                    </li>
+                                                ))}
+                                        </ul>
+                                    </div>
+                                )}
+                                        
                                 {/** RELATED NOTES */}
                                 { data.stories.length > 0 &&
                                     <div className='ml-[20px] mt-[30px] pb-[10px]'>
@@ -153,9 +182,9 @@ export default function Note() {
                             {/** MEDIAS */}
                             <div className="lg:w-1/2 lg:ml-[50px] py-[40px] lg:overflow-y-auto flex-grow border-t lg:border-none border-black">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    { data.documents.map((document, index) => 
+                                    
+                                    { data.documents.filter((document) => document.type !== "reference").map(document =>
                                         <div key={document.id}>
-                                        <h1>{document.id}</h1>
 
                                             { ((document.type === 'image' || document.type === 'photo') && document.attachment.split('.')[1] !== 'pdf') &&
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
@@ -165,15 +194,6 @@ export default function Note() {
                                                     </div>
                                                 </div>  
                                             }
-
-                                            {/* { ((document.type === 'image' || document.type === 'photo') && document.attachment.split('.')[1] === 'pdf') &&
-                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
-                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
-                                                        <PhotoIcon style={{ width: '40px', color: 'white'}} />
-                                                    </div>
-                                                </div>  
-                                            } */}
 
                                             { ((document.type === 'image' || document.type === 'photo' ) && document.attachment.split('.')[1] === 'pdf') && 
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
@@ -193,10 +213,11 @@ export default function Note() {
                                                 </div>
                                             }
 
-                                            { (document.type === 'book' || document.type === 'reference') &&
+                                            { (document.type === 'book') &&
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={document.data} />
-                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                    {/* <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={document.data} /> */}
+                                                    <div className='max-w-full cursor-pointer h-[250px] object-cover w-full bg-gray-200'></div>
+                                                    <div className='absolute inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <BookOpenIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
