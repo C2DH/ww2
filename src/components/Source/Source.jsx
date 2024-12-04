@@ -148,9 +148,6 @@ export default function Source({ data, handleSourcePopup }) {
                                 <Player url={ data.data.videoResolutions.hsl.url } controls={true} status={'video'}/>
                             }
 
-                            { (data.type === 'video' && data.attachment) &&
-                                <Player url={ data.attachment } controls={true} status={'video'}/>
-                            }
 
                             {/** PDF */}
                             { isPDF &&

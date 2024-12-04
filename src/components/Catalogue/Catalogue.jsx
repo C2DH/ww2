@@ -64,7 +64,7 @@ export default function Catalogue() {
                      {/** Headers */}
                     <div className='grid grid-cols-12 pt-[20px] 2xl:pt-[35px]'>
                         <div className="col-span-12 lg:col-span-8">
-                            <h1 className='font-abril text-[40px] sm:text-[50px] 2xl:text-[70px]'>Catalogue</h1>
+                            <h1 className='font-abril text-[40px] sm:text-[50px] 2xl:text-[70px]'>{ t('catalogue')}</h1>
                             <p className='pt-[15px] pr-[15px] text-[20px] md:text-[24px] 2xl:text-[28px] mb-[20px]'>{textCatalogue[language]}</p>                    
                         </div>
     

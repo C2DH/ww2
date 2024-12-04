@@ -409,10 +409,13 @@ const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
         return acc.concat(markers);
     }, []), ({ coordinates }) => coordinates));
 
+    console.log(allMarkers);
+
     const clusters = allMarkers.filter(item => item.length > 1);
     const markers = allMarkers.filter(item => item.length === 1).flat();
 
-    console.log(clusters);
+    console.log(allMarkers.filter(item => item.length === 1));
+    console.log(allMarkers.filter(item => item.length === 1).flat());
 
     return (
         <>

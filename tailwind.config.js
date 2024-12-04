@@ -49,12 +49,12 @@ export default {
       // => @media (min-width: 1280px) { ... }
       "2xl": "1536px",
       // => @media (min-width: 1536px) { ... }
-      "3xl": "2000px",
+      "3xl": "1580px",
       // => @media (min-width: 2000px) { ... }
 
-      ipad: { raw: "(min-height: 768px),(min-width: 1024px)" },
+      ipad: { raw: "(min-height: 768px) and (min-width: 1024px)" },
+      ipadBig: { raw: "(min-height: 1366px) and (min-width: 1024px)" },
 
-      ipadBig: { raw: "(min-height: 1366px),(min-width: 1024px)" },
     },
   },
   plugins: [("flowbite/plugin")],
