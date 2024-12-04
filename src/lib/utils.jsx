@@ -32,7 +32,7 @@ export function cleanText(text) {
         .replace('?', ' ')
 }
 
-export async function fetchData(endpoint, filters = {}, limit, offset = 0) {
+export async function fetchData(endpoint, filters = {}, limit, offset = 0, facets = false) {
 
     const searchParams = new URLSearchParams()
 
@@ -46,8 +46,13 @@ export async function fetchData(endpoint, filters = {}, limit, offset = 0) {
     if (offset) {
         searchParams.append("offset", offset)
     }
+    if (facets) {
+        searchParams.append("facets", facets);
+    }
 
     const url = `/api/${endpoint}/?${searchParams.toString()}`
+    console.log('url', url)
+
 
     try {
         const response = await fetch(url);
@@ -60,7 +65,7 @@ export async function fetchData(endpoint, filters = {}, limit, offset = 0) {
     }
 }
 
-export async function fetchFacets(endpoint, facets, filters = {}) {
+export async function fetchFacets(endpoint, facets, filters = {}, limit = "") {
     const searchParams = new URLSearchParams()
 
     if (facets) {
@@ -71,8 +76,11 @@ export async function fetchFacets(endpoint, facets, filters = {}) {
         searchParams.append('filters', JSON.stringify(filters))
     }
 
-    const url = `/api/${endpoint}/?${searchParams.toString()}`
-    console.log('url', url)
+    let url = `/api/${endpoint}/?${searchParams.toString()}`
+
+    if (limit) {
+        url = url + `&limit=${limit}`
+    }
 
     try {
         const response = await fetch(url)
@@ -113,12 +121,31 @@ export async function getAllNotes() {
 
 
 
+// export function formatDate(input, lang) {
+//     const date = new Date(input)
+//     return date.toLocaleDateString(lang.replace('_', '-'), {
+//         month: 'long',
+//         year: 'numeric'
+//     })
+// }
+
+
 export function formatDate(input, lang) {
     const date = new Date(input)
-    return date.toLocaleDateString(lang.replace('_', '-'), {
-        month: 'long',
-        year: 'numeric'
-    })
+    console.log(lang)
+    if (lang === 'fr_FR' || lang === 'de_DE') {
+        return date.toLocaleDateString(lang.replace('_', '-'), {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        })
+    } else if (lang === 'en_GB') {
+        return date.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        })
+    }
 }
 
 

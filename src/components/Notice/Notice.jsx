@@ -22,6 +22,7 @@ import defaultImage from '../../assets/images/common/default.png'
 const rootPath = import.meta.env.VITE_ROOT
 
 
+
 export default function Notice() {
     
     const { t } = useTranslation()
@@ -33,24 +34,24 @@ export default function Notice() {
     const [sharedState, setSharedState] = useSharedState()
     const [imgBg, setImgBg] = useState()
     const navigate = useNavigate()
+    const [pdf, setPdf] = useState()
 
 
     // DETAILS CAPSULE
     useEffect(() => {
         const getData = async () => {
             const data = await fetchData(`story/${slug}`)
+
+            console.log('data', data)
             
             if (data) {
                 setResults(data)
-                const photoItem = data.covers.find(item => item.type === 'photo');
-            
+                const photoItem = data.covers.find(item => item.type === 'photo')            
                 if (photoItem) {
-                    console.log('la');
                     setImgBg(rootPath + photoItem.attachment)
                 } else {
                     setImgBg(defaultImage)
                 }
-
                 setIsLoaded(true)
             }
         }
@@ -129,7 +130,7 @@ export default function Notice() {
 
                                     {results.stories.map((note, index) => (
                                         <Link key={ index } to={ `/note/${note.slug}` } className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2]'>
-                                            <h3 className='font-abril text-[22px] text-white uppercase'>{ note.title }</h3>
+                                            <h3 className='font-abril text-[22px] text-white uppercase'>{ note.data.title[language].replace(/^Note \d+\s*-?\s*/, '') }</h3>
                                         </Link>
                                     ))}
                                 </>
@@ -153,10 +154,16 @@ export default function Notice() {
                         <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3">
 
                             {/* TODO: Ajouter le tag ppur filtrer sur la page sources */}
-                            <Link to={'/historical-index'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('about') }</Link>
+                            <Link
+  to={`/sources?filters=${encodeURIComponent(JSON.stringify({ stories__slug: slug }))}`}
+  className="block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white"
+>
+  {t('about')}
+</Link>
+                            {/* <Link to={`/sources?filters=${encodeURIComponent(JSON.stringify({ stories__slug: "N1-PAD-C01-place-couvent-de-cinqfontaines-troisvierges-luxembourg" }))}`}  className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('about') }</Link> */}
 
                             {/* TODO: Ajouter le tag ppur filtrer sur la page index historique */}
-                            <Link to={'/historical-index'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('menuItems.glossary')}</Link>
+                            <Link to={'/glossary'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('menuItems.glossary')}</Link>
                         </div>
                     </div>
                 </div>

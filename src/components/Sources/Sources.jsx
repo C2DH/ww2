@@ -6,7 +6,7 @@ import ButtonFilter from '../ButtonFilter/ButtonFilter'
 import LayoutHistorianWorkshop from '../LayoutHistorianWorkshop/LayoutHistorianWorkshop'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import axios from 'axios'
@@ -15,7 +15,17 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Source from '../Source/Source'
 import { useMediaQuery } from 'react-responsive'
 import { useMenuHistorianContext } from '../../contexts/MenuHistorianProvider'
+import { fetchData, fetchFacets } from '../../lib/utils'
 
+
+const computeTags = (response) => {
+    return [...(new Set(response.reduce((carry, item) => {
+        if (item.data__zotero__tags?.length > 0) {
+            return [...carry, ...(item.data__zotero__tags.map(tag => tag.tag))]
+        }
+        return carry;
+    }, [])))];
+}
 
 
 export default function Sources() {
@@ -26,28 +36,46 @@ export default function Sources() {
     const [loading, setLoading] = useState(false)
     const [sources, setSources] = useState([])
     const [types, setTypes] = useState([])
+    const [tags, setTags] = useState([])
+    const [notes, setNotes] = useState([])
+    const [typesBase, setTypesBase] = useState([])
     const { pathname } = useLocation()
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenFilters, setIsOpenFilters] = useState(false)
-    const [filters, setFilters] = useState({types: [], tags: []})
-    const [filteredSources, setFilteredSources] = useState([])
+    const [filters, setFilters] = useState({types: [], note: false})
     const [hasMore, setHasMore] = useState(true)
     const [dataPopup, setDataPopup] = useState({ open: false, data: null })
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
     const menuItems = useMenuHistorianContext()
 
 
-    const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']  
+    //https://ww2.lu/api/document/?filters={"stories__slug":"N1-PAD-C01-place-couvent-de-cinqfontaines-troisvierges-luxembourg"}
     
-    const fetchSources = async (offset = 0, limit = 20) => {
-        try {
-            const response = await axios.get(`api/document/?filters=%7B%22type__in%22%3A%5B%22audio%22%2C%22video%22%2C%22picture%22%2C%22book%22%2C%22manuscript%22%5D%7D&facets=type&limit=${ limit }&offset=${ offset }`)
-            setTypes(response.data.facets.type)
 
-            if (response.data.results.length < limit) {
-                setHasMore(false);
+    const [searchParams] = useSearchParams();
+    const filtersParams = JSON.parse(decodeURIComponent(searchParams.get('filters') || '{}'))
+
+    const fetchSources = async (offset = 0, limit = 24) => {
+        try {
+            if (filtersParams.stories__slug) {
+                const filteredSources = await fetchData('document', filtersParams, limit, offset)
+                console.log('test', filteredSources)
+                return filteredSources.results ?? []
+            } else {
+                let params = {type__in: ['audio', 'video', 'picture', 'book', 'manuscript']};
+                if (filters.types.length > 0) params = {type__in: filters.types}
+                if (filters.note) params = { ...params, stories__slug: filters.note.slug };
+    
+                const response = await fetchData('/document', params, limit, offset, 'type')
+    
+                await getNotes();
+                await getTypes();
+    
+                if (response.results.length < limit) {
+                    setHasMore(false);
+                }
+                return response.results
             }
-            return response.data
         } catch (error) {
             setHasMore(false)
             return []
@@ -55,11 +83,60 @@ export default function Sources() {
     }
 
 
-    const loadMoreSources = async () => {
-        if (!hasMore) return
+    const fetchNotes = async () => {
+        try {
+            let params = { type__in: ['audio', 'video', 'photo', 'book', 'manuscript'] };
+            if (filters.types.length > 0) params = {type__in: filters.types}
+
+            const notesIdTab = []
+            const allNotes = await fetchFacets('document', 'stories', params)
+
+            allNotes.facets.stories.map(note => {
+                notesIdTab.push(note.stories)
+            })
+
+            const data = await fetchData('story', { id__in: notesIdTab })
+            return data ? data.results : []
+
+        } catch (error) {
+            console.error('Erreur lors de la récupération des notes :', error)
+            return []
+        }
+    }
+
+    const fetchTypes = async () => {
+        try {
+            let params = { type__in: ['audio', 'video', 'photo', 'book', 'manuscript'] };
+            if (filters.note) params = { ...params, stories__slug: filters.note.slug };
+
+            const allTypes = await fetchFacets('document', 'type', params)
+            return allTypes ? allTypes.facets.type : []
+
+        } catch (error) {
+            console.error('Erreur lors de la récupération des notes :', error)
+            return []
+        }
+    }
+
+    const getNotes = async () => {
+        const notes = await fetchNotes()
+        setNotes(notes)
+    }
+
+    const getTypes = async () => {
+        const types = await fetchTypes()
+        if(typesBase.length === 0) {
+            setTypesBase(types)
+        }
+        setTypes(types)
+    }
+
+    const loadMoreSources = async (force = false) => {
+        if (!hasMore && !force) return
         setLoading(true)
         const newSources = await fetchSources(offset)
-        setSources((prevSources) => [...prevSources, ...newSources.results])
+        console.log('newsouyrces', newSources)
+        setSources((prevSources) => [...prevSources, ...newSources])
         setLoading(false)
     };
 
@@ -76,7 +153,7 @@ export default function Sources() {
     
             observer.current = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting) {
-                    setOffset((prevOffset) => prevOffset + 20)
+                    setOffset((prevOffset) => prevOffset + 24)
                 }
             })
     
@@ -89,19 +166,14 @@ export default function Sources() {
     useEffect(() => {
         loadMoreSources()
     }, [offset])
-    
-    
 
     useEffect(() => {
-        if (filters.types.length > 0) {
-            const filteredSources = sources.filter(source => filters.types.includes(source.type))
-            setFilteredSources(filteredSources)
-        } else {
-            setFilteredSources(sources)
-        }
-    },[sources, filters])
+        setHasMore(true);
+        setSources([]);
+        setOffset(0);
+        loadMoreSources(true);
+    }, [filters])
     
-
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, [])
@@ -118,9 +190,6 @@ export default function Sources() {
     }
 
     const handleSourcePopup = (source) => {
-
-        console.log('dataPopup',dataPopup)
-
         if (!dataPopup.open) {
             setDataPopup(prevSource => ({
                 ...prevSource, 
@@ -138,6 +207,7 @@ export default function Sources() {
 
 
     const clickButton = (type) => {
+
         if (!filters.types.includes(type)) {
             setFilters(prevFilters => ({
                 ...prevFilters,
@@ -151,6 +221,13 @@ export default function Sources() {
         }
     }
 
+    const handleChangeNote = (note) => {
+        if (note) {
+            setFilters(prevFilters => ({ ...prevFilters, note: note }))
+        } else {
+            setFilters(prevFilters => ({ ...prevFilters, note: false }))
+        }
+    }
 
     return (
 
@@ -162,12 +239,12 @@ export default function Sources() {
                 <div className="hidden lg:block mt-[30px] 2xl:mt-[40px]">
                     <div className="grid grid-cols-12 gap-5 border-b border-black pb-[30px] 2xl:pb-[40px]">
                         <div className="col-span-5 relative">
-                            <Dropdown items={tags} text={'Recherche par #tag'}/>
+                            <Dropdown items={notes} theme={'notes'} text={'Recherche par #tag'} onChange={handleChangeNote} />
                         </div>
 
                         <div className="col-span-7">
-                            {types?.map((type, index) => 
-                                <ButtonFilter key={index} title={type.type} number={type.count} types={filters.types} handleClick={() => clickButton(type.type)} /> 
+                            {typesBase?.map((type, index) => 
+                                <ButtonFilter key={index} title={type.type} number={types.find(item => item.type == type.type)?.count ?? 0} types={filters.types} handleClick={() => clickButton(type.type)} /> 
                             )}
                         </div>
                     </div>
@@ -177,11 +254,11 @@ export default function Sources() {
                 {/* TODO: Manque les photos, modèles 3D et audio */}
                 <div className='lg:overflow-scroll'>
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                        { filteredSources.map((source, index) => {
-                            if (source.type === 'video' || source.type === 'picture') { 
+                        { sources.map((source, index) => {
+                            if (source.type === 'video' || source.type === 'photo' || source.type === "audio") { 
                                 return (
                                     <CardImageText 
-                                        myRef={filteredSources.length === index + 1 ? lastSourceRef : null}
+                                        myRef={sources.length === index + 1 ? lastSourceRef : null}
                                         key={index}
                                         title={source.data.title[language]}
                                         data={source}
@@ -193,7 +270,7 @@ export default function Sources() {
                             } else if (source.type === "book" || source.type === "manuscript") {
                                 return (
                                     <CardImageText 
-                                        myRef={filteredSources.length === index + 1 ? lastSourceRef : null}
+                                        myRef={sources.length === index + 1  ? lastSourceRef : null}
                                         key={index}
                                         title={source.data.zotero.title}
                                         data={source}
@@ -245,7 +322,7 @@ export default function Sources() {
                     })}>
                         <div className='flex flex-col shrink-0'>
                             {types?.map((type, index) => 
-                                <ButtonFilter key={index} title={type.type} number={type.count} types={filters.types} handleClick={() => clickButton(type.category)} /> 
+                                <ButtonFilter key={index} title={type.type} number={types.find(item => item.type == type.type)?.count ?? 0} types={filters.types} handleClick={() => {clickButton(type.type); handleMenu("filter")}} /> 
                             )}
                         </div>
                     </div>

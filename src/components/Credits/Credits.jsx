@@ -7,7 +7,7 @@ import bgBlack from '../../assets/images/common/bg-black.jpg'
 import { convertToHtml, fetchData } from '../../lib/utils'
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import { Link, useNavigate } from 'react-router-dom'
-import logoGouv from '../../assets/images/menu/logo-gouv.svg'
+import logoGouv from '../../assets/images/menu/logo-gouv.png'
 import logoUni from '../../assets/images/menu/logo-uni.svg'
 import Player from '../Player/Player'
 import { ForwardIcon } from "@heroicons/react/24/outline";
@@ -32,9 +32,6 @@ export default function Credits() {
     const navigate = useNavigate()
     const [animationDuration, setAnimationDuration] = useState(20)
     const { width } = useWindowSize()
-
-    console.log(language)
-
 
     useEffect(() => {
         if (width <= 768) {

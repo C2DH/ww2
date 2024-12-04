@@ -29,7 +29,7 @@ import { MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import SourceComponent from '../Source/Source'
 import { useSourceContext } from '../../contexts/SourceProvider'
 
-
+const rootPath = import.meta.env.VITE_ROOT
 const tokenMapbox = import.meta.env.VITE_API_KEY_MAPBOX
 const styleBlueprint = import.meta.env.VITE_API_STYLE_MAPBOX_BLUEPRINT
 const styleMSF = import.meta.env.VITE_API_STYLE_MAPBOX_MSF
@@ -60,33 +60,26 @@ export default function SpaceTimeMap() {
         setViewState((prevState) => ({
             ...prevState,
             zoom: newZoom,
-        }));
-    };
+        }))
+    }
+
 
     // ALL LOCATIONS WITH DATE
     useEffect(() => {
         const getData = async () => {
-            const locations = await fetchData(`story`, {
-                mentioned_to__slug: 'spatiotemporal-map'
-            })
+            const locations = await fetchData(`story`, {mentioned_to__slug: 'spatiotemporal-map'}, 100)
 
+            console.log(locations.results)
             if (locations.results.length > 0) {
-                locations.results.map(location =>
-                    location.covers.map(item => {
-                        if (item.data && item.data.type == "event") {
-
-                            // POUR TESTER
-                            if (item.id === 1425) {
-                                item.data.start_date = '1940-01-01'
-                                console.log(item.data.start_date )
-                            }
-
+                locations.results.forEach(location => {
+                    location.covers.forEach(item => {
+                        if (item.data && item.type == "glossary") {
                             if (new Date(item.data.start_date) >= filters.min && new Date(item.data.end_date) <= filters.max ) {
                                 dataFiltered.push(location)
                             }
                         }
                     })
-                )
+                })
                 setData(dataFiltered)
                 setIsLoaded(true)
             }
@@ -101,7 +94,6 @@ export default function SpaceTimeMap() {
 
 
     const handleMap = (element) => {
-        console.log('element',element)
         if (element.style) {
             setViewState((prevState) => ({ ...prevState, style: element.style }));
         }
@@ -143,7 +135,7 @@ export default function SpaceTimeMap() {
         return (
 
             <motion.div className='h-full w-full' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                <MapBox items={data} state={viewState} reference={mapRef} onZoomChange={handleZoomState}/>
+                <MapBox items={data} state={viewState} reference={mapRef} onZoomChange={handleZoomState} />
 
                 {/** Map style and zoom */}
                 <div className='absolute top-[40px] right-[20px]'>
@@ -238,24 +230,24 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
     const [openLocation, setOpenLocation] = useState(false)
     const [openSource, setOpenSource] = useState(false)
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
-    const [date, setDate] = useState(null)
+    const [dateStart, setDateStart] = useState(null)
+    const [dateEnd, setDateEnd] = useState(null)
     const [city, setCity] = useState(null)
+    const [description, setDescription] = useState(null )
     const {setIsOpenSource} = useSourceContext()
 
     useEffect(() => {
-        console.log('state', state)
-    }, [state])
-
+        console.log('selected', selectedMarker)
+    }, [selectedMarker])
 
     const handleMapScroll = () => {
-        const map = reference.current.getMap(); // Accéder à l'instance Mapbox
-        const newZoom = map.getZoom(); // Obtenir le niveau de zoom actuel
+        const map = reference.current.getMap()
+        const newZoom = map.getZoom()
 
-        // Mettre à jour le zoom dans le parent
         if (onZoomChange) {
             onZoomChange(newZoom);
         }
-    };
+    }
    
 
     const sourceStyle = {
@@ -292,16 +284,17 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
     useEffect(() => {
         if (selectedMarker.data && selectedMarker.id) {
             selectedMarker.data.covers.map(cover => {
-                if (cover.data.type === "event") {
-                    setDate(formatDate(cover.data.start_date, language));
+                if (cover.type === "glossary") {
+                    setDateStart(formatDate(cover.data.start_date, language))
+                    setDateEnd(formatDate(cover.data.end_date, language))
+                    setDescription(cover.data.description[language])
                 }
                 if (cover.data.type === "place") {
-                    setCity(cover.data.geojson.properties.city[language]);
+                    setCity(cover.data.geojson.properties.city[language])
                 }
             })
         }
-    }, [selectedMarker])
-
+    }, [selectedMarker, language])
 
     return (
         <>
@@ -391,24 +384,45 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                                 <div className='px-[20px] md:px-0'>
 
                                     {/* Location */}
-                                    <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.data.title[language]}</h2>
+                                    {selectedMarker.data.covers.map(cover => {
+                                        if (cover.type === "glossary") {
+                                            return (
+                                                <h2 key={cover.id} className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{cover.data.title[language]}</h2>
+                                            )
+                                        }
 
-                                    {city &&
-                                        <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ city }, </span>
+                                    })}
+
+                                    {description &&
+                                        <p className='text-[28px] pb-[40px] md:pb-[10px] font-light'>{ description }</p>
                                     }
-                                    {date &&
-                                        <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ date }</span>
+
+                                    {/* {city &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ city }, </span>
                                     }
 
-                                    <img src={selectedMarker.data.data.type === "event" && selectedMarker.data.data.resolutions.medium.url ? selectedMarker.data.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                    {dateStart &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateStart } - </span>
+                                    }
 
-                                    <Link
-                                        className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
-                                        onClick={() => setOpenSource(true)}
-                                    >
-                                        <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
-                                        <span className='block icon-arrow'></span>
-                                    </Link>
+                                    {dateEnd &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateEnd }</span>
+                                    } */}
+
+                                    {selectedMarker.data.covers.map(cover => {
+                                        if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
+                                            return (
+                                                <div key={cover.id} className='mt-[30px]'>
+                                                    <img key={cover.id} src={cover.data.resolutions.medium.url ? rootPath + cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                                    <Link  className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer" onClick={() => setOpenSource(true)}>
+                                                        <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
+                                                        <span className='block icon-arrow'></span>
+                                                    </Link>
+                                                </div>
+                                            )
+                                        }
+
+                                    })}
                                 </div>
                             </motion.div>
                         }
@@ -440,24 +454,45 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                             <div className='px-[20px] md:px-0'>
 
                                 {/* Location */}
-                                <h2 className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{selectedMarker.data.data.title[language]}</h2>
+                                {selectedMarker.data.covers.map(cover => {
+                                        if (cover.type === "glossary") {
+                                            return (
+                                                <h2 key={cover.id} className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{cover.data.title[language]}</h2>
+                                            )
+                                        }
 
-                                {city &&
-                                    <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ city }, </span>
-                                }
-                                {date &&
-                                    <span className='text-[28px] pb-[40px] md:pb-[10px]'>{ date }</span>
-                                }
+                                    })}
 
-                                <img src={selectedMarker.data.data.type === "event" && selectedMarker.data.data.resolutions.medium.url ? selectedMarker.data.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                    {description &&
+                                        <p className='text-[28px] pb-[40px] md:pb-[10px] font-light'>{ description }</p>
+                                    }
+{/* 
+                                    {city &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ city }, </span>
+                                    }
 
-                                <Link
-                                    className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer"
-                                    onClick={() => setOpenSource(true)}
-                                >
-                                    <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
-                                    <span className='block icon-arrow'></span>
-                                </Link>
+                                    {dateStart &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateStart } - </span>
+                                    }
+
+                                    {dateEnd &&
+                                        <span className='text-[28px] pb-[40px] md:pb-[10px] italic'>{ dateEnd }</span>
+                                    } */}
+
+                                    {selectedMarker.data.covers.map(cover => {
+                                        if (cover.type === "glossary" && cover.data.resolutions?.medium.url) {
+                                            return (
+                                                <div key={cover.id} className='mt-[30px]'>
+                                                    <img key={cover.id} src={cover.data.resolutions.medium.url ? rootPath + cover.data.resolutions.medium.url : defaultImage } alt="" className='rounded-[5px]' />
+                                                    <Link  className="button-arrow border border-black px-[12px] py-[8px] w-fit mt-[40px] md:mt-[30px] flex items-center rounded-[4px] cursor-pointer" onClick={() => setOpenSource(true)}>
+                                                        <span className='uppercase text-[24px] font-medium pr-[12px]'>{ t('learn_more') }</span>
+                                                        <span className='block icon-arrow'></span>
+                                                    </Link>
+                                                </div>
+                                            )
+                                        }
+
+                                    })}
                             </div>
                         </motion.div>
                     }

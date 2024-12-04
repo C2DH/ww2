@@ -8,6 +8,10 @@ export default defineConfig({
         target: "https://ww2.lu",
         changeOrigin: true,
       },
+      "/media": {
+        target: "https://ww2.lu",
+        changeOrigin: true,
+      }
     },
   },
 

@@ -4,9 +4,9 @@ import { useLanguageContext } from "../../contexts/LanguageProvider";
 
 export default function CardLink({ data }) {
 
-    console.log(data)
-
     const { language } = useLanguageContext()
+
+    console.log('data',data)
 
     return (
         <Link target="_blank" to={ data.url } className="block col-span-12 md:col-span-6 border border-black rounded-[5px] p-[10px] h-[240px] lg:h-[140px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow cursor-pointer">

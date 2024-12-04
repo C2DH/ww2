@@ -41,15 +41,6 @@ export default function Player({ url, className, controls, status, onEnded, loop
         }
     }
 
-    useEffect(() => {
-
-        if(playerTrailerRef.current) {
-            console.log(playerTrailerRef)
-
-        }
-
-    }, [])
-
     const handleMediaPlay = () => {
         setIsPlaying(true);
         setIsMenuSoundPlay(false) // Stopper la musique de fond

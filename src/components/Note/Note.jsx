@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import Source from '../Source/Source'
 import bgPaper from '../../assets/images/common/bg-paper.png'
@@ -18,38 +18,23 @@ export default function Note() {
     const { slug } = useParams()
     const { language } = useLanguageContext()
     const [dataPopup, setDataPopup] = useState({ open: false, data: null })
-    const [data, setData] = useState(null)
+    const [data, setData] = useState({})
     const [isLoaded, setIsLoaded] = useState(false)
     const [notes, setNotes ] = useState([])
     const navigate = useNavigate()
     const rootPath = import.meta.env.VITE_ROOT
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
 
-
-    const [jsonFile, setJsonFile] = useState([])
-
     // DETAILS NOTE
     useEffect(() => {
         const getData = async () => {
             const data = await fetchData(`story/${slug}`)
-           
+        
             if (data) {
                 setData(data)
                 setIsLoaded(true)
             }
-
-        {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
-            // const response = await fetch('/data.json')
-            // const jsonData = await response.json()
-            // setJsonFile(jsonData)            
-            // if (data) {
-            //     const updatedDocuments = Array.isArray(data.documents) ? [...data.documents, ...jsonData] : [...jsonData]
-            //     setData({ ...data, documents: updatedDocuments })
-            //     setIsLoaded(true);
-            // }
-        {/* TODO: ENLEVER EN PROD ET SUPPRIMER FICHIER JSON */}
-        
-    }
+        }
         getData();
     }, [isLoaded])
 
@@ -71,7 +56,7 @@ export default function Note() {
 
 
     useEffect(() => {
-        console.log(data)
+        console.log('documents',data.documents)
     }, [data])
 
     // NAVIGATE NOTES
@@ -125,8 +110,8 @@ export default function Note() {
     
                         <div className="flex lg:justify-between lg:border-b border-black pt-[10px] md:pt-[20px] 2xl:pt-[60px]">
                             <div className="hidden lg:block uppercase">
-                                <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span>
-                                <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data.title[language] }</span>
+                                {/* <span className="text-[30px] lg:text-[38px] lg:pb-[5px] relative after:content-[''] after:absolute after:left-[45px] lg:after:left-[50px] after:bottom-[50%] lg:after:bottom-[5px] after:translate-y-[50%] lg:after:translate-y-0 after:h-[30px] lg:after:h-[60px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span> */}
+                                <span className="hidden lg:inline-block text-[40px] font-abril pl-[10px]">{ data.data?.title[language].replace(/^Note \d+\s*-?\s*/, '') }</span>
                             </div>
                             <div className='hidden lg:flex items-center lg:items-end text-[22px] lg:text-[24px] uppercase lg:leading-[48px] cursor-pointer pl-[20px] lg:pl-0'>   
                                 <span className='pr-[10px] lg:pr-[20px]' onClick={() => navigateNote(-1)}>{ t('prev') }</span>
@@ -135,65 +120,82 @@ export default function Note() {
                         </div>
 
                         <div className='lg:hidden border-b border-black pb-[20px] pt-[10px] text-[24px] md:text-[38px] uppercase'>
-                            <span className="relative after:content-[''] after:absolute after:left-[35px] md:after:left-[50px] after:bottom-[50%] after:translate-y-[50%] after:h-[30px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span>
-                            <span className="leading-none font-abril pl-[10px] md:pl-[15px]">{ data.data.title[language] }</span>
+                            {/* <span className="relative after:content-[''] after:absolute after:left-[35px] md:after:left-[50px] after:bottom-[50%] after:translate-y-[50%] after:h-[30px] after:w-[1px] after:bg-black pr-[10px] font-thin">N01</span> */}
+                            <span className="leading-none font-abril pl-[10px] md:pl-[15px]">{ data.data?.title[language].replace(/^Note \d+\s*-?\s*/, '') }</span>
                         </div>
     
                         <div className="flex flex-col lg:flex-row overflow-scroll lg:min-h-[calc(100%-120px)]" id="text">
                             <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
                                 
                                 {/** CONTENT - REFERENCES */}
-                                <div className='text-[28px]' id="content">
-                                    {/* {JSON.parse(data.data.abstract[language]).modules.map((text, index) => (
-                                        <ContentDisplay
-                                            key={index}
-                                            text={text}
-                                            index={index}
-                                        />
-                                    ))} */}
-
-                                    <ContentDisplay text={data.data.abstract[language]} />
-                                </div>
+                                {data.contents &&
+                                    <div className='text-[28px]' id="content">
+                                        <ContentDisplay data={data.contents} />
+                                    </div>
+                                }
             
 
                                 {/** RELATED NOTES */}
-                                <div className='ml-[20px] mt-[30px] pb-[10px]'>
-                                    <span className='uppercase font-abril text-[20px] border-b border-black block pb-[10px]'>{ t('links')} :</span>
-                                    <div className='text-[24px] pt-[15px]'>
-                                        <Link className=' uppercase'>
-                                            <span className='font-normal'>{ data.data.title[language]?.split('(')[1]?.replace(')',"") }</span> 
-                                            <span className='font-abril pl-[10px]'>{ data.data.title[language]?.split('(')[0] }</span>
-                                        </Link>
+                                { data.stories.length > 0 &&
+                                    <div className='ml-[20px] mt-[30px] pb-[10px]'>
+                                        <span className='uppercase font-abril text-[20px] border-b border-black block pb-[10px]'>{ t('links')} :</span>
+                                        <div className='text-[24px] pt-[15px]'>
+                                            {data.stories?.map(story => 
+                                                <Link to={`/note/${story.slug}`} key={story.id} className='block uppercase'>
+                                                    <span className='font-abril hover:text-blue transition-all duration-500'>{ story.data.title[language].replace(/^Note \d+\s*-?\s*/, '') }</span>
+                                                </Link>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             </div>
                             
                             {/** MEDIAS */}
                             <div className="lg:w-1/2 lg:ml-[50px] py-[40px] lg:overflow-y-auto flex-grow border-t lg:border-none border-black">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    { data.documents.map(document => 
-                                        <>
-                                            { document.type === 'picture' && document.data.resolutions.medium.url &&
-                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url !== "" ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
+                                    { data.documents.map((document, index) => 
+                                        <div key={document.id}>
+                                        <h1>{document.id}</h1>
+
+                                            { ((document.type === 'image' || document.type === 'photo') && document.attachment.split('.')[1] !== 'pdf') &&
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <PhotoIcon style={{ width: '40px', color: 'white'}} />
+                                                    </div>
+                                                </div>  
+                                            }
+
+                                            {/* { ((document.type === 'image' || document.type === 'photo') && document.attachment.split('.')[1] === 'pdf') &&
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <PhotoIcon style={{ width: '40px', color: 'white'}} />
+                                                    </div>
+                                                </div>  
+                                            } */}
+
+                                            { ((document.type === 'image' || document.type === 'photo' ) && document.attachment.split('.')[1] === 'pdf') && 
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={  document.data.resolutions?.preview?.url ? rootPath + document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
+                                                    <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
+                                                        <DocumentIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
 
-                                            { document.type === 'video' && document.data.videoResolutions.sd360p.url &&
-                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }> 
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions.medium.url !== "" ? document.data.resolutions.preview.url : defaultImage } alt={document.data.title[language]} />
+                                            { document.type === 'video' &&
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }> 
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data?.resolutions?.medium?.url ? document.data?.resolutions?.preview?.url : defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <VideoCameraIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
 
-                                            { document.type === 'book' &&
-                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                            { (document.type === 'book' || document.type === 'reference') &&
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={document.data} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <BookOpenIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
@@ -201,8 +203,8 @@ export default function Note() {
                                             }
 
                                             { document.type === 'pdf' &&
-                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ rootPath + document.data.resolutions.preview.url } alt={""} />
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ document.data.resolutions?.preview?.url ? rootPath + document.data?.resolutions?.preview?.url : defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <DocumentIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
@@ -210,8 +212,8 @@ export default function Note() {
                                             }
 
                                             { document.type === 'audio' &&
-                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <SpeakerWaveIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
@@ -219,8 +221,8 @@ export default function Note() {
                                             }
 
                                             { document.type === "gallery" &&
-                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <PhotoIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
@@ -229,14 +231,14 @@ export default function Note() {
 
 
                                             { document.type === "3d" &&
-                                                <div className="gap-6 relative cursor-pointer" key={ document.id } onClick={() => handleSourcePopup(document) }>
-                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={""} />
+                                                <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
+                                                    <img className="max-w-full cursor-pointer h-[250px] object-cover w-full" src={ defaultImage } alt={document.data.title[language]} />
                                                     <div className='absolute hover:opacity-0 transition-all duration-[750ms] inset-0 bg-[rgba(0,0,0,0.4)] flex justify-center items-center'>
                                                         <CubeIcon style={{ width: '40px', color: 'white'}} />
                                                     </div>
                                                 </div>
                                             }
-                                        </>
+                                        </div>
                                     )}
 
                                 </div>
@@ -264,10 +266,30 @@ export default function Note() {
 }
 
 
+    const ContentDisplay = ({ data }) => {
+        const { language } = useLanguageContext(); // Si nécessaire
+        let parsedData
 
-const ContentDisplay = ({ text }) => {
-    const htmlContent = convertToHtml(text);
-    return (
-        <div dangerouslySetInnerHTML={{ __html: htmlContent }} ></div>
-    )
-}
+        try {
+            parsedData = JSON.parse(data)
+        } catch (error) {
+            console.error("Erreur lors du parsing des données :", error)
+            return <p>Erreur : Les données sont invalides.</p>
+        }
+
+        if (!parsedData?.modules || !Array.isArray(parsedData.modules)) {
+            console.error("Modules manquants ou mal formés :", parsedData)
+            return <p>Erreur : Aucun texte à afficher.</p>
+        }
+
+        return (
+            <div>
+                { parsedData.modules.map((module, index) => (
+                    <div key={index} className={`${index !== 0 ? 'mt-[30px]' : ''}`}>{module?.text?.content[language]}</div>
+                ))}
+            </div>
+        );  
+    };
+
+
+
