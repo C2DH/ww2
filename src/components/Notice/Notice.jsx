@@ -34,16 +34,12 @@ export default function Notice() {
     const [sharedState, setSharedState] = useSharedState()
     const [imgBg, setImgBg] = useState()
     const navigate = useNavigate()
-    const [pdf, setPdf] = useState()
 
 
     // DETAILS CAPSULE
     useEffect(() => {
         const getData = async () => {
-            const data = await fetchData(`story/${slug}`)
-
-            console.log('data', data)
-            
+            const data = await fetchData(`story/${slug}`)            
             if (data) {
                 setResults(data)
                 const photoItem = data.covers.find(item => item.type === 'photo')            
@@ -121,7 +117,7 @@ export default function Notice() {
                     </Link>
 
                     <div className="grid grid-cols-12 mt-[30px] xl:mt-[50px] 2xl:mt-[70px]">
-                        <div className="col-span-12 xl:col-span-3 2xl:col-span-2 pt-[20px] order-3 xl:order-1">
+                        <div className="col-span-12 2xl:col-span-2 pt-[20px] order-3 2xl:order-1">
                             { results.stories.length > 0 && (
                                 <>
                                     <span className='block uppercase font-abril text-[22px] text-white mb-[20px] xl:mb-[30px]'>
@@ -141,7 +137,7 @@ export default function Notice() {
                             initial={{ opacity: 0, y: '100%' }}
                             animate={{ opacity: 1, y: 0, transition: { delay: 2, duration: 1.5 } }}
                             exit={{ transition: {duration: 0.8, delay: 0.8} } } 
-                            className="col-span-12 xl:col-span-6 xl:px-[50px] 2xl:px-0 xl:col-start-4 order-1 xl:order-2 rounded-[6px] xl:h-[500px]">
+                            className="col-span-12 2xl:col-span-6 2xl:col-start-4 order-1 2xl:order-2 rounded-[6px] 2xl:h-[500px]">
                             { results.covers.map(cover => {
                                 if (cover.type === "video") {   
                                     return (
@@ -151,19 +147,13 @@ export default function Notice() {
                             })}
                         </motion.div>
 
-                        <div className="col-span-12 xl:col-span-3 xl:col-start-10 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 xl:order-3">
+                        <div className="col-span-12 2xl:col-span-2 2xl:col-start-11 pt-[30px] xl:pt-[20px] order-2 2xl:order-3">
 
-                            {/* TODO: Ajouter le tag ppur filtrer sur la page sources */}
-                            <Link
-  to={`/sources?filters=${encodeURIComponent(JSON.stringify({ stories__slug: slug }))}`}
-  className="block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white"
->
-  {t('about')}
-</Link>
-                            {/* <Link to={`/sources?filters=${encodeURIComponent(JSON.stringify({ stories__slug: "N1-PAD-C01-place-couvent-de-cinqfontaines-troisvierges-luxembourg" }))}`}  className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('about') }</Link> */}
-
-                            {/* TODO: Ajouter le tag ppur filtrer sur la page index historique */}
-                            <Link to={'/glossary'} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('menuItems.glossary')}</Link>
+                            <Link to={`/sources?filters=${encodeURIComponent(JSON.stringify({ stories__slug: slug }))}`} className="block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white">
+                                {t('about')}
+                            </Link>
+         
+                            <Link to={`/glossary?filters=${encodeURIComponent(JSON.stringify({ stories__slug: slug }))}`} className='block mb-[20px] xl:mb-[30px] transition-all duration-[750ms] border-[0.5px] border-transparent py-[8px] px-[10px] rounded-[5px] border-white xl:border-transparent xl:hover:border-white hover:bg-[#000000]/[0.2] uppercase font-abril text-[22px] text-white'>{ t('menuItems.glossary')}</Link>
                         </div>
                     </div>
                 </div>

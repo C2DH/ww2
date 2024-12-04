@@ -40,8 +40,6 @@ export default function Layout() {
         const timer = setTimeout(() => {
           setShowSkip(false)
         }, 21000)
-
-        console.log('isSmall', isSmall)
     
         return () => clearTimeout(timer)
       }, [])

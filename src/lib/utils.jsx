@@ -51,8 +51,6 @@ export async function fetchData(endpoint, filters = {}, limit, offset = 0, facet
     }
 
     const url = `/api/${endpoint}/?${searchParams.toString()}`
-    console.log('url', url)
-
 
     try {
         const response = await fetch(url);
@@ -132,7 +130,6 @@ export async function getAllNotes() {
 
 export function formatDate(input, lang) {
     const date = new Date(input)
-    console.log(lang)
     if (lang === 'fr_FR' || lang === 'de_DE') {
         return date.toLocaleDateString(lang.replace('_', '-'), {
             day: 'numeric',

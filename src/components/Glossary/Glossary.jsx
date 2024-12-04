@@ -6,17 +6,18 @@ import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianW
 import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop";
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import classNames from 'classnames'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { useTranslation } from "react-i18next";
 import { useSharedState } from "../../contexts/SharedStateProvider";
 import axios from "axios";
 import { useLanguageContext } from "../../contexts/LanguageProvider";
 import Error from "../Error/Error";
 import { useMenuHistorianContext } from "../../contexts/MenuHistorianProvider";
-import { fetchFacets } from "../../lib/utils";
+import { fetchData, fetchFacets } from "../../lib/utils";
 
 export default function Glossary() {
-    
+    const [searchParams] = useSearchParams();
+    const filtersParams = JSON.parse(decodeURIComponent(searchParams.get('filters') || '{}'))
     const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
     const { language } = useLanguageContext()
@@ -31,24 +32,24 @@ export default function Glossary() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null)
     const contentRef = useRef(null);
+    const [filters, setFilters] = useState({ note: filtersParams.stories__slug ? { slug: filtersParams.stories__slug } : false })
+    const [notes, setNotes] = useState([])
+    const [hasMore, setHasMore] = useState(true)
 
 
-    // const fetchTerms = async () => {
-    //     try {
-    //         const response = await axios.get(`api/document/?filters=%7B%22type%22%3A%22glossary%22%7D&facets=data__letter`)
-    //         console.log(response)
-    //         return response.data.results ? response.data.results : []
-    //     } catch (error) {
-    //         setError(error)
-    //         return []
-    //     }
-    // }
 
-
-    const fetchTerms = async () => {
+    const fetchTerms = async (offset = 0, limit = 24) => {
         try {
-            let params = { type: "glossary" }
-            const response = await fetchFacets('document', 'data__letter', params, 1000)
+            let params = {
+                type__in: ['glossary'],
+            };
+            if (filters.note) params = { ...params, stories__slug: filters.note.slug };
+
+            const response = await fetchData('document', params, limit, offset)
+            await getNotes();
+            if (response.results.length < limit) {
+                setHasMore(false);
+            }
             return response.results
         } catch (error) {
             setError(error)
@@ -57,7 +58,36 @@ export default function Glossary() {
     }
 
 
-    const loadMoreTerms = async () => {
+    const fetchNotes = async () => {
+        try {
+            let params = { type__in: ['glossary'] };
+            const notesIdTab = []
+            const allNotes = await fetchFacets('document', 'stories', params)
+
+            allNotes.facets.stories.map(note => {
+                notesIdTab.push(note.stories)
+            })
+            const data = await fetchData('story', { id__in: notesIdTab }, 100)
+            return data ? data.results : []
+        } catch (error) {
+            console.error('Erreur lors de la récupération des notes :', error)
+            return []
+        }
+    }
+
+    const getNotes = async () => {
+        const notes = await fetchNotes()
+        setNotes(notes)
+    }
+
+
+    useEffect(() => {
+        console.log('notes', notes)
+    }, [notes])
+
+
+    const loadMoreTerms = async (force = false) => {
+        if (!hasMore && !force) return
         setLoading(true)
         const newTerms = await fetchTerms()
         setTerms((prevTerms) => [...prevTerms, ...newTerms])
@@ -77,30 +107,28 @@ export default function Glossary() {
     
             observer.current = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting) {
-                    setOffset((prevOffset) => prevOffset + 10)
+                    setOffset((prevOffset) => prevOffset + 24)
                 }
             })
     
             if (node) {
                 observer.current.observe(node);
             } 
-        },[loading]
+        },[loading, hasMore]
     )
 
     useEffect(() => {
-        loadMoreTerms()
+        if (offset > 0) {
+            loadMoreTerms()
+        }
     }, [offset])
 
-    {/* TODO: Mettre à jour les tags  */}
-    const tags = ['Dolor', 'Sit', 'Amet', 'Test', 'Abeas', 'Corpus']
-
-    let allFirstLetters = []
-    let selectedLetters = []
-
-    terms.map(term => {
-        allFirstLetters.push(term.data.title[language].substring(0, 1))
-        selectedLetters = [...new Set(allFirstLetters)]
-    })
+    useEffect(() => {
+        setHasMore(true);
+        setTerms([]);
+        setOffset(0);
+        loadMoreTerms(true);
+    }, [filters])
 
     const handleMenu = (element) => {
         if (element === 'menu') {
@@ -116,18 +144,18 @@ export default function Glossary() {
         }
     }
 
+    const handleChangeNote = (note) => {
+        if (note) {
+            setFilters(prevFilters => ({ ...prevFilters, note: note }))
+        } else {
+            setFilters(prevFilters => ({ ...prevFilters, note: false }))
+        }
+    }
+
     useEffect(() => {
         setSharedState({ ...sharedState, showClouds: false, showCurtains: false })
     }, [])
 
-    useEffect(() => {
-        if (filter) {
-            const selectedTerms = terms.filter(term => term.data.title[language][0] == filter)
-            setFilteredTerms(selectedTerms)
-        } else {
-            setFilteredTerms(terms)
-        }
-    },[filter, terms])
 
     if (error) {
         return <Error />
@@ -141,17 +169,17 @@ export default function Glossary() {
                 <div className="hidden lg:block mt-[40px]">
                     <div className="border-b border-black pb-[40px] w-full flex flex-wrap gap-y-[20px]">
                         <div className="w-[40%] relative h-[40px] me-5">
-                            <Dropdown items={tags} text={'Liste des tags'} />
+                            <Dropdown items={notes} text={'Recherche par Note(s) et capsule(s)'} theme={'notes'} onChange={handleChangeNote}/>
                         </div>
     
-                        <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} />
+                        {/* <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} /> */}
                     </div>
                 </div>
                 
                 {/** CONTENT */}
                 <div className="lg:overflow-scroll" ref={contentRef}>
                     <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                        { filteredTerms.map((term, index) => 
+                        { terms.map((term, index) => 
                             <CardText key={term.id} ref={filteredTerms.length === index + 1 ? lastTermRef : null} title={term.data.title[language]} text={term.data.description[language]} />
                         )}
                     </div>
@@ -159,21 +187,15 @@ export default function Glossary() {
     
                 {/* MOBILE: BTN MENU / BTN FILTERS */}
                 <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
-                    <div 
-                        onClick={() => handleMenu('menu')}
-                        className={classNames("flex items-center justify-center", {
-                            "border-r border-black w-1/2": allFirstLetters,
-                            "w-full": !allFirstLetters
-                        })} 
-                    >
+                    <div onClick={() => handleMenu('menu')} className="flex items-center justify-center">
                         <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
                     </div>
     
-                    {allFirstLetters &&                
+                    {/* {allFirstLetters &&                
                         <div className="w-1/2 flex items-center justify-center" onClick={() => handleMenu('filter')}>
                             <span className='uppercase text-[24px] cursor-pointer'>{t('filters')}</span>
                         </div>
-                    }
+                    } */}
                 </div>
     
                 {/* MOBILE: MENU - FILTERS */}
@@ -189,7 +211,7 @@ export default function Glossary() {
                     </ul>
                 </div>
     
-                { allFirstLetters &&
+                {/* { allFirstLetters &&
                     <div className={classNames('lg:hidden py-[50px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] flex justify-center items-center', {
                         "translate-y-[100%]": !isOpenFilters
                     })}>
@@ -197,7 +219,7 @@ export default function Glossary() {
                             <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => { setFilter(filter !== letter ? letter : ''); handleMenu('filter')} } />
                         </div>
                     </div>
-                }
+                } */}
     
             </LayoutHistorianWorkshop>
         )

@@ -23,10 +23,7 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useBounds, Bounds, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { Link, useLocation } from 'react-router-dom'
-import {
-  MagnifyingGlassMinusIcon,
-  MagnifyingGlassPlusIcon,
-} from '@heroicons/react/24/outline'
+import { BookOpenIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, SpeakerWaveIcon } from '@heroicons/react/24/outline'
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -51,34 +48,8 @@ export default function Source({ data, handleSourcePopup }) {
     setNumPages(numPages)
   }
 
-  const nextPage = () => {
-    if (pageNumber < numPages) {
-      setPageNumber(pageNumber + 1)
-    }
-  }
-
-  const prevPage = () => {
-    if (pageNumber > 1) {
-      setPageNumber(pageNumber - 1)
-    }
-  }
-
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth
-      if (width > 1280) {
-        setPageWidth(500)
-        setModelHeight('calc(100vh - 400px)')
-      } else if (width > 768) {
-        setPageWidth(420)
-        setModelHeight('500px')
-      } else if (width > 400) {
-        setPageWidth(380)
-        setModelHeight('400px')
-      } else {
-        setPageWidth(300)
-        setModelHeight('300px')
-      }
+    const onDocumentLoadSuccess = ({ numPages }) => {
+      setNumPages(numPages);
     }
 
     window.addEventListener('resize', handleResize)
@@ -205,71 +176,27 @@ export default function Source({ data, handleSourcePopup }) {
                     </svg>
                   )}
 
-                  <Document
-                    file={data.attachment}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                  >
-                    <Page
-                      pageNumber={pageNumber}
-                      size='A4'
-                      width={pageWidth}
-                      className='relative'
-                    />
-                  </Document>
-                </>
-              )}
+            <div className={classNames("container mx-auto relative px-[20px]", {
+                "h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)]": pathname !== '/spatiotemporal-map',
+                "h-[calc(100dvh-120px)] sm:h-[calc(100vh-80px)]": pathname === '/spatiotemporal-map'
+            })}>
+                <div className="grid grid-cols-12 pt-[20px] lg:pt-[40px] h-auto md:h-full">
+                    <div className="col-span-12 lg:col-span-7 lg:col-start-2">
+                        
+                        <div className="pb-[20px] pt-[20px] 2xl:pb-[40px] 2xl:pt-[80px] relative">
+                        
+                            {/** IMAGE */}
+                            {data.covers?.map(item => {
+                                if (item.type === 'glossary') {
+                                    return (
+                                        <ImageZoom key={item.id} image={ item.attachment ? rootPath + item.attachment : imageDefault }/>
+                                    )
+                                }
+                            })}
 
-              {!isPDF &&
-                data.type === 'image' &&
-                !data.data?.resolutions?.preview?.url && (
-                  <>
-                    {pageNumber > 1 && (
-                      <svg
-                        width='25'
-                        height='21'
-                        viewBox='0 0 25 21'
-                        fill='none'
-                        xmlns='http://www.w3.org/2000/svg'
-                        className='absolute -top-[10px] left-[20px] transform -translate-x-1/2 space-x-4 cursor-pointer text-white text-[20px]'
-                        onClick={prevPage}
-                      >
-                        <path
-                          d='M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z'
-                          fill='white'
-                        />
-                      </svg>
-                    )}
-
-                    {pageNumber < numPages && (
-                      <svg
-                        width='25'
-                        height='21'
-                        viewBox='0 0 25 21'
-                        fill='none'
-                        xmlns='http://www.w3.org/2000/svg'
-                        className='rotate-180 absolute -top-[10px] left-[50px] transform -translate-x-1/2 space-x-4 cursor-pointer text-white text-[20px] ml-[20px]'
-                        onClick={nextPage}
-                      >
-                        <path
-                          d='M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z'
-                          fill='white'
-                        />
-                      </svg>
-                    )}
-
-                    <Document
-                      file={rootPath + data.attachment}
-                      onLoadSuccess={onDocumentLoadSuccess}
-                    >
-                      <Page
-                        pageNumber={pageNumber}
-                        size='A4'
-                        width={pageWidth}
-                        className='relative'
-                      />
-                    </Document>
-                  </>
-                )}
+                            { ((data.type === 'image' || data.type === 'photo') && data.data?.resolutions?.preview?.url && data.attachment.split('.')[1] !== "pdf") &&                        
+                                <ImageZoom image={ rootPath + data.data.resolutions.preview.url } alt={data.title}/>
+                            }
 
               {/** VIDEO */}
               {data.type === 'video' &&
@@ -333,8 +260,59 @@ export default function Source({ data, handleSourcePopup }) {
                 <img src={imageDefault} alt='' className='w-full' />
               )}
 
-              {/** 3D */}
-              {/* { data.type === '3d' &&
+                            { (data.type === 'video' && data.attachment) &&
+                                <Player url={ data.attachment } controls={true} status={'video'}/>
+                            }
+
+                            {/** PDF */}
+                            { isPDF &&
+                                <>
+                                    {pageNumber > 1 &&
+                                        <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" className='absolute -top-[10px] left-[20px] transform -translate-x-1/2 space-x-4 cursor-pointer text-white text-[20px]' onClick={prevPage} >
+                                            <path d="M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z" fill="white"/>
+                                        </svg>  
+                                    }
+
+                                    {pageNumber < numPages &&
+                                        <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" className='rotate-180 absolute -top-[10px] left-[50px] transform -translate-x-1/2 space-x-4 cursor-pointer text-white text-[20px] ml-[20px]' onClick={nextPage} >
+                                            <path d="M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z" fill="white"/>
+                                        </svg>  
+                                    }
+                                    
+                                    <Document file={ data.attachment } onLoadSuccess={onDocumentLoadSuccess}>
+                                        <Page pageNumber={pageNumber} size="A4" width={pageWidth} className="relative"/>
+                                    </Document>
+                                </>
+                            }
+                            
+
+                            {/** AUDIO */}
+                            { (data.type === 'audio' && data.attachment) &&
+                                <div className='flex flex-col items-center justify-center'>
+                                    <SpeakerWaveIcon style={{ width: '60px', color: 'white'}} className='mb-[50px]' />
+                                    <Player url={ rootPath + data.attachment } controls={true} status={'audio'} />     
+                                </div>
+                            }
+
+                            {/** GALLERY */}
+                            { data.type === 'gallery' &&
+                                <Swiper modules={[Pagination, Navigation]} spaceBetween={50} slidesPerView={1} pagination={{ clickable: true }} loop={true} grabCursor={true}>
+                                    <SwiperSlide><img src={ imageDefault } alt="" className='w-full'/></SwiperSlide>
+                                    <SwiperSlide><img src={ imageDefault } alt="" className='w-full'/></SwiperSlide>
+                                    <SwiperSlide><img src={ imageDefault } alt="" className='w-full'/></SwiperSlide>
+                                    <SwiperSlide><img src={ imageDefault } alt="" className='w-full'/></SwiperSlide>
+                                </Swiper>
+                            }
+
+                            {/** BOOK */}
+                            { (data.type === 'book' || data.type === "manuscript") &&
+                                <div className='flex flex-col items-center justify-center'>
+                                    <BookOpenIcon style={{ width: '60px', color: 'white'}} className='mb-[50px]' />
+                                </div>
+                            }
+
+                            {/** 3D */}
+                            {/* { data.type === '3d' &&
                                 <ModelViewer model="/assets/images/3D/avatar_1.glb" height={modelHeight} />  
                             } */}
             </div>
@@ -439,7 +417,7 @@ export default function Source({ data, handleSourcePopup }) {
               </>
             )}
 
-            {data.type === 'pdf' && (
+            {isPDF && (
               <>
                 <h1 className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>
                   {data.data.title[language]}
