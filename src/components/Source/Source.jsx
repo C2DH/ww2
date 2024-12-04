@@ -267,7 +267,7 @@ export default function Source({ data, handleSourcePopup }) {
                             </>
                         }
 
-                        { isPDF &&
+                        { data.type === "pdf" &&
                             <>
                                 <h1 className='lg:pl-[25px] text-[30px] font-semibold pt-[30px] pb-[30px]'>{ data.data.title[language] }</h1>
                                 <hr className='w-1/2'/>
