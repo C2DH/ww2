@@ -57,7 +57,7 @@ export default function Sources() {
             if (filters.types.length > 0) params = { type__in: filters.types }
             if (filters.note) params = { ...params, stories__slug: filters.note.slug };
             console.log(params);
-            const response = await fetchData('/document', params, limit, offset, 'type')
+            const response = await fetchData('document', params, limit, offset, 'type')
             await getNotes();
             await getTypes();
             if (response.results.length < limit) {

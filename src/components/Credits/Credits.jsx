@@ -35,9 +35,9 @@ export default function Credits() {
 
     useEffect(() => {
         if (width <= 768) {
-          setAnimationDuration(width / 10)
+          setAnimationDuration(width / 3)
         } else {
-          setAnimationDuration(width / 100)
+          setAnimationDuration(width / 30)
         }
       }, [width]);
 
@@ -46,7 +46,7 @@ export default function Credits() {
     }
 
     const getData = async () => {
-        const data = await fetchData(`/story/credits`)    
+        const data = await fetchData(`story/credits`)    
         setCredits(data)
         setIsLoaded(true)
     }
@@ -94,7 +94,7 @@ export default function Credits() {
                                     </div>
                                     <div>
                                         <Link to="https://mcult.gouvernement.lu/fr.html" target="_blank">
-                                            <img src={logoGouv} alt="Logo Gouvernement" />
+                                            <img src={logoGouv} alt="Logo Gouvernement" className="w-[225px]"/>
                                         </Link>
                                     </div>
                                 </div>
