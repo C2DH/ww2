@@ -219,7 +219,8 @@ export default function Source({ data, handleSourcePopup }) {
                 </>
               )}
 
-              {data.type === 'image' &&
+              {!isPDF &&
+                data.type === 'image' &&
                 !data.data?.resolutions?.preview?.url && (
                   <>
                     {pageNumber > 1 && (
@@ -286,57 +287,6 @@ export default function Source({ data, handleSourcePopup }) {
                   controls={true}
                   status={'video'}
                 />
-              )}
-
-              {/** PDF */}
-              {data.type === 'pdf' && (
-                <>
-                  {pageNumber > 1 && (
-                    <svg
-                      width='25'
-                      height='21'
-                      viewBox='0 0 25 21'
-                      fill='none'
-                      xmlns='http://www.w3.org/2000/svg'
-                      className='absolute -top-[10px] left-[20px] transform -translate-x-1/2 space-x-4 cursor-pointer text-white text-[20px]'
-                      onClick={prevPage}
-                    >
-                      <path
-                        d='M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z'
-                        fill='white'
-                      />
-                    </svg>
-                  )}
-
-                  {pageNumber < numPages && (
-                    <svg
-                      width='25'
-                      height='21'
-                      viewBox='0 0 25 21'
-                      fill='none'
-                      xmlns='http://www.w3.org/2000/svg'
-                      className='rotate-180 absolute -top-[10px] left-[50px] transform -translate-x-1/2 space-x-4 cursor-pointer text-white text-[20px] ml-[20px]'
-                      onClick={nextPage}
-                    >
-                      <path
-                        d='M23.875 9.625C24.3125 9.625 24.75 10.0625 24.75 10.5C24.75 10.9922 24.3125 11.375 23.875 11.375H7.57812L13.9766 17.7734C14.3047 18.1016 14.3047 18.7031 13.9766 19.0312C13.6484 19.3594 13.0469 19.3594 12.7188 19.0312L4.84375 11.1562C4.67969 10.9922 4.625 10.7734 4.625 10.5C4.625 10.2812 4.67969 10.0625 4.84375 9.89844L12.7188 2.02344C13.0469 1.69531 13.6484 1.69531 13.9766 2.02344C14.3047 2.35156 14.3047 2.95312 13.9766 3.28125L7.57812 9.625H23.875ZM1.125 0C1.5625 0 2 0.4375 2 0.875V20.125C2 20.6172 1.5625 21 1.125 21C0.632812 21 0.25 20.6172 0.25 20.125V0.875C0.25 0.4375 0.632812 0 1.125 0Z'
-                        fill='white'
-                      />
-                    </svg>
-                  )}
-
-                  <Document
-                    file={data.attachment}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                  >
-                    <Page
-                      pageNumber={pageNumber}
-                      size='A4'
-                      width={pageWidth}
-                      className='relative'
-                    />
-                  </Document>
-                </>
               )}
 
               {/** AUDIO */}
