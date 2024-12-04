@@ -3,7 +3,7 @@ import map2 from '../../assets/images/spaceTimeMap/map-2.png'
 import map3 from '../../assets/images/spaceTimeMap/map-3.png'
 import map4 from '../../assets/images/spaceTimeMap/map-4.png'
 import pinMarker from '../../assets/images/spaceTimeMap/marker-red.svg'
-// import pinMarker from '../../assets/images/spaceTimeMap/puce.jpg'
+import pinCluster from '../../assets/images/spaceTimeMap/marker-blue.svg'
 
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
@@ -12,8 +12,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { Map, Marker, Source, Layer } from 'react-map-gl';
 import mapboxgl from 'mapbox-gl'
 import MapboxglSpiderifier from 'mapboxgl-spiderifier';
-
-
+import 'mapboxgl-spiderifier/index.css';
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
@@ -228,6 +227,7 @@ export default function SpaceTimeMap() {
 
 const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
     const innerRef = useRef(null);
+    const clusterRef = useRef(null);
     useImperativeHandle(ref, () => innerRef.current, [])
 
     const { language } = useLanguageContext()
@@ -303,8 +303,6 @@ const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
         if (innerRef.current && mapLoaded) {
             const map = innerRef.current.getMap();
 
-            console.log('map', map)
-
             var features = [
                 {id: 0, type: 'car', color: 'red'},
                 {id: 1, type: 'bicycle', color: '#ff00ff'},
@@ -313,31 +311,22 @@ const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
                 {id: 4, type: 'train', color: 'red'}
             ];
             
-            const spiderifier = new MapboxglSpiderifier(map, {
-                onClick: function(e, spiderLeg){
+            clusterRef.current = new MapboxglSpiderifier(map, {
+                onClick: function (e, spiderLeg) {
                     console.log('Clicked on ', spiderLeg);
+                    setOpenLocation(true)
+                    setIsOpenSource(true)
+                    setSelectedMarker({ id: spiderLeg.feature.id, data: spiderLeg.feature.data })
                 },
-                markerWidth: 40,
-                markerHeight: 40
-            })
-
-            map.on('style.load', function() {
-                console.log('ici')
-                spiderifier.spiderfy([6.1243943, 49.6099615], features);
-            });
-
-            map.on('click', function(){
-                spiderifier.unspiderfy();
+                customPin: true,
+                animate: true,
+                animationSpeed: 200
             });
 
             map.on('error', function(error) {
                 console.log('Map loading error:', error);
             }); 
-   
-            spiderifier.spiderfy([6.1243943, 49.6099615], features);
 
-
-            console.log(spiderifier)
             // items.forEach(item => {
             //     item.covers.forEach(cover => {
             //         if (cover.type === 'entity') {
@@ -408,6 +397,23 @@ const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
     //     }
     //   }, [mapLoaded]);
 
+    const allMarkers = Object.values(Object.groupBy(items.reduce((acc, item) => {
+        const markers = item.covers.filter(cover => cover.data.type === "place").map(cover => {
+            return {
+                id: item.id,
+                markerId: cover.id,
+                coordinates: cover.data.geojson.geometry.coordinates,
+                data: item
+            };
+        });
+        return acc.concat(markers);
+    }, []), ({ coordinates }) => coordinates));
+
+    const clusters = allMarkers.filter(item => item.length > 1);
+    const markers = allMarkers.filter(item => item.length === 1).flat();
+
+    console.log(clusters);
+
     return (
         <>
             <div className='mask w-full h-[calc(100dvh-80px)] sm:h-[calc(100vh-80px)] transition-all duration-[750ms]'>
@@ -443,29 +449,42 @@ const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
                         </Source>
                     )}
                     
-                    {items.map(item =>
-                        item.covers.map(cover => {
-                            if (cover.data.type === "place") {
-                                return (
-                                    <Marker
-                                        key={cover.id}
-                                        longitude={cover.data.geojson.geometry.coordinates[0]}
-                                        latitude={cover.data.geojson.geometry.coordinates[1]}
-                                    >
-                                        <div className='relative'>
-                                            <img src={pinMarker} alt="marker" className="cursor-pointer"
-                                                onClick={() => {
-                                                    setOpenLocation(true)
-                                                    setIsOpenSource(true)
-                                                    setSelectedMarker({ id: item.id, data: item })
-                                                }}
-                                            />
-                                        </div>
-                                    </Marker>
-                                )
-                            }
-                        })
+                    {markers.map(item =>
+                        <Marker
+                            key={item.markerId}
+                            longitude={item.coordinates[0]}
+                            latitude={item.coordinates[1]}
+                        >
+                            <div className='relative'>
+                                <img src={pinMarker} alt="marker" className="cursor-pointer"
+                                    onClick={() => {
+                                        setOpenLocation(true)
+                                        setIsOpenSource(true)
+                                        setSelectedMarker({ id: item.id, data: item.data })
+                                    }}
+                                />
+                            </div>
+                        </Marker>
                     )}
+
+                    {clusters.map(item =>
+                        <Marker
+                            key={item[0].markerId}
+                            longitude={item[0].coordinates[0]}
+                            latitude={item[0].coordinates[1]}
+                        >
+                            <div className='relative'>
+                                <img src={pinCluster} alt="marker" className="cursor-pointer"
+                                    onClick={() => {
+                                        console.log('click cluster');
+                                        console.log(item);
+                                        clusterRef.current.spiderfy(item[0].coordinates, item);
+                                    }}
+                                />
+                            </div>
+                        </Marker>
+                    )}
+                    
                 </Map>
 
                 {/* <div ref={innerRef}  style={{ width: '100%', height: '100vh' }} /> */}
