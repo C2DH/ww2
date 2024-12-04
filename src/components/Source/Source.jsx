@@ -162,7 +162,7 @@ export default function Source({ data, handleSourcePopup }) {
 
               {(data.type === 'image' || data.type === 'photo') &&
                 data.data?.resolutions?.preview?.url &&
-                data.attachment.split('.')[1] !== 'pdf' && (
+                !isPDF && (
                   <ImageZoom
                     image={rootPath + data.attachment}
                     alt={data.title}
