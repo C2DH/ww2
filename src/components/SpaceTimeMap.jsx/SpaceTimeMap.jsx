@@ -3,13 +3,16 @@ import map2 from '../../assets/images/spaceTimeMap/map-2.png'
 import map3 from '../../assets/images/spaceTimeMap/map-3.png'
 import map4 from '../../assets/images/spaceTimeMap/map-4.png'
 import pinMarker from '../../assets/images/spaceTimeMap/marker-red.svg'
-// import pinMarker from '../../assets/images/spaceTimeMap/puce.jpg'
+import pinCluster from '../../assets/images/spaceTimeMap/marker-blue.svg'
 
-import {useEffect, useRef, useState } from 'react'
+import {forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 // MAPBOX
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Map, Marker, Source, Layer } from 'react-map-gl';
+import mapboxgl from 'mapbox-gl'
+import MapboxglSpiderifier from 'mapboxgl-spiderifier';
+import 'mapboxgl-spiderifier/index.css';
 
 // FRAMER
 import { AnimatePresence, motion } from "framer-motion"
@@ -222,7 +225,11 @@ export default function SpaceTimeMap() {
 }
 
 
-const MapBox = ({ items, state, reference, onZoomChange }) => {
+const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
+    const innerRef = useRef(null);
+    const clusterRef = useRef(null);
+    useImperativeHandle(ref, () => innerRef.current, [])
+
     const { language } = useLanguageContext()
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null })
     const [openLocation, setOpenLocation] = useState(false)
@@ -233,9 +240,10 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
     const [city, setCity] = useState(null)
     const [description, setDescription] = useState(null )
     const {setIsOpenSource} = useSourceContext()
+    const [mapLoaded, setMapLoaded] = useState(false)
 
     const handleMapScroll = () => {
-        const map = reference.current.getMap()
+        const map = innerRef.current.getMap()
         const newZoom = map.getZoom()
 
         if (onZoomChange) {
@@ -290,11 +298,130 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
         }
     }, [selectedMarker, language])
 
+
+    useEffect(() => {
+        if (innerRef.current && mapLoaded) {
+            const map = innerRef.current.getMap();
+
+            var features = [
+                {id: 0, type: 'car', color: 'red'},
+                {id: 1, type: 'bicycle', color: '#ff00ff'},
+                {id: 2, type: 'bus', color: 'blue'},
+                {id: 3, type: 'cab', color: 'orange'},
+                {id: 4, type: 'train', color: 'red'}
+            ];
+            
+            clusterRef.current = new MapboxglSpiderifier(map, {
+                onClick: function (e, spiderLeg) {
+                    console.log('Clicked on ', spiderLeg);
+                    setOpenLocation(true)
+                    setIsOpenSource(true)
+                    setSelectedMarker({ id: spiderLeg.feature.id, data: spiderLeg.feature.data })
+                },
+                customPin: true,
+                animate: true,
+                animationSpeed: 200
+            });
+
+            map.on('error', function(error) {
+                console.log('Map loading error:', error);
+            }); 
+
+            // items.forEach(item => {
+            //     item.covers.forEach(cover => {
+            //         if (cover.type === 'entity') {
+            //             console.log('cover', cover);
+            //             const marker = new mapboxgl.Marker()
+            //             .setLngLat([cover.data.geojson.geometry.coordinates[0], cover.data.geojson.geometry.coordinates[1]])
+            //             .setPopup(
+            //                 new mapboxgl.Popup().setHTML(
+            //                 `<h3>${item.title}</h3><p>${item.description}</p>`
+            //                 )
+            //             );
+
+            //             // spiderifier.addMarker(marker)
+            //         }
+            //     });
+            // });
+        } 
+    }, [items, mapLoaded]);
+
+
+    // useEffect(() => {
+    //     if (innerRef.current && !mapLoaded) {
+
+    //         var features = [
+    //         {id: 0, type: 'car', color: 'red'},
+    //         {id: 1, type: 'bicycle', color: '#ff00ff'},
+    //         {id: 2, type: 'bus', color: 'blue'},
+    //         {id: 3, type: 'cab', color: 'orange'},
+    //         {id: 4, type: 'train', color: 'red'}
+    //         ];
+    //       // Initialize the Mapbox map
+    //       const map = new mapboxgl.Map({
+    //         accessToken: "pk.eyJ1IjoiYmxhY2ttYWdpazg4IiwiYSI6ImNtMnQ1amdkcTA0MnQybHNic2NmaDZwdTUifQ.oZIH7Te6TdhVwQwl2Oygyg",
+    //         container: innerRef.current,
+    //         style: 'mapbox://styles/mapbox/streets-v9',
+    //         center: [-74.50, 40],  // Coordinates to center the map
+    //         zoom: 9,
+    //       });
+    
+    //       map.on('load', () => {
+    //         // Set the mapLoaded state to true once the map has loaded
+    //         setMapLoaded(true);
+    
+    //         // Initialize the Spiderifier once the map has loaded
+    //         const spiderifier = new MapboxglSpiderifier(map, {
+    //           onClick: function (e, spiderLeg) {
+    //             console.log('Clicked on ', spiderLeg);
+    //           },
+    //           markerWidth: 40,
+    //           markerHeight: 40,
+    //         });
+    
+    //         // Spiderfy the features when the map style is loaded
+    //         map.on('style.load', function () {
+    //           spiderifier.spiderfy([-74.50, 40], features);
+    //         });
+    
+    //         // Unspiderfy on map click
+    //         map.on('click', function () {
+    //           spiderifier.unspiderfy();
+    //         });
+    //       });
+    
+    //       // Handle map errors
+    //       map.on('error', function (error) {
+    //         console.error('Map loading error:', error);
+    //       });
+    //     }
+    //   }, [mapLoaded]);
+
+    const allMarkers = Object.values(Object.groupBy(items.reduce((acc, item) => {
+        const markers = item.covers.filter(cover => cover.data.type === "place").map(cover => {
+            return {
+                id: item.id,
+                markerId: cover.id,
+                coordinates: cover.data.geojson.geometry.coordinates,
+                data: item
+            };
+        });
+        return acc.concat(markers);
+    }, []), ({ coordinates }) => coordinates));
+
+    console.log(allMarkers);
+
+    const clusters = allMarkers.filter(item => item.length > 1);
+    const markers = allMarkers.filter(item => item.length === 1).flat();
+
+    console.log(allMarkers.filter(item => item.length === 1));
+    console.log(allMarkers.filter(item => item.length === 1).flat());
+
     return (
         <>
             <div className='mask w-full h-[calc(100dvh-80px)] sm:h-[calc(100vh-80px)] transition-all duration-[750ms]'>
                 <Map
-                    ref={reference}
+                    ref={innerRef}
                     style={{ width: '100%', height: '100%' }}
                     mapboxAccessToken={state.token}
                     mapStyle={state.style}
@@ -308,7 +435,10 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                     maxZoom={state.maxZoom}
                     dragRotate={true} // 3D Relief : désactiver
                     scrollZoom={true} // Désactiver Zoom scroll
-                    onZoomEnd={handleMapScroll}
+                    // onZoomEnd={handleMapScroll}
+                    onLoad={
+                        () => setMapLoaded(true)
+                    }
                 >
                     {state.style === 'geoportail' && (
                         <Source {...sourceStyle}>
@@ -322,30 +452,45 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
                         </Source>
                     )}
                     
-                    {items.map(item =>
-                        item.covers.map(cover => {
-                            if (cover.data.type === "place") {
-                                return (
-                                    <Marker
-                                        key={cover.id}
-                                        longitude={cover.data.geojson.geometry.coordinates[0]}
-                                        latitude={cover.data.geojson.geometry.coordinates[1]}
-                                    >
-                                        <div className='relative'>
-                                            <img src={pinMarker} alt="marker" className="cursor-pointer"
-                                                onClick={() => {
-                                                    setOpenLocation(true)
-                                                    setIsOpenSource(true)
-                                                    setSelectedMarker({ id: item.id, data: item })
-                                                }}
-                                            />
-                                        </div>
-                                    </Marker>
-                                )
-                            }
-                        })
+                    {markers.map(item =>
+                        <Marker
+                            key={item.markerId}
+                            longitude={item.coordinates[0]}
+                            latitude={item.coordinates[1]}
+                        >
+                            <div className='relative'>
+                                <img src={pinMarker} alt="marker" className="cursor-pointer"
+                                    onClick={() => {
+                                        setOpenLocation(true)
+                                        setIsOpenSource(true)
+                                        setSelectedMarker({ id: item.id, data: item.data })
+                                    }}
+                                />
+                            </div>
+                        </Marker>
                     )}
+
+                    {clusters.map(item =>
+                        <Marker
+                            key={item[0].markerId}
+                            longitude={item[0].coordinates[0]}
+                            latitude={item[0].coordinates[1]}
+                        >
+                            <div className='relative'>
+                                <img src={pinCluster} alt="marker" className="cursor-pointer"
+                                    onClick={() => {
+                                        console.log('click cluster');
+                                        console.log(item);
+                                        clusterRef.current.spiderfy(item[0].coordinates, item);
+                                    }}
+                                />
+                            </div>
+                        </Marker>
+                    )}
+                    
                 </Map>
+
+                {/* <div ref={innerRef}  style={{ width: '100%', height: '100vh' }} /> */}
                 
                 {!isSmall &&                
                     <AnimatePresence>
@@ -510,7 +655,9 @@ const MapBox = ({ items, state, reference, onZoomChange }) => {
             </AnimatePresence>
         </>
     )
-}
+})
+
+MapBox.displayName
 
 
 const MultiRangeSelector = ({ onFilterChange }) => {

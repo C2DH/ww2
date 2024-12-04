@@ -495,3 +495,12 @@ p {
 .animate-spin {
     animation: spin 1s linear infinite;
 }
+
+.spider-leg-container .spider-leg-pin {
+    position: relative;
+    width: 25px;
+    height: 41px;
+    margin-left: -11.5px;
+    margin-top: -38.5px;
+    background-image: url('../images/spaceTimeMap/marker-red.svg');
+  }
