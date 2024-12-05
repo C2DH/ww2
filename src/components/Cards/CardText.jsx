@@ -19,9 +19,9 @@ export default function CardText({title, text}) {
     }, [isMobile, isMedium])
 
     return (
-        <div className="col-span-12 border border-black rounded-[5px] p-[10px] lg:p-[35px] md:h-[150px] lg:h-[180px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow cursor-pointer overflow-hidden">
+        <div className="col-span-12 border border-black rounded-[5px] p-[10px] lg:p-[35px] hover:bg-[#0e4b5a]/[0.15] transition-all duration-[750ms] boxShadow cursor-pointer overflow-hidden">
             <h2 className='text-[20px] lg:text-[24px] font-abril leading-none'>{ title }</h2>
-            <p className='text-[20px] pt-[14px] lg:text-[24px] pb-0'>{ truncateText(text, sizeText) }</p>
+            <p className='text-[20px] pt-[14px] lg:text-[24px] pb-0'>{ text }</p>
         </div>
     )
 }

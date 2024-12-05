@@ -241,7 +241,7 @@ export default function Glossary() {
                         "translate-y-[100%]": !isOpenFilters
                     })}>
                        
-                        <div className="w-[40%] relative h-[200px] me-5">
+                        <div className="w-[90%] sm:w-[80%] relative h-[200px] me-5 mb-[400px]">
                             <Dropdown items={notes} text={'recherche'} theme={'notes'} onChange={handleChangeNote}/>
                         </div>
                     </div>

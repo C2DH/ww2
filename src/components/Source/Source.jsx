@@ -99,7 +99,7 @@ export default function Source({ data, handleSourcePopup }) {
                 <span className='text-white uppercase text-[24px] cursor-pointer' onClick={ handleSourcePopup }>{ t('close') }</span>
             </div>
 
-            <div className={classNames("container mx-auto relative px-[20px]", {
+            <div className={classNames("container mx-auto relative px-[20px] overflow-scroll", {
                 "h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)]": pathname !== '/spatiotemporal-map',
                 "h-[calc(100dvh-120px)] sm:h-[calc(100vh-80px)]": pathname === '/spatiotemporal-map'
             })}>

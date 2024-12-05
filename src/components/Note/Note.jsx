@@ -137,7 +137,7 @@ export default function Note() {
         return (
             <>
                 <motion.div style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover'}} className='note' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                    <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] flex flex-col px-[30px] pt-[30px] 2xl:pt-0">
+                    <div className="container mx-auto relative h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] flex flex-col px-[30px] pt-[30px] 2xl:pt-0 overflow-hidden">
     
                         <div className='flex items-center justify-between'>
                             <Link to={'/catalogue'} className='2xl:absolute 2xl:top-[30px] 2xl:left-[30px] text-[20px] lg:text-[30px]'>
@@ -185,7 +185,7 @@ export default function Note() {
                         </div>
     
                         <div className="flex flex-col lg:flex-row overflow-scroll lg:min-h-[calc(100%-120px)]" id="text">
-                            <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
+                            <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow pb-[50px]">   
                                 
                                 {/** CONTENT */}
                                 {data.contents &&
@@ -195,14 +195,14 @@ export default function Note() {
                                 }
 
                                 {/** REFERENCES */}
-                                {data.documents.some((document) => document.type === "reference") && (
+                                {data.documents.some((document) => document.type === "reference" || document.type === "book" || document.type === "manuscript") && (
                                     <div className="ml-[20px] mt-[30px] pb-[10px]">
                                         <span className="uppercase font-abril text-[20px] border-b border-black block pb-[10px]">
                                             {t('references')} :
                                         </span>
                                         <ul className="ml-[20px] mt-[20px] list-disc">
                                             {data.documents
-                                                .filter((document) => ["reference","book","manuscript"].includes(document.type))
+                                                .filter((document) => document.type === "reference" || document.type === "book" || document.type === "manuscript")
                                                 .map((document) => (
                                                     <li key={document.id} className="text-[24px] font-normal">
                                                         {document.data.zotero.url ? (
@@ -247,7 +247,7 @@ export default function Note() {
                             <div className="lg:w-1/2 lg:ml-[50px] py-[40px] lg:overflow-y-auto flex-grow border-t lg:border-none border-black">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     
-                                    { data.documents.filter((document) =>  !["reference","book","manuscript"].includes(document.type)).map(document =>
+                                    { data.documents.filter((document) => document.type !== "reference" && document.type !== "book" && document.type !== "manuscript").map(document =>
                                         <div key={document.id} data-id={document.id}>
                                             { ((document.type === 'image' || document.type === 'photo') && document.attachment.split('.')[1] !== 'pdf') &&
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
