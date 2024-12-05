@@ -202,7 +202,7 @@ export default function Note() {
                                         </span>
                                         <ul className="ml-[20px] mt-[20px] list-disc">
                                             {data.documents
-                                                .filter((document) => document.type === "reference")
+                                                .filter((document) => ["reference","book","manuscript"].includes(document.type))
                                                 .map((document) => (
                                                     <li key={document.id} className="text-[24px] font-normal">
                                                         {document.data.zotero.url ? (
@@ -247,7 +247,7 @@ export default function Note() {
                             <div className="lg:w-1/2 lg:ml-[50px] py-[40px] lg:overflow-y-auto flex-grow border-t lg:border-none border-black">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     
-                                    { data.documents.filter((document) => document.type !== "reference").map(document =>
+                                    { data.documents.filter((document) =>  !["reference","book","manuscript"].includes(document.type)).map(document =>
                                         <div key={document.id} data-id={document.id}>
                                             { ((document.type === 'image' || document.type === 'photo') && document.attachment.split('.')[1] !== 'pdf') &&
                                                 <div className="gap-6 relative cursor-pointer" onClick={() => handleSourcePopup(document) }>
