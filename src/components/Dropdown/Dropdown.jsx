@@ -59,7 +59,7 @@ export default function Dropdown({ items, text, theme, onChange}) {
                     }
 
                 </div>
-                { isOpen ? <ChevronDownIcon style={{ width: '10px', height: '30px' }} /> : <ChevronUpIcon style={{ width: '30px', height: '30px' }} /> }
+                { isOpen ? <ChevronDownIcon style={{ width: '30px' }} /> : <ChevronUpIcon style={{ width: '30px' }} /> }
             </div>
 
             <div className={classNames('text-[24px] transition-all duration-[750ms]',{ 'opacity-0': !isOpen })}>
