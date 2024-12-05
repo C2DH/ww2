@@ -6,7 +6,7 @@ import ButtonFilter from '../ButtonFilter/ButtonFilter'
 import LayoutHistorianWorkshop from '../LayoutHistorianWorkshop/LayoutHistorianWorkshop'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
-import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import { useLanguageContext } from '../../contexts/LanguageProvider'
@@ -46,18 +46,20 @@ export default function Sources() {
     const [dataPopup, setDataPopup] = useState({ open: false, data: null })
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)' })
     const menuItems = useMenuHistorianContext()
+    const navigate = useNavigate()
+    const location = useLocation()
 
-    
+    console.log('location', location)
+
     const fetchSources = async (offset = 0, limit = 24) => {
-        console.log('fetchSources');
         try {
             let params = {
                 type__in: ['audio', 'video', 'photo', 'book', 'manuscript'],
             };
+    
             if (filters.types.length > 0) params = { type__in: filters.types }
             if (filters.note) params = { ...params, stories__slug: filters.note.slug };
-            console.log(params);
-            const response = await fetchData('document', params, limit, offset, 'type')
+            const response = await fetchData('document', params, limit, offset, 'type', true)
             await getNotes();
             await getTypes();
             if (response.results.length < limit) {
@@ -91,7 +93,7 @@ export default function Sources() {
         try {
             let params = { type__in: ['audio', 'video', 'photo', 'book', 'manuscript'] };
             if (filters.note) params = { ...params, stories__slug: filters.note.slug };
-            const allTypes = await fetchFacets('document', 'type', params)
+            const allTypes = await fetchFacets('document', 'type', params, true)
             return allTypes ? allTypes.facets.type : []
         } catch (error) {
             console.error('Erreur lors de la récupération des notes :', error)
@@ -113,12 +115,9 @@ export default function Sources() {
     }
 
     const loadMoreSources = async (force = false) => {
-        console.log('loadMoreSources');
-        console.log(force);
         if (!hasMore && !force) return
         setLoading(true)
         const newSources = await fetchSources(offset)
-        console.log('newsources', newSources)
         setSources((prevSources) => [...prevSources, ...newSources])
         setLoading(false)
     };
@@ -201,10 +200,34 @@ export default function Sources() {
             setFilters(prevFilters => ({ ...prevFilters, note: false }))
         }
     }
+
+    const resetFilters = async () => {
+        setFilters({ types: [], note: false })
+        setTypes([])
+        setTypesBase([])
+        setLoading(true)
+    
+        try {
+            const updatedTypes = await fetchTypes();
+            setTypesBase(updatedTypes)
+            setTypes(updatedTypes)
+        } catch (error) {
+            console.error('Erreur lors de la réinitialisation des types :', error);
+        } finally {
+            setLoading(false)
+            navigate('/sources')
+        }
+    };
+
     return (
         <>
             <LayoutHistorianWorkshop pageTitle={t('menuItems.sources')}>
                 <HeaderHistorianWorkshop items={menuItems} />
+
+                {filtersParams.stories__slug &&
+                    <div className="lg:hidden cursor-pointer text-[20px] underline mt-[20px]" onClick={resetFilters}>{ t('reset') }</div>
+                }
+
                 {/** FILTERS */}
                 <div className="hidden lg:block mt-[30px] 2xl:mt-[40px]">
                     <div className="grid grid-cols-12 gap-5 border-b border-black pb-[30px] 2xl:pb-[40px]">
@@ -216,6 +239,9 @@ export default function Sources() {
                                 <ButtonFilter key={index} title={type.type} number={types.find(item => item.type == type.type)?.count ?? 0} types={filters.types} handleClick={() => clickButton(type.type)} />
                             )}
                         </div>
+                        {filtersParams.stories__slug &&
+                            <div className="cursor-pointer text-[20px] underline" onClick={resetFilters}>{ t('reset') }</div>
+                        }
                     </div>
                 </div>
                 {/** CONTENT */}
@@ -252,7 +278,7 @@ export default function Sources() {
                     </div>
                 </div>
                 {/* MOBILE: BTN MENU / BTN FILTERS */}
-                <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full bg-red-200 flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
+                <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
                     <div
                         onClick={() => handleMenu('menu')}
                         className={classNames("flex items-center justify-center", {
@@ -267,6 +293,7 @@ export default function Sources() {
                             <span className='uppercase text-[24px] cursor-pointer'>Filtres</span>
                         </div>
                     }
+
                 </div>
                 {/* MOBILE: MENU - FILTERS */}
                 <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {

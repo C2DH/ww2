@@ -32,7 +32,7 @@ export function cleanText(text) {
         .replace('?', ' ')
 }
 
-export async function fetchData(endpoint, filters = {}, limit, offset = 0, facets = false) {
+export async function fetchData(endpoint, filters = {}, limit, offset = 0, facets = false, exclude = false ) {
 
     const searchParams = new URLSearchParams()
 
@@ -49,9 +49,13 @@ export async function fetchData(endpoint, filters = {}, limit, offset = 0, facet
     if (facets) {
         searchParams.append("facets", facets);
     }
-
-    const url = `/api/${endpoint}/?${searchParams.toString()}`
-
+    
+    let url = `/api/${endpoint}/?${searchParams.toString()}`
+    
+    if (exclude) {
+        url = `/api/${endpoint}/?${searchParams.toString()}&exclude=%7B"tags__slug":"no-level-3"%7D`
+    }
+    
     try {
         const response = await fetch(url);
 
@@ -63,7 +67,7 @@ export async function fetchData(endpoint, filters = {}, limit, offset = 0, facet
     }
 }
 
-export async function fetchFacets(endpoint, facets, filters = {}, limit = "") {
+export async function fetchFacets(endpoint, facets, filters = {}, exclude, limit = "", ) {
     const searchParams = new URLSearchParams()
 
     if (facets) {
@@ -76,6 +80,10 @@ export async function fetchFacets(endpoint, facets, filters = {}, limit = "") {
 
     let url = `/api/${endpoint}/?${searchParams.toString()}`
 
+    if (exclude) {
+        url = url + '&exclude=%7B"tags__slug":"no-level-3"%7D'
+    }
+    
     if (limit) {
         url = url + `&limit=${limit}`
     }

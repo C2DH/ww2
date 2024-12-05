@@ -295,7 +295,7 @@ const ImageZoom = ({ image, alt }) => {
             {() => (
                 <>
                     <TransformComponent>
-                        <img src={ image } alt={ alt } className='w-full max-h-[400px] 2xl:max-h-[750px] object-cover'/>
+                        <img src={ image } alt={ alt } className='w-full max-h-[350px] lg:max-h-[600px] 2xl:max-h-[650px] object-contain'/>
                     </TransformComponent>
                     <Controls zoom={stateZoom}/>
                 </>

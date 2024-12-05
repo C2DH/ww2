@@ -6,7 +6,7 @@ import HeaderHistorianWorkshop from "../HeaderHistorianWorkshop/HeaderHistorianW
 import LayoutHistorianWorkshop from "../LayoutHistorianWorkshop/LayoutHistorianWorkshop";
 import bgPaper from '../../assets/images/common/bg-paper.png'
 import classNames from 'classnames'
-import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from "react-i18next";
 import { useSharedState } from "../../contexts/SharedStateProvider";
 import axios from "axios";
@@ -35,8 +35,7 @@ export default function Glossary() {
     const [filters, setFilters] = useState({ note: filtersParams.stories__slug ? { slug: filtersParams.stories__slug } : false })
     const [notes, setNotes] = useState([])
     const [hasMore, setHasMore] = useState(true)
-
-
+    const navigate = useNavigate()
 
     const fetchTerms = async (offset = 0, limit = 24) => {
         try {
@@ -52,11 +51,11 @@ export default function Glossary() {
             }
             return response.results
         } catch (error) {
+            setHasMore(false)
             setError(error)
             return []
         }
     }
-
 
     const fetchNotes = async () => {
         try {
@@ -81,15 +80,10 @@ export default function Glossary() {
     }
 
 
-    useEffect(() => {
-        console.log('notes', notes)
-    }, [notes])
-
-
     const loadMoreTerms = async (force = false) => {
         if (!hasMore && !force) return
         setLoading(true)
-        const newTerms = await fetchTerms()
+        const newTerms = await fetchTerms(offset)
         setTerms((prevTerms) => [...prevTerms, ...newTerms])
         setLoading(false)
     };
@@ -138,8 +132,8 @@ export default function Glossary() {
             setIsOpenMenu(false)
             setIsOpenFilters(!isOpenFilters)
             if (contentRef.current) {
-                contentRef.current.scrollTop = 0; // Pour les conteneurs défilants
-                window.scrollTo(0, 0); // Optionnel si vous voulez aussi remettre le scroll global à 0
+                contentRef.current.scrollTop = 0
+                window.scrollTo(0, 0)
             }
         }
     }
@@ -157,6 +151,27 @@ export default function Glossary() {
     }, [])
 
 
+    const resetFilters = async () => {
+        navigate('/glossary', { replace: true })
+        setFilters({ note: false })
+        setTerms([])
+        setOffset(0)
+        setLoading(true)
+    
+        try {
+            const updatedNotes = await fetchNotes()
+            setNotes(updatedNotes)
+            const updatedTerms = await fetchTerms(0)
+            setTerms(updatedTerms)
+            setHasMore(true)
+        } catch (error) {
+            console.error('Erreur lors de la réinitialisation des données :', error)
+            setError(error)
+        } finally {
+            setLoading(false)
+        }
+    };
+
     if (error) {
         return <Error />
     } else {
@@ -164,6 +179,10 @@ export default function Glossary() {
             <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
     
                 <HeaderHistorianWorkshop items={ menuItems }/>
+
+                {filtersParams.stories__slug &&
+                    <div className="lg:hidden cursor-pointer text-[20px] underline mt-[20px]" onClick={resetFilters}>{ t('reset') }</div>
+                }
     
                 {/** FILTERS */}
                 <div className="hidden lg:block mt-[40px]">
@@ -172,7 +191,9 @@ export default function Glossary() {
                             <Dropdown items={notes} text={'Recherche par Note(s) et capsule(s)'} theme={'notes'} onChange={handleChangeNote}/>
                         </div>
     
-                        {/* <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => setFilter(filter !== letter ? letter : '')} /> */}
+                        {filtersParams.stories__slug &&
+                            <div className="cursor-pointer text-[20px] underline" onClick={resetFilters}>{ t('reset') }</div>
+                        }
                     </div>
                 </div>
                 
@@ -187,15 +208,19 @@ export default function Glossary() {
     
                 {/* MOBILE: BTN MENU / BTN FILTERS */}
                 <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
-                    <div onClick={() => handleMenu('menu')} className="flex items-center justify-center">
+                    <div onClick={() => handleMenu('menu')}
+                        className={classNames("flex items-center justify-center", {
+                            "border-r border-black w-1/2": filters,
+                            "w-full": !filters
+                        })}
+                    >
                         <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
                     </div>
-    
-                    {/* {allFirstLetters &&                
-                        <div className="w-1/2 flex items-center justify-center" onClick={() => handleMenu('filter')}>
-                            <span className='uppercase text-[24px] cursor-pointer'>{t('filters')}</span>
-                        </div>
-                    } */}
+
+            
+                    <div className="w-1/2 flex items-center justify-center" onClick={() => handleMenu('filter')}>
+                        <span className='uppercase text-[24px] cursor-pointer'>Filtres</span>
+                    </div>
                 </div>
     
                 {/* MOBILE: MENU - FILTERS */}
@@ -203,23 +228,24 @@ export default function Glossary() {
                     "translate-y-[100%]": !isOpenMenu
                 })}>
                     <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
-                        {menuItems.map((item, index) => 
+                        {menuItems.map((item, index) =>
                             <li key={index}>
-                                <Link key={index} to={item.link} className={classNames('navbar-title', {'active' : pathname === `${item.link}`})}>{item.title}</Link>
+                                <Link key={index} to={item.link} className={classNames('navbar-title', { 'active': pathname === `${item.link}` })}>{item.title}</Link>
                             </li>
-                       )}
+                        )}
                     </ul>
                 </div>
-    
-                {/* { allFirstLetters &&
+
+                {notes &&
                     <div className={classNames('lg:hidden py-[50px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] flex justify-center items-center', {
                         "translate-y-[100%]": !isOpenFilters
                     })}>
-                        <div className='flex flex-wrap justify-center gap-2'>
-                            <LetterFilters itemsSelected={selectedLetters} filter={filter} handleClick={(letter) => { setFilter(filter !== letter ? letter : ''); handleMenu('filter')} } />
+                       
+                        <div className="w-[40%] relative h-[200px] me-5">
+                            <Dropdown items={notes} text={'recherche'} theme={'notes'} onChange={handleChangeNote}/>
                         </div>
                     </div>
-                } */}
+                }
     
             </LayoutHistorianWorkshop>
         )
