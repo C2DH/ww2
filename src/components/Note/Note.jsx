@@ -41,6 +41,7 @@ export default function Note() {
                 setData(data)
                 setIsLoaded(true)
             }
+            console.log('data', data.contents)
         }
         getData();
     }, [isLoaded])
@@ -197,7 +198,7 @@ export default function Note() {
                                 {data.documents.some((document) => document.type === "reference") && (
                                     <div className="ml-[20px] mt-[30px] pb-[10px]">
                                         <span className="uppercase font-abril text-[20px] border-b border-black block pb-[10px]">
-                                            {t('references')}:
+                                            {t('references')} :
                                         </span>
                                         <ul className="ml-[20px] mt-[20px] list-disc">
                                             {data.documents

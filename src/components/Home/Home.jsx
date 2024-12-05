@@ -166,9 +166,9 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
                         animate="animate"
                         exit="exit"
                         className={classNames("fixed z-[9999]", {
-                            "left-[20px] lg:left-[50px] top-[50px] lg:top-[120px]": marker.origin === "toUk",
-                            "right-[20px] lg:right-[50px] top-[50px] lg:top-[120px]": marker.origin === "toPolska",
-                            "right-[20px] lg:right-[50px] top-[150px] lg:top-[250px]": marker.origin === "toRussia",
+                            "left-[20px] lg:left-[50px] top-[150px] lg:top-[120px]": marker.origin === "toUk",
+                            "right-[20px] lg:right-[50px] top-[150px] lg:top-[120px]": marker.origin === "toPolska",
+                            "right-[20px] lg:right-[50px] top-[250px] lg:top-[250px]": marker.origin === "toRussia",
                             "right-[50px] bottom-[150px]": marker.origin === "toLux" && visibleMarkers.origin === "toUk",
                             "left-[50px] bottom-[150px]": marker.origin === "toLux" && visibleMarkers.origin !== "toUk",
                         })}
@@ -190,8 +190,6 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
                 ))}
             </AnimatePresence>
 
-
-            
             <Map
                 ref={mapRef}
                 style={{ width: '100%', height: '100%'}}

@@ -46,6 +46,8 @@ export default function SpaceTimeMap() {
     const [isLoaded, setIsLoaded] = useState(false)
     const mapRef = useRef(null)
     const [openFilter, setOpenFilter] = useState(false)
+    const [openLocation, setOpenLocation] = useState(false);
+
 
     const [ viewState, setViewState ] = useState({
         longitude: 6.1243943,
@@ -132,11 +134,17 @@ export default function SpaceTimeMap() {
     }
 
 
+    const handleLocationChange = (isOpen) => {
+        console.log('openLocation dans le parent :', isOpen);
+        setOpenLocation(isOpen);
+    };
+
+
     if (isLoaded) {
         return (
 
             <motion.div className='h-full w-full' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                <MapBox items={data} state={viewState} reference={mapRef} onZoomChange={handleZoomState} />
+                <MapBox items={data} state={viewState} reference={mapRef} onZoomChange={handleZoomState} onLocationChange={handleLocationChange} />
 
                 {/** Map style and zoom */}
                 <div className='absolute top-[40px] right-[20px]'>
@@ -187,17 +195,29 @@ export default function SpaceTimeMap() {
 
                 <span className='hidden xl:block absolute z-[100] bottom-[15px] right-[15px] text-[13px] text-white font-antonio'>© MAPBOX 2024</span>
 
-                {/** Gradient Bottom */}
-                <div className="hidden md:block bottom-gradient absolute bottom-0"></div>
+                <AnimatePresence>
+                    {!openLocation && (
+                        <motion.div
+                            key="filter-panel"
+                            className="relative"
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 50 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {/* Contenu avec animation */}
+                            <div className="hidden md:block bottom-gradient absolute bottom-0"></div>
+                            <div className="hidden md:block container mx-auto fixed bottom-[20px] left-0 right-0">
+                                <div className="grid grid-cols-12">
+                                    <div className="col-span-10 col-start-2">
+                                        <MultiRangeSelector onFilterChange={handleFilterChange} />
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-                {/** Filter period Desktop */}
-                <div className="hidden md:block container mx-auto fixed bottom-[20px] left-0 right-0">
-                    <div className="grid grid-cols-12">
-                        <div className="col-span-10 col-start-2">
-                            <MultiRangeSelector onFilterChange={handleFilterChange}/>
-                        </div>
-                    </div>
-                </div>
 
                 {/** Filter period Mobile */}
                 <div className="fixed md:hidden bottom-0 left-0 right-0">
@@ -225,7 +245,7 @@ export default function SpaceTimeMap() {
 }
 
 
-const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
+const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref) => {
     const innerRef = useRef(null);
     const clusterRef = useRef(null);
     useImperativeHandle(ref, () => innerRef.current, [])
@@ -284,6 +304,12 @@ const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
     }
 
     useEffect(() => {
+        if (onLocationChange) {
+            onLocationChange(openLocation);
+        }
+    }, [openLocation, onLocationChange]);
+
+    useEffect(() => {
         if (selectedMarker.data && selectedMarker.id) {
             selectedMarker.data.covers.map(cover => {
                 if (cover.type === "glossary") {
@@ -302,14 +328,6 @@ const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
     useEffect(() => {
         if (innerRef.current && mapLoaded) {
             const map = innerRef.current.getMap();
-
-            var features = [
-                {id: 0, type: 'car', color: 'red'},
-                {id: 1, type: 'bicycle', color: '#ff00ff'},
-                {id: 2, type: 'bus', color: 'blue'},
-                {id: 3, type: 'cab', color: 'orange'},
-                {id: 4, type: 'train', color: 'red'}
-            ];
             
             clusterRef.current = new MapboxglSpiderifier(map, {
                 onClick: function (e, spiderLeg) {
@@ -327,75 +345,8 @@ const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
                 console.log('Map loading error:', error);
             }); 
 
-            // items.forEach(item => {
-            //     item.covers.forEach(cover => {
-            //         if (cover.type === 'entity') {
-            //             console.log('cover', cover);
-            //             const marker = new mapboxgl.Marker()
-            //             .setLngLat([cover.data.geojson.geometry.coordinates[0], cover.data.geojson.geometry.coordinates[1]])
-            //             .setPopup(
-            //                 new mapboxgl.Popup().setHTML(
-            //                 `<h3>${item.title}</h3><p>${item.description}</p>`
-            //                 )
-            //             );
-
-            //             // spiderifier.addMarker(marker)
-            //         }
-            //     });
-            // });
         } 
     }, [items, mapLoaded]);
-
-
-    // useEffect(() => {
-    //     if (innerRef.current && !mapLoaded) {
-
-    //         var features = [
-    //         {id: 0, type: 'car', color: 'red'},
-    //         {id: 1, type: 'bicycle', color: '#ff00ff'},
-    //         {id: 2, type: 'bus', color: 'blue'},
-    //         {id: 3, type: 'cab', color: 'orange'},
-    //         {id: 4, type: 'train', color: 'red'}
-    //         ];
-    //       // Initialize the Mapbox map
-    //       const map = new mapboxgl.Map({
-    //         accessToken: "pk.eyJ1IjoiYmxhY2ttYWdpazg4IiwiYSI6ImNtMnQ1amdkcTA0MnQybHNic2NmaDZwdTUifQ.oZIH7Te6TdhVwQwl2Oygyg",
-    //         container: innerRef.current,
-    //         style: 'mapbox://styles/mapbox/streets-v9',
-    //         center: [-74.50, 40],  // Coordinates to center the map
-    //         zoom: 9,
-    //       });
-    
-    //       map.on('load', () => {
-    //         // Set the mapLoaded state to true once the map has loaded
-    //         setMapLoaded(true);
-    
-    //         // Initialize the Spiderifier once the map has loaded
-    //         const spiderifier = new MapboxglSpiderifier(map, {
-    //           onClick: function (e, spiderLeg) {
-    //             console.log('Clicked on ', spiderLeg);
-    //           },
-    //           markerWidth: 40,
-    //           markerHeight: 40,
-    //         });
-    
-    //         // Spiderfy the features when the map style is loaded
-    //         map.on('style.load', function () {
-    //           spiderifier.spiderfy([-74.50, 40], features);
-    //         });
-    
-    //         // Unspiderfy on map click
-    //         map.on('click', function () {
-    //           spiderifier.unspiderfy();
-    //         });
-    //       });
-    
-    //       // Handle map errors
-    //       map.on('error', function (error) {
-    //         console.error('Map loading error:', error);
-    //       });
-    //     }
-    //   }, [mapLoaded]);
 
     const allMarkers = Object.values(Object.groupBy(items.reduce((acc, item) => {
         const markers = item.covers.filter(cover => cover.data.type === "place").map(cover => {
@@ -409,13 +360,9 @@ const MapBox = forwardRef(({ items, state, onZoomChange }, ref) => {
         return acc.concat(markers);
     }, []), ({ coordinates }) => coordinates));
 
-    console.log(allMarkers);
 
     const clusters = allMarkers.filter(item => item.length > 1);
     const markers = allMarkers.filter(item => item.length === 1).flat();
-
-    console.log(allMarkers.filter(item => item.length === 1));
-    console.log(allMarkers.filter(item => item.length === 1).flat());
 
     return (
         <>
