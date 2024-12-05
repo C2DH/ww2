@@ -47,10 +47,16 @@ ENV VITE_API_MAPTILER=${VITE_API_MAPTILER}
 ENV VITE_ROOT=${VITE_ROOT}
 ENV VITE_EMAIL=${VITE_EMAIL}
 ENV VITE_VIDEO_TRAILER_HOME=${VITE_VIDEO_TRAILER_HOME}
+ENV VITE_VIDEO_TRAILER_HOME_FR=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/Trailer_fr_FR.webm
+ENV VITE_VIDEO_TRAILER_HOME_EN=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/Trailer_en_EN.webm
+ENV VITE_VIDEO_TRAILER_HOME_DE=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/Trailer_de_DE.webm
+ENV VITE_VIDEO_TRAILER_CREDIT_FR=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/WWII_Trailer_fr_FR.mp4
+ENV VITE_VIDEO_TRAILER_CREDIT_EN=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/WWII_Trailer_en_EN.mp4
+ENV VITE_VIDEO_TRAILER_CREDIT_DE=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/WWII_Trailer_de_DE.mp4
 RUN npm run build
 
 # print out these env values to a info.json file
-RUN echo "{\"BUILD_DATE\": \"${BUILD_DATE}\", \"GIT_TAG\": \"${GIT_TAG}\", \"GIT_BRANCH\": \"${GIT_BRANCH}\", \"GIT_COMMIT_SHA\": \"${GIT_COMMIT_SHA}\", \"GIT_LAST_COMMIT_DATE\": \"${GIT_LAST_COMMIT_DATE}\", \"VITE_VIDEO_TRAILER_HOME\": \"${VITE_VIDEO_TRAILER_HOME}\", \"VITE_ROOT\":\"${VITE_ROOT}\"}" > dist/info.json
+RUN echo "{\"BUILD_DATE\": \"${BUILD_DATE}\", \"GIT_TAG\": \"${GIT_TAG}\", \"GIT_BRANCH\": \"${GIT_BRANCH}\", \"GIT_COMMIT_SHA\": \"${GIT_COMMIT_SHA}\", \"GIT_LAST_COMMIT_DATE\": \"${GIT_LAST_COMMIT_DATE}\", \"VITE_VIDEO_TRAILER_HOME\": \"${VITE_VIDEO_TRAILER_HOME}\", \"VITE_VIDEO_TRAILER_CREDIT_EN\":\"${VITE_VIDEO_TRAILER_CREDIT_EN}\", \"VITE_ROOT\":\"${VITE_ROOT}\"}" > dist/info.json
 
 FROM busybox:stable
 WORKDIR /app
