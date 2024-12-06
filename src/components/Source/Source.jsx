@@ -87,7 +87,7 @@ export default function Source({ data, handleSourcePopup }) {
 
             {/* {isLoading && <Loader />} */}
 
-            <div className={classNames('hidden lg:block absolute top-[40px] left-[40px] text-[30px] text-white z-[100]', {
+            <div className={classNames('hidden lg:block absolute top-[40px] left-[40px] text-[30px] text-white z-[99]', {
                 'top-[80px]': pathname === '/spatiotemporal-map'
             })}>
                 <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" className='cursor-pointer' onClick={ handleSourcePopup } >

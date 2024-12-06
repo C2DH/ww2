@@ -17,14 +17,25 @@ export default function Catalogue() {
     const [lastRead, setLastRead] = useState('')
     const storedParams = localStorage.getItem('params')
     const [sharedState, setSharedState] = useSharedState()
-    const [readTheme1, setReadTheme1] = useState(60/100)
-    const [readTheme2, setReadTheme2] = useState(20/100)
-    const [readTheme3, setReadTheme3] = useState(50/100)
-    const [readTheme4, setReadTheme4] = useState(85/100)
+    // const [readTheme1, setReadTheme1] = useState(60/100)
+    // const [readTheme2, setReadTheme2] = useState(20/100)
+    // const [readTheme3, setReadTheme3] = useState(50/100)
+    // const [readTheme4, setReadTheme4] = useState(85/100)
     const [isLoaded, setIsLoaded] = useState(false)
     const [textCatalogue, setTextCatalogue] = useState()
     const { language } = useLanguageContext()
     const [themes, setThemes] = useState([])
+    const [progress, setProgress] = useState([])
+    
+    
+    useEffect(() => {
+        const results = JSON.parse(localStorage.getItem('results'))
+        if (results) {
+            setProgress(results)
+        }
+    }, [])
+
+ 
 
 
     useEffect(() => {
@@ -69,12 +80,17 @@ export default function Catalogue() {
                         </div>
     
                         <div className="hidden lg:flex col-span-4 border-l border-black mt-[70px] mb-[45px] pl-[20px] flex-col justify-between">
-                            <div className='flex items-center'>
-                                <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')} 1</span>  
-                                <ProgressBar progress={readTheme1}/>
-                            </div>
+                            
+                            
+                            {progress.map((item, index) => 
+                                <div key={index} className='flex items-center'>
+                                    <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')} {index + 1}</span>  
+                                    <ProgressBar progress={progress[index]}/>
+                                </div>
+                            )}
+
     
-                            <div className='flex items-center'>
+                            {/* <div className='flex items-center'>
                                 <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')} 2</span>   
                                 <ProgressBar progress={readTheme2} />
                             </div>
@@ -86,7 +102,7 @@ export default function Catalogue() {
                             <div className='flex items-center'>
                                 <span className='text-[24px] uppercase pr-[10px] text-nowrap'>{ t('theme')} 4</span>   
                                 <ProgressBar progress={readTheme4} />
-                            </div>
+                            </div> */}
 
                                 
                                 {/* <div className='resume-reading'>

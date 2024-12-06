@@ -5,9 +5,7 @@ import { useTranslation } from "react-i18next"
 import { fetchData } from "../../lib/utils"
 import { useLanguageContext } from '../../contexts/LanguageProvider'
 import bgBlack from '../../assets/images/common/bg-black.jpg'
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-
+import ReactMarkdown from 'react-markdown'
 
 export default function Contact() {
     const [sharedState, setSharedState] = useSharedState()
@@ -53,18 +51,16 @@ export default function Contact() {
 const MarkdownContent = ({content}) => {
 
     const customComponents = {
-      h2: ({ node, ...props }) => <h2 className="text-[26px] lg:text-[40px] mt-[40px] lg:mt-[80px]" {...props} />,
-      h3: ({ node, ...props }) => <h3 className="text-[22px] lg:text-[28px]" {...props} />,
-      p: ({ node, ...props }) => <p className="text-[20px] lg:text-[24px] leading-none" {...props} />,
-      a: ({ node, ...props }) => <a className="text-blue underline" target="_blank" {...props} />,
-    };
-      return (
-          <div className="markdown-container" >
-              <ReactMarkdown remarkPlugins={[remarkGfm]} components={customComponents}>
-                  {content}
-              </ReactMarkdown>
-          </div>
-      )
-  }  
+        h2: ({ node, ...props }) => <h2 className="text-[26px] lg:text-[40px] mt-[40px] lg:mt-[80px]" {...props} />,
+        h3: ({ node, ...props }) => <h3 className="text-[22px] lg:text-[28px]" {...props} />,
+        p: ({ node, ...props }) => <p className="text-[20px] lg:text-[24px] leading-none" {...props} />,
+        a: ({ node, ...props }) => <a className="text-blue underline" target="_blank" {...props} />
+    }
+    return (
+        <div className="markdown-container" >
+            <ReactMarkdown components={customComponents}>{content}</ReactMarkdown>
+        </div>
+    )
+}  
 
 

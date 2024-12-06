@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import siteConfig from '../../../site.config'
     
-
 // Assets
 import bgBlack from '../../assets/images/common/bg-black.jpg'
 import img1 from '../../assets/images/historianWorkshop/img-1.png'
@@ -17,69 +16,67 @@ import img7 from '../../assets/images/historianWorkshop/img-7.png'
 import img8 from '../../assets/images/historianWorkshop/img-8.png'
 import { useTranslation } from 'react-i18next'
 
-export default function HistorianWorkshop() {
+const EXPIRE = 6 * 3600 * 1000;
 
+export default function HistorianWorkshop() {
     const [sharedState, setSharedState] = useSharedState()
     const [imgLoaded, setImgLoaded] = useState(false)
     const { t } = useTranslation()
-
+    const historianWorkshop = localStorage.getItem('historianWorkshop');
+    let animation = false;
+    if (historianWorkshop < new Date().getTime() || !historianWorkshop) {
+        animation = true;
+        localStorage.setItem("historianWorkshop", new Date().getTime() + EXPIRE);
+    }
     useEffect(() => {
         setSharedState({ ...sharedState, showCurtains: false });
     }, [])
-
     return (
         <motion.div exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}} >
-            <div style={{ backgroundImage: `url(${bgBlack})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='hidden md:block w-full h-[calc(100vh-120px)] overflow-hidden'>
+            <div style={{ backgroundImage: `url(${bgBlack})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}} className='hidden 2xl:block w-full h-[calc(100vh-120px)] overflow-hidden'>
                 <div className="container mx-auto relative h-full 2xl:mt-[40px]">
                     
-                    <motion.div className='absolute inset-0' initial={{ y: '150%'}} animate={{ y: '-3%' }} transition={{ duration: 0.75, delay: 1 }}>
+                    <motion.div className='absolute inset-0' initial={{ y: '150%'}} animate={{ y: '-3%' }} transition={{ duration: animation ? 0.75 : 0, delay: animation ? 1 : 0 }}>
                         <div className='flex justify-center'>
                             <img src={img1} alt="" className='h-[70vh]'  />
                         </div>
                     </motion.div>
-
-                    <motion.div className="absolute inset-0" initial={{ y: '150%'}} animate={{ y: 0 }} transition={{ duration: 0.75, delay: 2 }}>
+                    <motion.div className="absolute inset-0" initial={{ y: '150%'}} animate={{ y: 0 }} transition={{ duration: animation ? 0.75 : 0, delay: animation ? 2 : 0 }}>
                         <div className='flex justify-center'>
                             <img src={img2} alt="" className='h-[70vh]' />
                         </div>
                     </motion.div>
-
-                    <motion.div className="absolute inset-0" initial={{ x: '150%' }} animate={{ x: '5%' }} transition={{ duration: 0.75, delay: 3 }}>
+                    <motion.div className="absolute inset-0" initial={{ x: '150%' }} animate={{ x: '5%' }} transition={{ duration: animation ? 0.75 : 0, delay: animation ? 3 : 0 }}>
                         <div className='flex justify-center'>
                             <img src={img3} alt="" className='h-[70vh]' />
                         </div>
                     </motion.div>
-
-                    <motion.div className="absolute inset-0" initial={{ x: '-150%' }} animate={{ x: '3%' }} transition={{ duration: 0.75, delay: 4 }}>
+                    <motion.div className="absolute inset-0" initial={{ x: '-150%' }} animate={{ x: '3%' }} transition={{ duration: animation ? 0.75 : 0, delay: animation ? 4 : 0 }}>
                         <div className='flex justify-center'>
                             <img src={img4} alt="" className='h-[70vh]' />
                         </div>                    
                     </motion.div>
-
-                    <motion.div className="absolute inset-0" initial={{ x: '-150%', y: '150%' }} animate={{ x: '-4%', y: 0 }} transition={{ duration: 0.75, delay: 5 }}>
+                    <motion.div className="absolute inset-0" initial={{ x: '-150%', y: '150%' }} animate={{ x: '-4%', y: 0 }} transition={{ duration: animation ? 0.75 : 0, delay: animation ? 5 : 0 }}>
                         <div className='flex justify-center'>
                             <img src={img5} alt="" className='h-[70vh]' />
                         </div>                    
                     </motion.div>
-
-                    <motion.div className="absolute inset-0" initial={{ x: '150%', y: '150%' }} animate={{ x: '-3%', y: '5%' }} transition={{ duration: 0.75, delay: 6 }}>
+                    <motion.div className="absolute inset-0" initial={{ x: '150%', y: '150%' }} animate={{ x: '-3%', y: '5%' }} transition={{ duration: animation ? 0.75 : 0, delay: animation ? 6 : 0 }}>
                         <div className='flex justify-center'>
                             <img src={img6} alt="" className='h-[70vh]' />
                         </div>
                     </motion.div>
-
-                    <motion.div className="absolute inset-0" initial={{ x: '-150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 7 }}>
+                    <motion.div className="absolute inset-0" initial={{ x: '-150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: animation ? 0.75 : 0, delay: animation ? 7 : 0 }}>
                         <div className='flex justify-center'>
                             <img src={img7} alt="" className='h-[70vh]' />
                         </div>
                     </motion.div>
-
-                    <motion.div className="absolute inset-0" initial={{ x: '150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: 0.75, delay: 8 }}>
+                    <motion.div className="absolute inset-0" initial={{ x: '150%', y: '150%' }} animate={{ x: 0, y: 0 }} transition={{ duration: animation ? 0.75 : 0, delay: animation ? 8 : 0 }}>
                         <div className='relative flex justify-center'>
                             <img src={img8} className='h-[70vh]' alt="" onLoad={() => setImgLoaded(true)}/>
                             
                             { imgLoaded &&                            
-                                <div className='absolute bottom-[20px] lg:bottom-[40px] xl:bottom-[100px] right-[20px] lg:right-[60px] xl:right-[100px] w-1/2 lg:w-1/3'>
+                                <div className='absolute bottom-[100px] right-[200px] w-1/3'>
                                     <h2 className='text-blue font-abril text-[40px] leading-none'>{ t('menuItems.historian_workshop') }</h2>
                                     <p className='text-white pt-[10px]'>{ t('historian_description')}</p>
                                 </div>
@@ -104,7 +101,6 @@ export default function HistorianWorkshop() {
                                         <text x="300" y="692" r="11" fill="transparent" className='transition-all duration-[750ms] text-[36px] group-hover:opacity-1 group-hover:fill-[#6EDFFB] uppercase'>{ t('menuItems.sources')}</text> 
                                     </Link>
 
-
                                     {/* Bibliothèque centre */} 
                                     <Link to={"/research-institutions"} className='block group transition-all duration-[750ms]'>
                                         <path d="M1159 551.5L1161.5 478L1099 439L1103.5 141.5L825 140L820 512L945 537V527.5L1081.5 544.5" stroke="transparent" fill="transparent" fillOpacity={0.1}  strokeWidth="2" className='transition-all duration-[750ms] group-hover:fill-[#6EDFFB] group-hover:stroke-[#6EDFFB]'/>
@@ -112,44 +108,24 @@ export default function HistorianWorkshop() {
                                         <circle cx="959" cy="324" r="6" fill="white" className='animate-pulseSmall' style={{ transformOrigin: '959px 324px' }}/>
                                         <text x="800" y="294" r="11" fill="transparent" className='transition-all duration-[750ms] text-[36px] group-hover:opacity-1 group-hover:fill-[#6EDFFB] uppercase'>{ t('menuItems.research_institutions')}</text> 
                                     </Link>
-
-
-                                    {/* Bibliothèque droite haut */} 
-                                    {/* <Link to={"/glossary"} className='block group transition-all duration-[750ms]'>
-                                        <path d="M1137.95 145H1426V237L1133 230L1137.95 145Z" stroke="transparent" fill="transparent" fillOpacity={0.1} strokeWidth="2" className='transition-all duration-[750ms] group-hover:fill-[#6EDFFB] group-hover:stroke-[#6EDFFB]'/>
-                                        <circle cx="1365" cy="200" r="11" fill="#6EDFFB" className='animate-pulseBig' style={{ transformOrigin: '1365px 200px' }}/>
-                                        <circle cx="1365" cy="200" r="6" fill="white" className='animate-pulseSmall' style={{ transformOrigin: '1365px 200px' }}/>
-                                        <text x="1210" y="200" r="11" fill="transparent" className='transition-all duration-[750ms] text-[36px] group-hover:opacity-1 group-hover:fill-[#6EDFFB] uppercase'>GLossaire</text> 
-                                    </Link> */}
-
-
-                                    {/* Bibliothèque droite bas */} 
-                                    {/* <Link to={'/bibliography'} className='block group transition-all duration-[750ms]'>
-                                        <path d="M1426 348L1127.5 331.5L1133 237L1426 245V348Z" stroke="transparent" fill="transparent" fillOpacity={0.1} strokeWidth="2" className='transition-all duration-[750ms] group-hover:fill-[#6EDFFB] group-hover:stroke-[#6EDFFB]'/>
-                                        <circle cx="1347" cy="302" r="11" fill="#6EDFFB" className='animate-pulseBig' style={{ transformOrigin: '1347px 302px' }} />
-                                        <circle cx="1347" cy="302" r="6" fill="white" className='animate-pulseSmall' style={{ transformOrigin: '1347px 302px' }} />
-                                        <text x="1150" y="302" fill="transparent" className='transition-all duration-[750ms] text-[36px] group-hover:opacity-1 group-hover:fill-[#6EDFFB] uppercase'>Bibliographie</text> 
-                                    </Link> */}
-
+                                    
+                                    {/* Bibliothèque droite */}
                                     <Link to={'/glossary'} className='block group transition-all duration-[750ms]'>
                                     <path d="M301 1v312l-149.5-14-74.75-7L2 285 11 1h290Z" stroke="transparent" fill="transparent" fillOpacity={0.1} strokeWidth="2" className='transition-all duration-[750ms] group-hover:fill-[#6EDFFB] group-hover:stroke-[#6EDFFB]'/>   
                                     <circle cx="1347" cy="302" r="11" fill="#6EDFFB" className='animate-pulseBig' style={{ transformOrigin: '1347px 302px' }} />
                                     <circle cx="1347" cy="302" r="6" fill="white" className='animate-pulseSmall' style={{ transformOrigin: '1347px 302px' }} />
                                     <text x="1150" y="302" fill="transparent" className='transition-all duration-[750ms] text-[36px] group-hover:opacity-1 group-hover:fill-[#6EDFFB] uppercase'>{ t('menuItems.glossary')}</text> 
                                     </Link>
-
                                 </svg>    
-
-
                             </div>
                         </div>
                     </motion.div>
                 </div>
             </div>
-
-            <div className='md:hidden flex relative'>
-                <div className='px-[20px] sm:px-0 h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] overflow-scroll' style={{ backgroundImage: `url(${img8})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
-                    <div className="container mx-auto relative z-[2]">
+            <div className='2xl:hidden flex relative'>
+                <div className='px-[20px] h-[calc(100dvh-120px)] sm:h-[calc(100vh-120px)] w-full overflow-scroll' style={{ backgroundImage: `url(${img8})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
+                    <div className="container mx-auto relative z-[2] flex items-center justify-center">
+                    <div className='w-full sm:w-[80%] md:w-[70%] lg:w-[60%]'>
                         <h1 className='text-[40px] font-abril text-blue pt-[40px] w-[80%] leading-none'>Atelier de l'historien</h1>
                         <p className='text-white text-[24px] pt-[15px]'>Le 10 septembre 1944, les résistants luxembourgeois se ruent à la Chambre des députés, jusqu’alors occupé par l’administration nazie, et cherchent à prendre possession des documents qui y sont conservés. Suivons leur parcours dans les archives immédiates de l’annexion, en consultant la bibliographie et les sources relatives au Luxembourg pendant la Seconde Guerre mondiale.</p>
                         <div className='py-[20px] text-white text-[38px]'>
@@ -158,9 +134,10 @@ export default function HistorianWorkshop() {
                             <Link to={'/glossary'} className='uppercase block pt-[10px]'>Glossaire</Link>
                             <Link to={'/bibliography'} className='uppercase block pt-[10px]'>Bibliographie</Link>
                         </div>
+                        </div>
                     </div>
                 </div>
-                <div className='md:hidden absolute bg-gradient-to-t from-neutral-800 inset-0'></div>
+                <div className='2xl:hidden absolute bg-gradient-to-t from-neutral-800 inset-0'></div>
             </div>
         </motion.div>
     )

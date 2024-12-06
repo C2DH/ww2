@@ -50,11 +50,9 @@ export default function CardImageText({ title = "", myRef, data, onClick }) {
                         )}
 
                         {data.type === "audio" && (
-                    
-                                <div className="bg-gray-200 h-[110px] flex items-center justify-center rounded-[2px]">
-                                    <MusicalNoteIcon style={{ width: '30px', height: '30px' }} />
-                                </div>
-                            
+                            <div className="bg-gray-200 h-[110px] flex items-center justify-center rounded-[2px]">
+                                <MusicalNoteIcon style={{ width: '30px', height: '30px' }} />
+                            </div>
                         )}    
                     </div>
 

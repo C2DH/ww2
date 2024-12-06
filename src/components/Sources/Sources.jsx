@@ -15,15 +15,7 @@ import Source from '../Source/Source'
 import { useMediaQuery } from 'react-responsive'
 import { useMenuHistorianContext } from '../../contexts/MenuHistorianProvider'
 import { fetchData, fetchFacets } from '../../lib/utils'
-
-// const computeTags = (response) => {
-//     return [...(new Set(response.reduce((carry, item) => {
-//         if (item.data__zotero__tags?.length > 0) {
-//             return [...carry, ...(item.data__zotero__tags.map(tag => tag.tag))]
-//         }
-//         return carry;
-//     }, [])))];
-// }
+import { XCircleIcon } from '@heroicons/react/24/outline'
 
 export default function Sources() {
     const [searchParams] = useSearchParams();
@@ -35,7 +27,6 @@ export default function Sources() {
     const [loading, setLoading] = useState(false)
     const [sources, setSources] = useState([])
     const [types, setTypes] = useState([])
-    const [tags, setTags] = useState([])
     const [notes, setNotes] = useState([])
     const [typesBase, setTypesBase] = useState([])
     const { pathname } = useLocation()
@@ -47,23 +38,36 @@ export default function Sources() {
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)' })
     const menuItems = useMenuHistorianContext()
     const navigate = useNavigate()
-    const location = useLocation()
+    const [filterTitle, setFilterTitle] = useState()
 
-    console.log('location', location)
+    const getTitleNote = async () => {
+        if (filtersParams.stories__slug) {
+            const data = await fetchData(`story/${filtersParams.stories__slug}`)
+            if (data?.data?.title[language]) {
+                setFilterTitle(data.data.title[language])
+            }
+        }
+    }
+
+    useEffect(() => {
+        getTitleNote()
+    }, [])
+
 
     const fetchSources = async (offset = 0, limit = 24) => {
         try {
             let params = {
-                type__in: ['audio', 'video', 'photo', 'book', 'manuscript'],
-            };
+                type__in: ['audio', 'video', 'photo', 'book', 'manuscript']
+            }
     
             if (filters.types.length > 0) params = { type__in: filters.types }
-            if (filters.note) params = { ...params, stories__slug: filters.note.slug };
+            if (filters.note) params = { ...params, stories__slug: filters.note.slug }
+
             const response = await fetchData('document', params, limit, offset, 'type', true)
-            await getNotes();
-            await getTypes();
+            await getNotes()
+            await getTypes()
             if (response.results.length < limit) {
-                setHasMore(false);
+                setHasMore(false)
             }
             return response.results
         } catch (error) {
@@ -74,7 +78,7 @@ export default function Sources() {
 
     const fetchNotes = async () => {
         try {
-            let params = { type__in: ['audio', 'video', 'photo', 'book', 'manuscript'] };
+            let params = { type__in: ['audio', 'video', 'photo', 'book', 'manuscript'] }
             if (filters.types.length > 0) params = { type__in: filters.types }
             const notesIdTab = []
             const allNotes = await fetchFacets('document', 'stories', params)
@@ -91,8 +95,8 @@ export default function Sources() {
 
     const fetchTypes = async () => {
         try {
-            let params = { type__in: ['audio', 'video', 'photo', 'book', 'manuscript'] };
-            if (filters.note) params = { ...params, stories__slug: filters.note.slug };
+            let params = { type__in: ['audio', 'video', 'photo', 'book', 'manuscript'] }
+            if (filters.note) params = { ...params, stories__slug: filters.note.slug }
             const allTypes = await fetchFacets('document', 'type', params, true)
             return allTypes ? allTypes.facets.type : []
         } catch (error) {
@@ -206,6 +210,7 @@ export default function Sources() {
         setTypes([])
         setTypesBase([])
         setLoading(true)
+        setFilterTitle()
     
         try {
             const updatedTypes = await fetchTypes();
@@ -217,13 +222,14 @@ export default function Sources() {
             setLoading(false)
             navigate('/sources')
         }
-    };
+    }
 
     return (
         <>
             <LayoutHistorianWorkshop pageTitle={t('menuItems.sources')}>
                 <HeaderHistorianWorkshop items={menuItems} />
 
+                {/** RESET */}
                 {filtersParams.stories__slug &&
                     <div className="lg:hidden cursor-pointer text-[20px] underline mt-[20px]" onClick={resetFilters}>{ t('reset') }</div>
                 }
@@ -232,16 +238,23 @@ export default function Sources() {
                 <div className="hidden lg:block mt-[30px] 2xl:mt-[40px]">
                     <div className="grid grid-cols-12 gap-5 border-b border-black pb-[30px] 2xl:pb-[40px]">
                         <div className="col-span-5 relative">
-                            <Dropdown items={notes} theme={'notes'} text={'Recherche par Note(s) et capsule(s) '} onChange={handleChangeNote} />
+                            {filterTitle &&
+                                <div className='py-[5px] px-[10px] border border-black cursor-pointer w-full rounded-[4px] bg-[#EFEFED] transition-all duration-[750ms]'>
+                                    <div className='relative w-fit'>
+                                        <span className='uppercase text-[24px] mr-5'>{filterTitle}</span>
+                                        <XCircleIcon style={{ width: '15px' }} onClick={(e) => { e.stopPropagation(); resetFilters(); }} className="absolute top-0 right-0 hover:text-red-500" />
+                                    </div>
+                                </div>
+                            }
+                            {!filterTitle &&                            
+                                <Dropdown items={notes} theme={'notes'} text={'Recherche par Note(s) et capsule(s) '} onChange={handleChangeNote} />
+                            }
                         </div>
                         <div className="col-span-7">
-                            {typesBase?.map((type, index) =>
+                            {types.filter(item => item.count > 0).map((type, index) =>
                                 <ButtonFilter key={index} title={type.type} number={types.find(item => item.type == type.type)?.count ?? 0} types={filters.types} handleClick={() => clickButton(type.type)} />
                             )}
                         </div>
-                        {filtersParams.stories__slug &&
-                            <div className="cursor-pointer text-[20px] underline" onClick={resetFilters}>{ t('reset') }</div>
-                        }
                     </div>
                 </div>
                 {/** CONTENT */}

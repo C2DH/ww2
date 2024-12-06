@@ -9,11 +9,11 @@ import classNames from 'classnames'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from "react-i18next";
 import { useSharedState } from "../../contexts/SharedStateProvider";
-import axios from "axios";
 import { useLanguageContext } from "../../contexts/LanguageProvider";
 import Error from "../Error/Error";
 import { useMenuHistorianContext } from "../../contexts/MenuHistorianProvider";
 import { fetchData, fetchFacets } from "../../lib/utils";
+import { XCircleIcon } from "@heroicons/react/24/outline";
 
 export default function Glossary() {
     const [searchParams] = useSearchParams();
@@ -21,7 +21,6 @@ export default function Glossary() {
     const [sharedState, setSharedState] = useSharedState()
     const { t } = useTranslation()
     const { language } = useLanguageContext()
-    const [filter, setFilter] = useState('')
     const [filteredTerms, setFilteredTerms] = useState([])
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenFilters, setIsOpenFilters] = useState(false)
@@ -36,6 +35,21 @@ export default function Glossary() {
     const [notes, setNotes] = useState([])
     const [hasMore, setHasMore] = useState(true)
     const navigate = useNavigate()
+    const [filterTitle, setFilterTitle] = useState(null)
+
+
+    const getTitleNote = async () => {
+        if (filtersParams.stories__slug) {
+            const data = await fetchData(`story/${filtersParams.stories__slug}`)
+            if (data?.data?.title[language]) {
+                setFilterTitle(data.data.title[language])
+            }
+        }
+    }
+
+    useEffect(() => {
+        getTitleNote()
+    }, [])
 
     const fetchTerms = async (offset = 0, limit = 24) => {
         try {
@@ -152,34 +166,31 @@ export default function Glossary() {
 
 
     const resetFilters = async () => {
-        navigate('/glossary', { replace: true })
         setFilters({ note: false })
-        setTerms([])
-        setOffset(0)
         setLoading(true)
-    
-        try {
-            const updatedNotes = await fetchNotes()
-            setNotes(updatedNotes)
-            const updatedTerms = await fetchTerms(0)
-            setTerms(updatedTerms)
-            setHasMore(true)
-        } catch (error) {
-            console.error('Erreur lors de la réinitialisation des données :', error)
-            setError(error)
-        } finally {
-            setLoading(false)
-        }
-    };
+        setFilterTitle(null)
+        navigate('/glossary')
+
+        // try {
+        //     const updatedNotes = await fetchNotes()
+        //     setNotes(updatedNotes)
+        // } catch (error) {
+        //     console.error('Erreur lors de la réinitialisation des données :', error)
+        //     setError(error)
+        // } finally {
+        //     setLoading(false)
+        //     navigate('/glossary', { replace: true })
+        // }
+    }
 
     if (error) {
         return <Error />
     } else {
         return (
             <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
-    
                 <HeaderHistorianWorkshop items={ menuItems }/>
 
+                {/** RESET */}
                 {filtersParams.stories__slug &&
                     <div className="lg:hidden cursor-pointer text-[20px] underline mt-[20px]" onClick={resetFilters}>{ t('reset') }</div>
                 }
@@ -188,12 +199,19 @@ export default function Glossary() {
                 <div className="hidden lg:block mt-[40px]">
                     <div className="border-b border-black pb-[40px] w-full flex flex-wrap gap-y-[20px]">
                         <div className="w-[40%] relative h-[40px] me-5">
-                            <Dropdown items={notes} text={'Recherche par Note(s) et capsule(s)'} theme={'notes'} onChange={handleChangeNote}/>
+                            {filterTitle &&
+                                <div className='py-[5px] px-[10px] border border-black cursor-pointer w-full rounded-[4px] bg-[#EFEFED] transition-all duration-[750ms]'>
+                                    <div className='relative w-fit'>
+                                        <span className='uppercase text-[24px] mr-5'>{filterTitle}</span>
+                                        <XCircleIcon style={{ width: '15px' }} onClick={(e) => { e.stopPropagation(); resetFilters(); }} className="absolute top-0 right-0 hover:text-red-500" />
+                                    </div>
+                                </div>
+                            }
+
+                            {!filterTitle && 
+                                <Dropdown items={notes} text={'Recherche par Note(s) et capsule(s)'} theme={'notes'} onChange={handleChangeNote}/>
+                            }
                         </div>
-    
-                        {filtersParams.stories__slug &&
-                            <div className="cursor-pointer text-[20px] underline" onClick={resetFilters}>{ t('reset') }</div>
-                        }
                     </div>
                 </div>
                 
@@ -217,7 +235,6 @@ export default function Glossary() {
                         <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
                     </div>
 
-            
                     <div className="w-1/2 flex items-center justify-center" onClick={() => handleMenu('filter')}>
                         <span className='uppercase text-[24px] cursor-pointer'>Filtres</span>
                     </div>
@@ -246,45 +263,7 @@ export default function Glossary() {
                         </div>
                     </div>
                 }
-    
             </LayoutHistorianWorkshop>
         )
     }
-
 }
-
-
-
-const LetterFilters = ({itemsSelected, filter, handleClick}) => {
-
-    const alphabet = [];
-    for (let i = 65; i <= 90; i++) {
-        alphabet.push(String.fromCharCode(i));
-    }
-
-    return (
-        alphabet.map((letter, index) => {
-            if (itemsSelected.includes(letter)) {
-                return (
-                    <div key={index} className={classNames("border border-black px-[22px] py-[7px] h-[40px] lg:me-5 cursor-pointer group hover:bg-black transition-all duration-500", {
-                        'bg-black': letter === filter
-                    })}
-                        onClick={() => { handleClick(letter) }}
-                    >
-                        <span className={classNames("text-[24px] leading-none group-hover:text-white transition-all duration-500", {
-                            "text-white": letter === filter
-                        })}>{letter}</span>
-                    </div>
-                )
-            } else {
-                return (
-                    <div key={index} className="border border-black opacity-20 px-[22px] py-[7px] h-[40px] lg:me-5 pointer-events-none">
-                        <span className="text-[24px] leading-none">{letter}</span>
-                    </div>
-                )
-            }
-        })
-    )
-}
-
-

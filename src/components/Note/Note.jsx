@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSharedState } from '../../contexts/SharedStateProvider'
 import Source from '../Source/Source'
@@ -12,8 +12,7 @@ import siteConfig from '../../../site.config'
 import { BookOpenIcon, CubeIcon, DocumentIcon, PhotoIcon, SpeakerWaveIcon, VideoCameraIcon } from '@heroicons/react/24/outline'
 import { useMediaQuery } from 'react-responsive'
 import classNames from 'classnames'
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import ReactMarkdown from 'react-markdown'
 
 
 export default function Note() {
@@ -28,9 +27,14 @@ export default function Note() {
     const rootPath = import.meta.env.VITE_ROOT
     const isSmall = useMediaQuery({ query: '(max-width: 1024px)'})
     const [currentTheme, setCurrentTheme] = useState()
-    const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
-    const [themes, setThemes] = useState([]); // Stocke tous les thèmes triés
+    const [currentNoteIndex, setCurrentNoteIndex] = useState(0)
+    const [themes, setThemes] = useState([])
+    const noteEndRef = useRef(null);
 
+    const readProgress = localStorage.getItem('readProgress')
+    if (!readProgress) {
+        localStorage.setItem('readProgress', JSON.stringify([[], [], [], []]))
+    }
 
     // DETAILS NOTE
     useEffect(() => {
@@ -41,7 +45,6 @@ export default function Note() {
                 setData(data)
                 setIsLoaded(true)
             }
-            console.log('data', data.contents)
         }
         getData();
     }, [isLoaded])
@@ -56,12 +59,10 @@ export default function Note() {
         fetchNotes()
     }, [])
 
-
     // ANIMATION CURTAINS
     useEffect(() => {
         setSharedState({ ...sharedState, showCurtains: false })
     }, [])
-
 
     useEffect(() => {
         const getThemes = async () => {
@@ -81,19 +82,14 @@ export default function Note() {
                     })
                 })
             } catch (error) {
-                console.error("Error fetching themes:", error);
+                console.error("Error fetching themes:", error)
             }
-        };
+        }
+        getThemes()
+    }, [data])
     
-        getThemes();
-    }, [data]);
-    
-
-
-
 
     // NAVIGATE NOTES
-
     const navigateNote = (direction) => {
 
         if (!notes || notes.length === 0) return
@@ -131,6 +127,59 @@ export default function Note() {
             }))
         }
     }
+
+    const updateProgress = (theme, note) => {
+
+        if (!themes || !themes[theme]) {
+            return
+        }
+    
+        const notesNumber = themes[theme].data.chapters.length;
+    
+        let readProgress = JSON.parse(localStorage.getItem('readProgress')) || [[], [], [], []]
+        let total
+    
+        if (theme !== undefined && note !== undefined) {
+            if (!readProgress[theme].includes(note)) {
+                readProgress[theme].push(note);
+            }
+    
+            localStorage.setItem('readProgress', JSON.stringify(readProgress));
+            total = Number((readProgress[theme].length / notesNumber).toFixed(2))
+            let results = JSON.parse(localStorage.getItem('results')) || [0,0,0,0]
+            
+            results[theme] = total
+            localStorage.setItem('results', JSON.stringify(results));
+        }
+    }
+
+
+    // Observer progress Note
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        console.log('lu')
+                        // Si la fin de la note est visible
+                        // markNoteAsRead(currentTheme, data.id);
+                        updateProgress(currentTheme, data.id)
+                    }
+                });
+            },
+            { threshold: 1.0 }
+        );
+
+        if (noteEndRef.current) {
+            observer.observe(noteEndRef.current);
+        }
+
+        return () => {
+            if (noteEndRef.current) {
+                observer.unobserve(noteEndRef.current);
+            }
+        };
+    }, [data.id, currentTheme]);
 
 
     if (isLoaded) {
@@ -185,7 +234,7 @@ export default function Note() {
                         </div>
     
                         <div className="flex flex-col lg:flex-row overflow-scroll lg:min-h-[calc(100%-120px)]" id="text">
-                            <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow pb-[50px]">   
+                            <div className="lg:w-1/2 py-[30px] lg:py-[40px] font-light lg:border-r border-black lg:pr-[60px] lg:overflow-y-auto flex-grow">   
                                 
                                 {/** CONTENT */}
                                 {data.contents &&
@@ -338,6 +387,9 @@ export default function Note() {
                         </div>
                     </div>
                 </motion.div>
+
+                <div ref={noteEndRef} style={{ height: '1px' }}></div>
+
     
                 <AnimatePresence>
                     { dataPopup.open && 
@@ -388,18 +440,12 @@ export default function Note() {
 
 
     const MarkdownContent = ({content}) => {
-
         const customComponents = {
-        //   h2: ({ node, ...props }) => <h2 className="text-[26px] lg:text-[40px] mt-[40px] lg:mt-[80px]" {...props} />,
-        //   h3: ({ node, ...props }) => <h3 className="text-[22px] lg:text-[28px]" {...props} />,
-        //   p: ({ node, ...props }) => <p className="text-[20px] lg:text-[24px] leading-none" {...props} />,
-          a: ({ node, ...props }) => <a className="text-blue underline" target="_blank"  {...props} />,
-        };
-          return (
-              <div className="markdown-container" >
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={customComponents}>
-                      {content}
-                  </ReactMarkdown>
-              </div>
-          )
-      }   
+            a: ({ node, ...props }) => <a className="text-blue underline" target="_blank"  {...props} />
+        }
+        return (
+            <div className="markdown-container">
+                <ReactMarkdown components={customComponents}>{content}</ReactMarkdown>
+            </div>
+        )
+    }   

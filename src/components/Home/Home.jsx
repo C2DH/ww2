@@ -103,21 +103,6 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
         ])
     }, [isSmall])
 
-    const calculatePixelPosition = () => {
-        const place = selectedMarker.data.covers.find(place => 
-            place.data.type === 'place' && place.data.geojson?.geometry?.coordinates.length === 2
-        )
-
-        if (place) {
-            const projected = mapRef.current.project(place.data.geojson.geometry.coordinates);
-            return { 
-                x: projected.x, 
-                y: projected.y, 
-                filter: 'drop-shadow(23px 30px 15px rgba(0, 0, 0, 0.65))'
-            }
-        }
-    }
-
     const fly = (origin) => {
         if (isFlying) return
         setBounds(null)
