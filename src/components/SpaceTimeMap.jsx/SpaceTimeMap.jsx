@@ -4,6 +4,8 @@ import map3 from '../../assets/images/spaceTimeMap/map-3.png'
 import map4 from '../../assets/images/spaceTimeMap/map-4.png'
 import pinMarker from '../../assets/images/spaceTimeMap/marker-red.svg'
 import pinCluster from '../../assets/images/spaceTimeMap/marker-blue.svg'
+import groupBy from 'object.groupby';
+
 
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
@@ -348,7 +350,7 @@ const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref
         } 
     }, [items, mapLoaded]);
 
-    const allMarkers = Object.values(Object.groupBy(items.reduce((acc, item) => {
+    const allMarkers = Object.values(groupBy(items.reduce((acc, item) => {
         const markers = item.covers.filter(cover => cover.data.type === "place").map(cover => {
             return {
                 id: item.id,
