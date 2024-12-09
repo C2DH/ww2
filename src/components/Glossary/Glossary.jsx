@@ -139,6 +139,7 @@ export default function Glossary() {
     }, [filters])
 
     const handleMenu = (element) => {
+        console.log('test scroll')
         if (element === 'menu') {
             setIsOpenFilters(false)
             setIsOpenMenu(!isOpenMenu)
@@ -170,62 +171,54 @@ export default function Glossary() {
         setLoading(true)
         setFilterTitle(null)
         navigate('/glossary')
-
-        // try {
-        //     const updatedNotes = await fetchNotes()
-        //     setNotes(updatedNotes)
-        // } catch (error) {
-        //     console.error('Erreur lors de la réinitialisation des données :', error)
-        //     setError(error)
-        // } finally {
-        //     setLoading(false)
-        //     navigate('/glossary', { replace: true })
-        // }
     }
+    
 
     if (error) {
         return <Error />
     } else {
         return (
-            <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
-                <HeaderHistorianWorkshop items={ menuItems }/>
+            <>
+                <LayoutHistorianWorkshop pageTitle={ t('menuItems.glossary')}>
+                    <HeaderHistorianWorkshop items={ menuItems }/>
 
-                {/** RESET */}
-                {filtersParams.stories__slug &&
-                    <div className="lg:hidden cursor-pointer text-[20px] underline mt-[20px]" onClick={resetFilters}>{ t('reset') }</div>
-                }
-    
-                {/** FILTERS */}
-                <div className="hidden lg:block mt-[40px]">
-                    <div className="border-b border-black pb-[40px] w-full flex flex-wrap gap-y-[20px]">
-                        <div className="w-[40%] relative h-[40px] me-5">
-                            {filterTitle &&
-                                <div className='py-[5px] px-[10px] border border-black cursor-pointer w-full rounded-[4px] bg-[#EFEFED] transition-all duration-[750ms]'>
-                                    <div className='relative w-fit'>
-                                        <span className='uppercase text-[24px] mr-5'>{filterTitle}</span>
-                                        <XCircleIcon style={{ width: '15px' }} onClick={(e) => { e.stopPropagation(); resetFilters(); }} className="absolute top-0 right-0 hover:text-red-500" />
+                    {/** RESET */}
+                    {filtersParams.stories__slug &&
+                        <div className="lg:hidden cursor-pointer text-[20px] underline mt-[20px]" onClick={resetFilters}>{ t('reset') }</div>
+                    }
+        
+                    {/** FILTERS */}
+                    <div className="hidden lg:block mt-[40px]">
+                        <div className="border-b border-black pb-[40px] w-full flex flex-wrap gap-y-[20px]">
+                            <div className="w-[40%] relative h-[40px] me-5">
+                                {filterTitle &&
+                                    <div className='py-[5px] px-[10px] border border-black cursor-pointer w-full rounded-[4px] bg-[#EFEFED] transition-all duration-[750ms]'>
+                                        <div className='relative w-fit'>
+                                            <span className='uppercase text-[24px] mr-5'>{filterTitle}</span>
+                                            <XCircleIcon style={{ width: '15px' }} onClick={(e) => { e.stopPropagation(); resetFilters(); }} className="absolute top-0 right-0 hover:text-red-500" />
+                                        </div>
                                     </div>
-                                </div>
-                            }
+                                }
 
-                            {!filterTitle && 
-                                <Dropdown items={notes} text={'Recherche par Note(s) et capsule(s)'} theme={'notes'} onChange={handleChangeNote}/>
-                            }
+                                {!filterTitle && 
+                                    <Dropdown items={notes} text={'Recherche par Note(s) et capsule(s)'} theme={'notes'} onChange={handleChangeNote}/>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                {/** CONTENT */}
-                <div className="lg:overflow-scroll" ref={contentRef}>
-                    <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
-                        { terms.map((term, index) => 
-                            <CardText key={term.id} ref={filteredTerms.length === index + 1 ? lastTermRef : null} title={term.data.title[language]} text={term.data.description[language]} />
-                        )}
+                    
+                    {/** CONTENT */}
+                    <div className="lg:overflow-scroll" ref={contentRef}>
+                        <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
+                            { terms.map((term, index) => 
+                                <CardText key={term.id} ref={filteredTerms.length === index + 1 ? lastTermRef : null} title={term.data.title[language]} text={term.data.description[language]} />
+                            )}
+                        </div>
                     </div>
-                </div>
-    
+                </LayoutHistorianWorkshop>
+
                 {/* MOBILE: BTN MENU / BTN FILTERS */}
-                <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
+                <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[101] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
                     <div onClick={() => handleMenu('menu')}
                         className={classNames("flex items-center justify-center", {
                             "border-r border-black w-1/2": filters,
@@ -239,9 +232,9 @@ export default function Glossary() {
                         <span className='uppercase text-[24px] cursor-pointer'>Filtres</span>
                     </div>
                 </div>
-    
-                {/* MOBILE: MENU - FILTERS */}
-                <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {
+
+                {/* MENU */}
+                <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] z-[100]', {
                     "translate-y-[100%]": !isOpenMenu
                 })}>
                     <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
@@ -253,17 +246,18 @@ export default function Glossary() {
                     </ul>
                 </div>
 
+                {/* FILTERS */}
                 {notes &&
-                    <div className={classNames('lg:hidden py-[50px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] flex justify-center items-center', {
+                    <div className={classNames('lg:hidden py-[50px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] flex justify-center items-center z-[100]', {
                         "translate-y-[100%]": !isOpenFilters
                     })}>
-                       
-                        <div className="w-[90%] sm:w-[80%] relative h-[200px] me-5 mb-[400px]">
+                        
+                        <div className="w-[90%] sm:w-[80%] relative h-[200px] xl:me-5">
                             <Dropdown items={notes} text={'recherche'} theme={'notes'} onChange={handleChangeNote}/>
                         </div>
                     </div>
                 }
-            </LayoutHistorianWorkshop>
+            </>
         )
     }
 }

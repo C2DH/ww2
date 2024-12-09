@@ -74,7 +74,7 @@ export default function Player({ url, className, controls, status, onEnded, loop
             <div className="relative">
                 <ReactPlayer url={ url } width={ '100%' } height={ '100%' } controls={controls} className={ className } playing={isPlaying} onPause={ handleMediaPause } onPlay={ handleMediaPlay } onEnded={ handleEnded } ref={playerRef} />
                 {!isPlaying &&
-                    <div onClick={() => setIsPlaying(true)} className={classNames('cursor-pointer absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] border border-[#6EDFFB] rounded-full flex justify-center items-center', {
+                    <div onClick={() => setIsPlaying(true)} className={classNames('hidden cursor-pointer absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] border border-[#6EDFFB] rounded-full md:flex justify-center items-center', {
                         "w-[100px] h-[100px]": !isMobile,
                         "w-[50px] h-[50px]": isMobile,
                     })}>

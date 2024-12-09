@@ -28,7 +28,7 @@ export default function Dropdown({ items, text, theme, onChange}) {
     return (
         <div onClick={() => setIsOpen(!isOpen) } className={classNames("absolute z-[6] overflow-hidden py-[5px] px-[10px] border border-black cursor-pointer w-full rounded-[4px] bg-[#EFEFED] transition-all duration-[750ms]", {
             'max-h-[40px]': !isOpen,
-            'max-h-[50vh] overflow-scroll': isOpen
+            'max-h-[30vh] lg:max-h-[50vh] overflow-scroll': isOpen
             })} id="dropdown-container"
         >
             <div className='flex justify-between items-center'>

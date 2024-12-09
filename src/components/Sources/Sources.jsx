@@ -251,7 +251,7 @@ export default function Sources() {
                             }
                         </div>
                         <div className="col-span-7">
-                            {types.filter(item => item.count > 0).map((type, index) =>
+                            {typesBase?.map((type, index) =>
                                 <ButtonFilter key={index} title={type.type} number={types.find(item => item.type == type.type)?.count ?? 0} types={filters.types} handleClick={() => clickButton(type.type)} />
                             )}
                         </div>
@@ -290,48 +290,54 @@ export default function Sources() {
                         })}
                     </div>
                 </div>
-                {/* MOBILE: BTN MENU / BTN FILTERS */}
-                <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
-                    <div
-                        onClick={() => handleMenu('menu')}
-                        className={classNames("flex items-center justify-center", {
-                            "border-r border-black w-1/2": filters,
-                            "w-full": !filters
-                        })}
-                    >
-                        <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
-                    </div>
-                    {filters &&
-                        <div className="w-1/2 flex items-center justify-center" onClick={() => handleMenu('filter')}>
-                            <span className='uppercase text-[24px] cursor-pointer'>Filtres</span>
-                        </div>
-                    }
 
+            </LayoutHistorianWorkshop>
+
+            {/* MOBILE: BTN MENU / BTN FILTERS */}
+            <div className='lg:hidden fixed bottom-0 left-0 right-0 z-[101] h-[70px] w-full flex border-t border-black' style={{ backgroundImage: `url(${bgPaper})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
+                <div
+                    onClick={() => handleMenu('menu')}
+                    className={classNames("flex items-center justify-center", {
+                        "border-r border-black w-1/2": filters,
+                        "w-full": !filters
+                    })}
+                >
+                    <span className='uppercase text-[24px] cursor-pointer'>Menu</span>
                 </div>
-                {/* MOBILE: MENU - FILTERS */}
-                <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms]', {
-                    "translate-y-[100%]": !isOpenMenu
-                })}>
-                    <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
-                        {menuItems.map((item, index) =>
-                            <li key={index}>
-                                <Link key={index} to={item.link} className={classNames('navbar-title', { 'active': pathname === `${item.link}` })}>{item.title}</Link>
-                            </li>
-                        )}
-                    </ul>
-                </div>
-                {types &&
-                    <div className={classNames('lg:hidden py-[50px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] flex justify-center items-center', {
-                        "translate-y-[100%]": !isOpenFilters
-                    })}>
-                        <div className='flex flex-col shrink-0'>
-                            {types?.map((type, index) =>
-                                <ButtonFilter key={index} title={type.type} number={types.find(item => item.type == type.type)?.count ?? 0} types={filters.types} handleClick={() => { clickButton(type.type); handleMenu("filter") }} />
-                            )}
-                        </div>
+                {filters &&
+                    <div className="w-1/2 flex items-center justify-center" onClick={() => handleMenu('filter')}>
+                        <span className='uppercase text-[24px] cursor-pointer'>Filtres</span>
                     </div>
                 }
-            </LayoutHistorianWorkshop>
+
+            </div>
+            {/* MENU */}
+            <div className={classNames('lg:hidden h-[360px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] z-[100]', {
+                "translate-y-[100%]": !isOpenMenu
+            })}>
+                <ul className='text-[38px] uppercase flex flex-col justify-center items-center h-full gap-4'>
+                    {menuItems.map((item, index) =>
+                        <li key={index}>
+                            <Link key={index} to={item.link} className={classNames('navbar-title', { 'active': pathname === `${item.link}` })}>{item.title}</Link>
+                        </li>
+                    )}
+                </ul>
+            </div>
+            
+            {/* FILTERS */}
+            {types &&
+                <div className={classNames('lg:hidden py-[50px] fixed bottom-[70px] left-0 right-0 bg-paper border-black border-t transition-all duration-[750ms] flex justify-center items-center z-[100]', {
+                    "translate-y-[100%]": !isOpenFilters
+                })}>
+                    <div className='flex flex-col shrink-0'>
+                        {typesBase?.map((type, index) =>
+                            <ButtonFilter key={index} title={type.type} number={types.find(item => item.type == type.type)?.count ?? 0} types={filters.types} handleClick={() => { clickButton(type.type); handleMenu("filter") }} />
+                        )}
+                    </div>
+                </div>
+            }
+
+                
             <AnimatePresence>
                 {dataPopup.open &&
                     <motion.div
