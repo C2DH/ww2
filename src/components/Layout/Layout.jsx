@@ -64,7 +64,7 @@ export default function Layout() {
                 <div className={classNames('absolute inset-0 transition-all duration-[2500ms] flex z-[200] top-[80px]', {
                     'translate-y-0': !openMenu && !isSmall,
                     'translate-y-full': openMenu,
-                    '-translate-y-[80px]': isOpenSource && isSmall
+                    '-translate-y-[80px] h-full': isOpenSource && isSmall
                     }
                 )}>
                     <Outlet/>

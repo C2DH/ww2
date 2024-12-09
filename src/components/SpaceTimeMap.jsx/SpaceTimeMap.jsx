@@ -137,9 +137,8 @@ export default function SpaceTimeMap() {
 
 
     const handleLocationChange = (isOpen) => {
-        console.log('openLocation dans le parent :', isOpen);
         setOpenLocation(isOpen);
-    };
+    }
 
 
     if (isLoaded) {
@@ -222,6 +221,9 @@ export default function SpaceTimeMap() {
 
 
                 {/** Filter period Mobile */}
+             
+
+                {!openLocation &&
                 <div className="fixed md:hidden bottom-0 left-0 right-0">
                     <div className='bg-[#475DA9] h-[70px] flex justify-center items-center border-t border-white relative z-[100]' onClick={() => setOpenFilter(!openFilter)}>
                         <span className='uppercase text-white text-[24px] cursor-pointer'>{ t('filter_by_period') }</span>
@@ -239,7 +241,10 @@ export default function SpaceTimeMap() {
                             <MultiRangeSelector onFilterChange={ handleFilterChange }/>
                         </div>
                     </div>
-                </div>  
+                </div> 
+                } 
+            
+
 
             </motion.div>
         )
@@ -516,7 +521,6 @@ const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref
                         }
                     </AnimatePresence>
                 }
-
             </div>
 
             {isSmall &&            
@@ -539,7 +543,7 @@ const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref
                                     <span className='cursor-pointer text-[24px] uppercase text-white' onClick={() => setIsOpenSource(false)}>{ t('close') }</span>
                             </div>
 
-                            <div className='px-[20px] md:px-0'>
+                            <div className='px-[20px] md:px-0 pb-[40px] h-[calc(100dvh-120px)] overflow-scroll'>
 
                                 {/* Location */}
                                 {selectedMarker.data.covers.map(cover => {
