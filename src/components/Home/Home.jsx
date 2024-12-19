@@ -221,7 +221,9 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
                                                     <div className="border border-black rounded-[6px] h-full w-full px-3 py-[12px] relative">
                                                         <div onClick={() => {
                                                             mapRef.current.flyTo({ zoom: zoom + 2, speed: 0.2, curve: 1 });
-                                                            navigate(`/notice/${selectedMarker.data.slug}`);
+                                                            navigate(`/notice/${selectedMarker.data.slug}`,{
+                                                                state: { from: '/'},
+                                                            });
                                                         }}>
                                                             <div className="flex">
                                                                 <span className="font-abril block pr-[10px]">{selectedMarker.id + 1 < 10 ? '0' + (selectedMarker.id + 1) : selectedMarker.id + 1}</span>
@@ -242,8 +244,6 @@ const MapBox = ({ items, visibleMarkers, setVisibleMarkers }) => {
                         </div>
                     )
                 })}
-
-
             </Map>
         </motion.div> 
     )

@@ -18,6 +18,12 @@ body {
     // background-image: url('../images/common/bg-black.jpg');
 }
 
+header {
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+    overflow: auto;
+}
+
 p {
     padding-bottom: 20px;
 }

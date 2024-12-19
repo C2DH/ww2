@@ -111,7 +111,7 @@ export default function HistorianWorkshop() {
                                     
                                     {/* Bibliothèque droite */}
                                     <Link to={'/glossary'} className='block group transition-all duration-[750ms]'>
-                                    <path d="M301 1v312l-149.5-14-74.75-7L2 285 11 1h290Z" stroke="transparent" fill="transparent" fillOpacity={0.1} strokeWidth="2" className='transition-all duration-[750ms] group-hover:fill-[#6EDFFB] group-hover:stroke-[#6EDFFB]'/>   
+                                    <path d="M301 1V313L151.5 299L76.75 292L2 285L11 1H301Z" stroke="transparent" fill="transparent" fillOpacity={0.1} strokeWidth="2" className='transition-all duration-[750ms] group-hover:fill-[#6EDFFB] group-hover:stroke-[#6EDFFB]'/>   
                                     <circle cx="1347" cy="302" r="11" fill="#6EDFFB" className='animate-pulseBig' style={{ transformOrigin: '1347px 302px' }} />
                                     <circle cx="1347" cy="302" r="6" fill="white" className='animate-pulseSmall' style={{ transformOrigin: '1347px 302px' }} />
                                     <text x="1150" y="302" fill="transparent" className='transition-all duration-[750ms] text-[36px] group-hover:opacity-1 group-hover:fill-[#6EDFFB] uppercase'>{ t('menuItems.glossary')}</text> 
@@ -142,3 +142,5 @@ export default function HistorianWorkshop() {
         </motion.div>
     )
 }
+
+

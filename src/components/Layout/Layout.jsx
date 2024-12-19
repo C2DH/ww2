@@ -7,34 +7,35 @@ import { useEffect, useState } from "react"
 import classNames from "classnames"
 import { ForwardIcon } from "@heroicons/react/24/outline"
 import { AnimatePresence, motion } from "framer-motion"
+import { useIntroContext } from "../../contexts/IntroProvider"
 const trailers = {
-    fr_FR: import.meta.env.VITE_VIDEO_TRAILER_HOME_FR,
-    en_GB: import.meta.env.VITE_VIDEO_TRAILER_HOME_EN,
-    de_DE: import.meta.env.VITE_VIDEO_TRAILER_HOME_DE,
+    fr_FR: [
+        { url: import.meta.env.VITE_VIDEO_TRAILER_HOME_WEBM_FR, type: 'video/webm'} , 
+        {url: import.meta.env.VITE_VIDEO_TRAILER_HOME_MP4_FR, type: 'video/mp4' }
+    ],
+    en_GB: [
+        { url: import.meta.env.VITE_VIDEO_TRAILER_HOME_WEBM_EN, type: 'video/webm'} , 
+        {url: import.meta.env.VITE_VIDEO_TRAILER_HOME_MP4_EN, type: 'video/mp4' }
+    ],
+    de_DE: [
+        { url: import.meta.env.VITE_VIDEO_TRAILER_HOME_WEBM_DE, type: 'video/webm'} , 
+        {url: import.meta.env.VITE_VIDEO_TRAILER_HOME_MP4_DE, type: 'video/mp4' }
+    ]
 }
 
 export default function Layout() {
+    const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
     const { pathname } = useLocation()
     const { openMenu } = useMenuContext()
-    const {isOpenSource} = useSourceContext()
-    const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
-    const [showIntro, setShowIntro] = useState(false)
-    const languageTrailer = localStorage.getItem("i18nextLng")
+    const { isOpenSource } = useSourceContext()
+    const { displayVideo, setDisplayVideo } = useIntroContext()
     const [showSkip, setShowSkip] = useState(true)
+    const languageTrailer = localStorage.getItem("i18nextLng")
     const trailerUrl = trailers[languageTrailer]
 
     const handleIntroEnd = () => {
-        setShowIntro(false)
-        localStorage.setItem("introSeen", JSON.stringify({value: true, expire: new Date().getTime()}))
+        setDisplayVideo(false)
     }
-
-    useEffect(() => {
-        const introSeen = localStorage.getItem("introSeen")
-        const now = new Date().getTime()
-        if ((!introSeen && pathname === "/") || (pathname === "/" && now - parseInt(introSeen.expire) > 6 * 60 * 60 * 1000)) {
-            setShowIntro(true)
-        }
-    }, [pathname])
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -46,9 +47,9 @@ export default function Layout() {
 
     return (
         <>
-            {(showIntro && pathname === '/' ) &&
+            {(displayVideo && pathname === '/' ) &&
                 <div className='hidden lg:block absolute top-0 left-0 z-[201] w-screen h-screen overflow-hidden'>
-                    <Player url={trailerUrl} status={"trailer"} onEnded={handleIntroEnd} />
+                    <Player url={trailerUrl} status={"trailer"} page={"/"} onEnded={handleIntroEnd} />
                     
                     <AnimatePresence>
                         {showSkip &&

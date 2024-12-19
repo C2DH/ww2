@@ -11,8 +11,7 @@ import { useMenuSoundContext } from '../../contexts/MenuProvider'
 import { PlayIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/outline'
 import { AnimatePresence, motion } from 'framer-motion'
 
-
-export default function Player({ url, className, controls, status, onEnded, loop = false })  {
+export default function Player({ url, className, controls, status, onEnded, loop = false, page })  {
     const { isMenuSoundPlay, setIsMenuSoundPlay } = useMenuSoundContext()
     const { t } = useTranslation()
     const { pathname } = useLocation()
@@ -28,7 +27,7 @@ export default function Player({ url, className, controls, status, onEnded, loop
     const playerTrailerRef = useRef(null)
 
     const handleEnded = () => {
-        if (playerRef.current) {    
+        if (playerRef.current) {
             playerRef.current.seekTo(0)
             playerRef.current.getInternalPlayer().play()
         }
@@ -107,7 +106,13 @@ export default function Player({ url, className, controls, status, onEnded, loop
                     controls={controls} loop={loop}  muted={isMuted} ref={playerTrailerRef} onEnded={ handleEnded }
                     style={{ height: "100%", width: "100%", objectFit: "cover" }}
                 >
-                    <source src={url} type="video/mp4" />
+                    {page === "/" && url.map(url => 
+                        <source key={url} src={url.url} type={url.type}/>
+                    )}
+
+                    {page !== "/" &&
+                        <source src={url} type="video/mp4"/>
+                    }
                 </video>
 
 

@@ -40,7 +40,7 @@ export default function CardImageText({ title = "", myRef, data, onClick }) {
                         )}
 
                         {data.type === "photo" && (
-                            data.attachment ? (
+                            data.data.resolutions.thumbnail.url ? (
                                 <img src={rootPath + data.data.resolutions.thumbnail.url} alt="" className="rounded-[2px] w-full h-[110px] object-cover" />
                             ) : (
                                 <div className="bg-gray-200 h-[110px] flex items-center justify-center rounded-[2px]">
@@ -57,8 +57,11 @@ export default function CardImageText({ title = "", myRef, data, onClick }) {
                     </div>
 
                     <div className="col-span-8">
-                        { title &&  
+                        { title && 
+                        <> 
                             <h2 className='text-[22px] leading-none'>{ cleanText(title)} </h2>
+                            {/* <span>id : { data.id }</span> */}
+                        </>
                         }
                     </div>
                 </div>

@@ -21,7 +21,6 @@ const trailersCredits = {
 
 export default function Credits() {
 
-
     const { t } = useTranslation()
     const [sharedState, setSharedState] = useSharedState()
     const [credits, setCredits] = useState()
@@ -35,9 +34,9 @@ export default function Credits() {
 
     useEffect(() => {
         if (width <= 768) {
-          setAnimationDuration(width / 3)
+          setAnimationDuration(width / 1.8)
         } else {
-          setAnimationDuration(width / 30)
+          setAnimationDuration(width / 20)
         }
       }, [width]);
 
@@ -110,7 +109,7 @@ export default function Credits() {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 1 }} // Durée de l'animation de fade-in
                     >
-                        <Player url={trailersCredits[language]} status={"trailer"} loop={true} />
+                        <Player url={trailersCredits[language]} status={"trailer"} page={"/credits"} loop={true} />
                         <div onClick={handleSkipVideo} className="absolute top-[50%] -translate-y-[50%] right-[50px] cursor-pointer bg-black bg-opacity-50 p-2 rounded-full" >
                             <ForwardIcon style={{ width: '50px', color: 'white' }} />
                         </div>

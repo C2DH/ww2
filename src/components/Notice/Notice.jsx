@@ -71,7 +71,7 @@ export default function Notice() {
     }, [])
 
     useEffect(() => {
-        setSharedState({ ...sharedState, showClouds: false })
+        setSharedState({ ...sharedState, showCurtains: false, showClouds:false })
     }, [slug])
 
 

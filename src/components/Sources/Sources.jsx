@@ -263,6 +263,7 @@ export default function Sources() {
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
                         {sources.map((source, index) => {
                             if (source.type === 'video' || source.type === 'photo' || source.type === "audio") {
+                                console.log('source', source)
                                 return (
                                     <CardImageText
                                         myRef={sources.length - 6 === index + 1 ? lastSourceRef : null}

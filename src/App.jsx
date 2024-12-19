@@ -26,19 +26,22 @@ import { LanguageProvider } from "./contexts/LanguageProvider"
 import { SourceProvider } from "./contexts/SourceProvider"
 import { MenuHistorianProvider } from "./contexts/MenuHistorianProvider"
 import NotFound from "./components/NotFound/NotFound"
+import { IntroProvider } from "./contexts/IntroProvider"
 
 export default function App() {
 
     const location = useLocation()
     const [sharedState, setSharedState] = useSharedState()
     const [firstLaunch, setFirstLaunch] = useState(true)
+    const from = location.state?.from;
+
 
     useEffect(() => {
         if (!firstLaunch) {
-            if ((location.state?.from == null && location.pathname.includes('notice')) || (location.state?.from.includes('notice') && location.pathname == '/')) {
+            if (from === '/' && location.pathname.includes('notice')) {
                 setSharedState({ ...sharedState, showClouds: true })
             } else {
-                setSharedState({ ...sharedState, showCurtains: true })
+                setSharedState({ ...sharedState, showClouds: false, showCurtains: true })
             }
         }
         setFirstLaunch(false);
@@ -46,37 +49,39 @@ export default function App() {
 
     return (
         <>
-            <LanguageProvider>
-                <MenuProvider>
-                    <SourceProvider>
-                        <MenuHistorianProvider>
-                            <Menu />
-                            <AnimatePresence mode="wait">
-                                <Routes location={location} key={location.pathname}>
-                                    <Route path='/' element={ <Layout/>} >
-                                        <Route path='/' element={ <Home /> }/>
-                                        <Route path='/catalogue' element={ <Catalogue /> }/>
-                                        <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
-                                        <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
-                                        <Route path='/bibliography' element={ <Bibliography /> }/>
-                                        <Route path='/glossary' element={ <Glossary /> }/>
-                                        <Route path='/spatiotemporal-map' element={ <SpaceTimeMap /> }/>
-                                        <Route path='/notice/:slug' element={ <Notice /> }/>
-                                        <Route path='/note/:slug' element={ <Note /> }/>
-                                        <Route path='/sources' element={ <Sources /> }/>
-                                        <Route path='/source/:id' element={ <Source /> }/>
-                                        <Route path='/credits' element={ <Credits /> }/>
-                                        <Route path='/about' element={ <About /> }/>
-                                        <Route path='/terms' element={ <Terms /> }/>
-                                        <Route path='/contact' element={ <Contact /> }/>
-                                        <Route path="*" element={ <NotFound /> }/>
-                                    </Route>
-                                </Routes>
-                            </AnimatePresence>
-                        </MenuHistorianProvider>
-                    </SourceProvider>    
-                </MenuProvider>
-            </LanguageProvider>
+            <IntroProvider>
+                <LanguageProvider>
+                    <MenuProvider>
+                        <SourceProvider>
+                            <MenuHistorianProvider>
+                                <Menu />
+                                <AnimatePresence mode="wait">
+                                    <Routes location={location} key={location.pathname}>
+                                        <Route path='/' element={ <Layout/>} >
+                                            <Route path='/' element={ <Home /> }/>
+                                            <Route path='/catalogue' element={ <Catalogue /> }/>
+                                            <Route path='/historian-workshop' element={ <HistorianWorkshop /> }/>
+                                            <Route path='/research-institutions' element={ <ResearchInstitutions /> }/>
+                                            <Route path='/bibliography' element={ <Bibliography /> }/>
+                                            <Route path='/glossary' element={ <Glossary /> }/>
+                                            <Route path='/spatiotemporal-map' element={ <SpaceTimeMap /> }/>
+                                            <Route path='/notice/:slug' element={ <Notice /> }/>
+                                            <Route path='/note/:slug' element={ <Note /> }/>
+                                            <Route path='/sources' element={ <Sources /> }/>
+                                            <Route path='/source/:id' element={ <Source /> }/>
+                                            <Route path='/credits' element={ <Credits /> }/>
+                                            <Route path='/about' element={ <About /> }/>
+                                            <Route path='/terms' element={ <Terms /> }/>
+                                            <Route path='/contact' element={ <Contact /> }/>
+                                            <Route path="*" element={ <NotFound /> }/>
+                                        </Route>
+                                    </Routes>
+                                </AnimatePresence>
+                            </MenuHistorianProvider>
+                        </SourceProvider>    
+                    </MenuProvider>
+                </LanguageProvider>
+            </IntroProvider>
 
             <AnimatePresence mode="wait">
                 {sharedState.showClouds && <Clouds />}

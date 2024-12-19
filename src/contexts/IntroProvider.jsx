@@ -3,10 +3,10 @@ import { createContext, useContext, useState } from "react";
 const IntroContext = createContext(null)
 
 export function IntroProvider({ children }) {
-    const [ isVisible, setIsVisible ] = useState(true)
+    const [ displayVideo, setDisplayVideo ] = useState(true)
 
     return (
-        <IntroContext.Provider value={{ isVisible, setIsVisible}}>
+        <IntroContext.Provider value={{ displayVideo, setDisplayVideo}}>
             { children }
         </IntroContext.Provider>
     )
