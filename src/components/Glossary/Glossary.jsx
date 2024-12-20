@@ -104,11 +104,9 @@ export default function Glossary() {
 
 
     const observer = useRef()
-
     const lastTermRef = useCallback(
         (node) => {
-            if (loading) return;
-            
+            if (loading || !hasMore) return;
             if (observer.current) {
                 observer.current.disconnect();
             } 
@@ -139,7 +137,6 @@ export default function Glossary() {
     }, [filters])
 
     const handleMenu = (element) => {
-        console.log('test scroll')
         if (element === 'menu') {
             setIsOpenFilters(false)
             setIsOpenMenu(!isOpenMenu)
@@ -211,7 +208,7 @@ export default function Glossary() {
                     <div className="lg:overflow-scroll" ref={contentRef}>
                         <div className="grid grid-cols-12 gap-y-[30px] pt-[40px] pb-[100px] lg:pb-[40px]">
                             { terms.map((term, index) => 
-                                <CardText key={term.id} ref={filteredTerms.length === index + 1 ? lastTermRef : null} title={term.data.title[language]} text={term.data.description[language]} />
+                                <CardText key={term.id}  myRef={terms.length - 6 === index + 1 ? lastTermRef : null} title={term.data.title[language]} text={term.data.description[language]} />
                             )}
                         </div>
                     </div>

@@ -86,7 +86,7 @@ export default function Player({ url, className, controls, status, onEnded, loop
         return (
             <div>
                 <div className='flex items-center'>
-                    <span className='text-[20px] sm:text-[24px] uppercase whitespace-nowrap me-3'>{ isPlaying ? t('sound_on') : t('sound_off') }</span>
+                    <span className='hidden md:block text-[20px] sm:text-[24px] uppercase whitespace-nowrap me-3'>{ isPlaying ? t('sound_on') : t('sound_off') }</span>
                     <ReactPlayer url={ sound } width={ '' } height={ '' } className={ className } playing={isMenuSoundPlay} ref={playerMenuRef} onEnded={ handleEnded } loop={true}/>
 
                     { isMenuSoundPlay ? (
