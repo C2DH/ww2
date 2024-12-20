@@ -47,12 +47,16 @@ ENV VITE_API_MAPTILER=${VITE_API_MAPTILER}
 ENV VITE_ROOT=${VITE_ROOT}
 ENV VITE_EMAIL=${VITE_EMAIL}
 ENV VITE_VIDEO_TRAILER_HOME=${VITE_VIDEO_TRAILER_HOME}
-ENV VITE_VIDEO_TRAILER_HOME_FR=/media/trailers/Trailer_fr_FR.webm
-ENV VITE_VIDEO_TRAILER_HOME_EN=/media/trailers/Trailer_en_EN.webm
-ENV VITE_VIDEO_TRAILER_HOME_DE=/media/trailers/Trailer_de_DE.webm
+ENV VITE_VIDEO_TRAILER_HOME_WEBM_FR=/media/trailers/Trailer_fr_FR.webm
+ENV VITE_VIDEO_TRAILER_HOME_WEBM_EN=/media/trailers/Trailer_en_EN.webm
+ENV VITE_VIDEO_TRAILER_HOME_WEBM_DE=/media/trailers/Trailer_de_DE.webm
 ENV VITE_VIDEO_TRAILER_CREDIT_FR=/media/trailers/WWII_Trailer_fr_FR.mp4
 ENV VITE_VIDEO_TRAILER_CREDIT_EN=/media/trailers/WWII_Trailer_en_EN.mp4
 ENV VITE_VIDEO_TRAILER_CREDIT_DE=/media/trailers/WWII_Trailer_de_DE.mp4
+ENV VITE_VIDEO_TRAILER_HOME_MP4_FR=/media/trailers/WWII_Trailer_fr_FR.mp4
+ENV VITE_VIDEO_TRAILER_HOME_MP4_EN=/media/trailers/WWII_Trailer_en_EN.mp4
+ENV VITE_VIDEO_TRAILER_HOME_MP4_DE=/media/trailers/WWII_Trailer_de_DE.mp4
+
 RUN npm run build
 
 # print out these env values to a info.json file
