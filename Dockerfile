@@ -47,12 +47,12 @@ ENV VITE_API_MAPTILER=${VITE_API_MAPTILER}
 ENV VITE_ROOT=${VITE_ROOT}
 ENV VITE_EMAIL=${VITE_EMAIL}
 ENV VITE_VIDEO_TRAILER_HOME=${VITE_VIDEO_TRAILER_HOME}
-ENV VITE_VIDEO_TRAILER_HOME_FR=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/Trailer_fr_FR.webm
-ENV VITE_VIDEO_TRAILER_HOME_EN=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/Trailer_en_EN.webm
-ENV VITE_VIDEO_TRAILER_HOME_DE=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/Trailer_de_DE.webm
-ENV VITE_VIDEO_TRAILER_CREDIT_FR=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/WWII_Trailer_fr_FR.mp4
-ENV VITE_VIDEO_TRAILER_CREDIT_EN=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/WWII_Trailer_en_EN.mp4
-ENV VITE_VIDEO_TRAILER_CREDIT_DE=https://upbeat-bhaskara.51-91-223-66.plesk.page/videos/WWII_Trailer_de_DE.mp4
+ENV VITE_VIDEO_TRAILER_HOME_FR=https://ww2.lu/media/trailers/Trailer_fr_FR.webm
+ENV VITE_VIDEO_TRAILER_HOME_EN=https://ww2.lu/media/trailers/Trailer_en_EN.webm
+ENV VITE_VIDEO_TRAILER_HOME_DE=https://ww2.lu/media/trailers/Trailer_de_DE.webm
+ENV VITE_VIDEO_TRAILER_CREDIT_FR=https://ww2.lu/media/trailers/WWII_Trailer_fr_FR.mp4
+ENV VITE_VIDEO_TRAILER_CREDIT_EN=https://ww2.lu/media/trailers/WWII_Trailer_en_EN.mp4
+ENV VITE_VIDEO_TRAILER_CREDIT_DE=https://ww2.lu/media/trailers/WWII_Trailer_de_DE.mp4
 RUN npm run build
 
 # print out these env values to a info.json file
