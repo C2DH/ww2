@@ -56,6 +56,7 @@ export default function SpaceTimeMap() {
         latitude: 49.6099615,
         token: tokenMapbox,
         style: styleBlueprint,
+        scrollZoom: false,
         zoom: 15,
         maxZoom: 18,
         minZoom: 8
@@ -97,55 +98,39 @@ export default function SpaceTimeMap() {
         setSharedState({ ...sharedState, showCurtains: false })
     }, [])
 
-
     const handleMap = (element) => {
         if (element.style) {
-            setViewState((prevState) => ({ ...prevState, style: element.style }));
+            setViewState((prevState) => ({ ...prevState, style: element.style, minZoom: element.style === "oldmap" ? 14 : 8 }))
         }
 
-        if (element.style === "oldmap") {
-            setViewState((prevState) => ({ ...prevState, minZoom: 14 }))
-        
-            mapRef.current.fitBounds(
-                [
-                    [6.12, 49.60], // Southwest corner (longitude, latitude)
-                    [6.14, 49.62]  // Northeast corner (longitude, latitude)
-                ],
-                {
-                    padding: 20, // Optional: Add padding around the bounds
-                    duration: 5000 // Optional: Animation duration in milliseconds
-                }
-            );
-            
-        } else {
-            setViewState((prevState) => ({ ...prevState, minZoom: 8 }))
-        }
-
-        // if (element.zoom && element.zoom >= 8) {
-        if (element.zoom && element.zoom >= 8 && element.zoom <= 18) {
-            setViewState((prevState) => ({ ...prevState, zoom: element.zoom }))
+        if (element.zoom && mapRef.current) {
             const map = mapRef.current.getMap()
-            // map.flyTo({center: [viewState.longitude, viewState.latitude], zoom: element.zoom})
-            map.flyTo({ zoom: element.zoom})
+
+            if (element.style === "oldmap" && element.zoom >= 14 && element.zoom <= 18) {
+                setViewState((prevState) => ({ ...prevState, zoom: element.zoom}))
+                map.flyTo({center: [viewState.longitude, viewState.latitude], zoom: element.zoom})
+            } else {
+                setViewState((prevState) => ({ ...prevState, zoom: element.zoom}))
+                map.flyTo({center: [viewState.longitude, viewState.latitude], zoom: element.zoom})
+            }
         }
-    }
+    }    
+
 
     const handleFilterChange = (newFilters) => {
         const { min, max } = newFilters
         setFilters({ min: transformDate(min), max: transformDate(max) })
     }
 
-
     const handleLocationChange = (isOpen) => {
         setOpenLocation(isOpen);
     }
-
 
     if (isLoaded) {
         return (
 
             <motion.div className='h-full w-full' exit={{opacity: 0.999, transition: {duration: siteConfig.curtainsTransitionDuration}}}>
-                <MapBox items={data} state={viewState} reference={mapRef} onZoomChange={handleZoomState} onLocationChange={handleLocationChange} />
+                <MapBox items={data} state={viewState} ref={mapRef} onZoomChange={handleZoomState} onLocationChange={handleLocationChange} />
 
                 {/** Map style and zoom */}
                 <div className='absolute top-[40px] right-[20px]'>
@@ -177,7 +162,13 @@ export default function SpaceTimeMap() {
 
                         <div>
                             <>
-                                <div className='h-[40px] w-[40px] bg-white rounded-t-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) + 1}) }>
+                                <div className='h-[40px] w-[40px] bg-white rounded-t-[6px] flex items-center justify-center' 
+                                    onClick={() => {
+                                        if (viewState.zoom <= 18) {
+                                            handleMap({ zoom: parseInt(viewState.zoom) + 1 });
+                                        }
+                                    }}
+                                >
                                     <PlusIcon style={{width: '20px'}} className={classNames('cursor-pointer', {
                                         'pointer-events-none text-gray-300': viewState.zoom >= 18
                                     })}/>
@@ -185,9 +176,15 @@ export default function SpaceTimeMap() {
                                 <hr />
                             </>
 
-                            <div className='h-[40px] w-[40px] bg-white rounded-b-[6px] flex items-center justify-center' onClick={() => handleMap({zoom: parseInt(viewState.zoom) - 1}) }>
+                            <div className='h-[40px] w-[40px] bg-white rounded-b-[6px] flex items-center justify-center' 
+                                onClick={() =>{ 
+                                    if ((viewState.zoom > 8 && viewState.style !== 'oldmap') || (viewState.style === 'oldmap' && viewState.zoom > 14) ) {
+                                        handleMap({zoom: parseInt(viewState.zoom) - 1})
+                                    } 
+                                }}
+                            >
                                 <MinusIcon style={{width: '20px'}} className={classNames('text-[20px] cursor-pointer', {
-                                    'pointer-events-none text-gray-300': viewState.zoom <= 8
+                                    'pointer-events-none text-gray-300': viewState.zoom <= 8 || (viewState.style === 'oldmap' && viewState.zoom <= 14)
                                 })}/>
                             </div>
                         </div>
@@ -221,8 +218,6 @@ export default function SpaceTimeMap() {
 
 
                 {/** Filter period Mobile */}
-             
-
                 {!openLocation &&
                 <div className="fixed md:hidden bottom-0 left-0 right-0">
                     <div className='bg-[#475DA9] h-[70px] flex justify-center items-center border-t border-white relative z-[100]' onClick={() => setOpenFilter(!openFilter)}>
@@ -243,9 +238,6 @@ export default function SpaceTimeMap() {
                     </div>
                 </div> 
                 } 
-            
-
-
             </motion.div>
         )
     }
@@ -255,7 +247,9 @@ export default function SpaceTimeMap() {
 const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref) => {
     const innerRef = useRef(null);
     const clusterRef = useRef(null);
-    useImperativeHandle(ref, () => innerRef.current, [])
+    useImperativeHandle(ref, () => ({
+        getMap: () => innerRef.current?.getMap(), // Expose `getMap()` pour accéder à l'instance Mapbox
+    }), []);
 
     const { language } = useLanguageContext()
     const [selectedMarker, setSelectedMarker] = useState({ id: null, data: null })
@@ -277,7 +271,6 @@ const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref
             onZoomChange(newZoom);
         }
     }
-   
 
     const sourceStyle = {
         id: 'geoportail',
@@ -338,7 +331,6 @@ const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref
             
             clusterRef.current = new MapboxglSpiderifier(map, {
                 onClick: function (e, spiderLeg) {
-                    console.log('Clicked on ', spiderLeg);
                     setOpenLocation(true)
                     setIsOpenSource(true)
                     setSelectedMarker({ id: spiderLeg.feature.id, data: spiderLeg.feature.data })
@@ -348,9 +340,9 @@ const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref
                 animationSpeed: 200
             });
 
-            map.on('error', function(error) {
-                console.log('Map loading error:', error);
-            }); 
+            // map.on('error', function(error) {
+            //     console.log('Map loading error:', error);
+            // }); 
 
         } 
     }, [items, mapLoaded]);
@@ -433,8 +425,6 @@ const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref
                             <div className='relative'>
                                 <img src={pinCluster} alt="marker" className="cursor-pointer"
                                     onClick={() => {
-                                        console.log('click cluster');
-                                        console.log(item);
                                         clusterRef.current.spiderfy(item[0].coordinates, item);
                                     }}
                                 />
@@ -455,7 +445,7 @@ const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref
                                 animate={{ x: 0 }}
                                 exit={{ x: '-100%' }}
                                 transition={{ duration: 0.8, ease: 'easeInOut' }}
-                                className='md:w-[70%] lg:w-[60%] xl:w-[40%] h-full bg-white absolute z-[9999] md:pt-[100px] sm:pl-[80px] sm:pr-[40px] top-0'
+                                className='md:w-[70%] lg:w-[60%] xl:w-[40%] h-full bg-white absolute z-[9999] md:pt-[100px] pb-[50px] sm:pl-[80px] sm:pr-[40px] top-0 overflow-scroll'
                             >
 
                                 <XMarkIcon className='hidden md:block absolute right-[40px] top-[60px] cursor-pointer' style={{ width: '40px' }}
@@ -547,13 +537,13 @@ const MapBox = forwardRef(({ items, state, onZoomChange, onLocationChange }, ref
 
                                 {/* Location */}
                                 {selectedMarker.data.covers.map(cover => {
-                                        if (cover.type === "glossary") {
-                                            return (
-                                                <h2 key={cover.id} className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{cover.data.title[language]}</h2>
-                                            )
-                                        }
+                                    if (cover.type === "glossary") {
+                                        return (
+                                            <h2 key={cover.id} className='text-[30px] pb-[10px] md:pb-[30px] font-semibold pt-[20px] md:pt-0'>{cover.data.title[language]}</h2>
+                                        )
+                                    }
 
-                                    })}
+                                })}
 
                                     {description &&
                                         <p className='text-[28px] pb-[40px] md:pb-[10px] font-light'>{ description }</p>

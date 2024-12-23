@@ -35,7 +35,7 @@ export default function Sources() {
     const [filters, setFilters] = useState({ types: [], note: filtersParams.stories__slug ? { slug: filtersParams.stories__slug } : false })
     const [hasMore, setHasMore] = useState(true)
     const [dataPopup, setDataPopup] = useState({ open: false, data: null })
-    const isSmall = useMediaQuery({ query: '(max-width: 1024px)' })
+    const isSmall = useMediaQuery({ query: '(max-width: 768px)' })
     const menuItems = useMenuHistorianContext()
     const navigate = useNavigate()
     const [filterTitle, setFilterTitle] = useState()
@@ -127,6 +127,7 @@ export default function Sources() {
     };
 
     const observer = useRef()
+
     const lastSourceRef = useCallback(
         (node) => {
             if (loading || !hasMore) return
@@ -134,6 +135,7 @@ export default function Sources() {
                 observer.current.disconnect()
             }
             observer.current = new IntersectionObserver((entries) => {
+                console.log('ici')
                 if (entries[0].isIntersecting) {
                     setOffset((prevOffset) => prevOffset + 24)
                 }
@@ -258,12 +260,10 @@ export default function Sources() {
                     </div>
                 </div>
                 {/** CONTENT */}
-                {/* TODO: Manque les photos, modèles 3D et audio */}
                 <div className='lg:overflow-scroll'>
                     <div className="grid grid-cols-12 gap-[20px] pt-[40px] pb-[100px] lg:pb-[40px]">
                         {sources.map((source, index) => {
                             if (source.type === 'video' || source.type === 'photo' || source.type === "audio") {
-                                console.log('source', source)
                                 return (
                                     <CardImageText
                                         myRef={sources.length - 6 === index + 1 ? lastSourceRef : null}
@@ -342,7 +342,7 @@ export default function Sources() {
             <AnimatePresence>
                 {dataPopup.open &&
                     <motion.div
-                        className='absolute w-full top-0 h-full lg:h-auto z-[9999]'
+                        className='absolute w-full top-0 h-full lg:h-auto z-[105] lg:z-[101]'
                         initial={{ top: '100%' }}
                         animate={{ top: isSmall ? 0 : '120px' }}
                         exit={{ top: '100%' }}

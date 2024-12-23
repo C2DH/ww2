@@ -14,7 +14,6 @@ import { useMediaQuery } from 'react-responsive'
 import classNames from 'classnames'
 import ReactMarkdown from 'react-markdown'
 
-
 export default function Note() {
     const [sharedState, setSharedState] = useSharedState()
     const { slug } = useParams()
@@ -410,42 +409,52 @@ export default function Note() {
 }
 
 
-    const ContentDisplay = ({ data }) => {
-        const { language } = useLanguageContext(); // Si nécessaire
-        let parsedData
+const ContentDisplay = ({ data }) => {
+    const { language } = useLanguageContext(); // Si nécessaire
+    let parsedData
 
-        try {
-            parsedData = JSON.parse(data)
-        } catch (error) {
-            console.error("Erreur lors du parsing des données :", error)
-            return <p>Erreur : Les données sont invalides.</p>
-        }
+    try {
+        parsedData = JSON.parse(data)
+    } catch (error) {
+        console.error("Erreur lors du parsing des données :", error)
+        return <p>Erreur : Les données sont invalides.</p>
+    }
 
-        if (!parsedData?.modules || !Array.isArray(parsedData.modules)) {
-            console.error("Modules manquants ou mal formés :", parsedData)
-            return <p>Erreur : Aucun texte à afficher.</p>
-        }
+    if (!parsedData?.modules || !Array.isArray(parsedData.modules)) {
+        console.error("Modules manquants ou mal formés :", parsedData)
+        return <p>Erreur : Aucun texte à afficher.</p>
+    }
 
-        return (
-            <div>
-                { parsedData.modules.map((module, index) => (
-                    <div key={index}>
-                        <MarkdownContent content={module?.text?.content[language]} />
-                    </div>
-                ))}
-            </div>
-        );  
-    };
+    return (
+        <div>
+            { parsedData.modules.map((module, index) => (
+                <div key={index}>
+                    <MarkdownContent content={module?.text?.content[language]} />
+                </div>
+            ))}
+        </div>
+    );  
+};
+
+const addNonBreakingSpaces = (text) => {
+    if (!text) return text;
+    return text
+        .replace(/«\s*/g, '«\u00A0') // Ajoute un espace insécable après «
+        .replace(/\s*»/g, '\u00A0»') // Ajoute un espace insécable avant »
+        .replace(/(\d)\s+(€|%)/g, '$1\u00A0$2'); // Ajoute un espace insécable entre les nombres et unités
+}
 
 
+const MarkdownContent = ({content}) => {
+    const customComponents = {
+        a: ({ node, ...props }) => <a className="text-blue underline" target="_blank"  {...props} />
+    }
 
-    const MarkdownContent = ({content}) => {
-        const customComponents = {
-            a: ({ node, ...props }) => <a className="text-blue underline" target="_blank"  {...props} />
-        }
-        return (
-            <div className="markdown-container">
-                <ReactMarkdown components={customComponents}>{content}</ReactMarkdown>
-            </div>
-        )
-    }   
+    const processedContent = addNonBreakingSpaces(content);
+
+    return (
+        <div className="markdown-container">
+            <ReactMarkdown components={customComponents}>{processedContent}</ReactMarkdown>
+        </div>
+    )
+}   

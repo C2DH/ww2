@@ -11,7 +11,6 @@ const rootPath = import.meta.env.VITE_ROOT
 export default function CardImageText({ title = "", myRef, data, onClick }) {
 
     const [openSource, setOpenSource] = useState(false)
-    const [setSelectedData] = useState({})
     const isSmall = useMediaQuery({ query: '(max-width: 768px)'})
 
     return (
