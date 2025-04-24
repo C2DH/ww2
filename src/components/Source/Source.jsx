@@ -33,6 +33,8 @@ import {
   ArrowRightIcon,
 } from '@heroicons/react/24/outline'
 
+import { markdownToHtml } from '../../lib/utils'
+
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
   import.meta.url
@@ -433,9 +435,12 @@ export default function Source({ data, handleSourcePopup }) {
                   {data.data.title[language]}
                 </h1>
                 <hr className='w-1/2' />
-                <p className='lg:pl-[25px] text-[28px] pt-[30px] font-light pb-[30px]'>
-                  {data.data.description[language]}
-                </p>
+                <p
+                  className='lg:pl-[25px] text-[28px] pt-[30px] font-light pb-[30px]'
+                  dangerouslySetInnerHTML={{
+                    __html: markdownToHtml(data.data.description[language]),
+                  }}
+                />
                 <hr className='w-1/2' />
                 <span className='block lg:pl-[25px] text-[28px] font-light pt-[30px] pb-[30px]'>
                   Source : {data.data.provenance ? data.data.provenance : 'NC'}
@@ -449,12 +454,24 @@ export default function Source({ data, handleSourcePopup }) {
                   {data.data.title[language]}
                 </h1>
                 <hr className='w-1/2' />
-                <p className='lg:pl-[25px] text-[28px] font-light pt-[30px] pb-[30px]'>
-                  {data.data.description[language]}
-                </p>
+                <p
+                  className='lg:pl-[25px] text-[28px] font-light pt-[30px] pb-[30px]'
+                  dangerouslySetInnerHTML={{
+                    __html: markdownToHtml(data.data.description[language]),
+                  }}
+                />
                 <hr className='w-1/2' />
                 <span className='block lg:pl-[25px] text-[28px] font-light pt-[30px] pb-[30px]'>
-                  Source : {data.data.provenance ? data.data.provenance : 'NC'}
+                  Source :{' '}
+                  {data.data.provenance ? (
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: markdownToHtml(data.data.provenance),
+                      }}
+                    />
+                  ) : (
+                    'NC'
+                  )}
                 </span>
                 <hr className='w-1/2' />
               </>
