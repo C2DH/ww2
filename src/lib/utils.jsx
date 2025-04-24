@@ -1,5 +1,15 @@
 import { marked } from 'marked'
 
+const renderer = new marked.Renderer()
+const originalLink = renderer.link
+renderer.link = function (href, title, text) {
+  const html = originalLink.call(this, href, title, text)
+  return html.replace(
+    '<a',
+    '<a target="_blank" rel="noopener noreferrer" style="text-decoration: underline"'
+  )
+}
+
 export function truncateText(text, maxLength) {
   if (text && text !== '' && text.length > maxLength) {
     return text.substring(0, maxLength) + '...'
@@ -9,7 +19,7 @@ export function truncateText(text, maxLength) {
 
 export function markdownToHtml(text) {
   if (text && text !== '') {
-    return marked.parse(text)
+    return marked.parse(text, { renderer })
   }
   return text
 }
