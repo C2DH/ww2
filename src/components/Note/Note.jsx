@@ -412,9 +412,6 @@ export default function Note() {
                                   style={{ width: '40px', color: 'white' }}
                                 />
                               </div>
-                              <span className='absolute right-[5px] top-0 text-white'>
-                                {document.id}
-                              </span>
                             </div>
                           )}
 
@@ -440,9 +437,6 @@ export default function Note() {
                                   style={{ width: '40px', color: 'white' }}
                                 />
                               </div>
-                              <span className='absolute right-[5px] top-0 text-white'>
-                                {document.id}
-                              </span>
                             </div>
                           )}
 
@@ -457,9 +451,6 @@ export default function Note() {
                                 style={{ width: '40px', color: 'white' }}
                               />
                             </div>
-                            <span className='absolute right-[5px] top-0 text-white'>
-                              {document.id}
-                            </span>
                           </div>
                         )}
 
@@ -475,9 +466,6 @@ export default function Note() {
                                 style={{ width: '40px', color: 'white' }}
                               />
                             </div>
-                            <span className='absolute right-[5px] top-0 text-white'>
-                              {document.id}
-                            </span>
                           </div>
                         )}
 
@@ -501,9 +489,6 @@ export default function Note() {
                                 style={{ width: '40px', color: 'white' }}
                               />
                             </div>
-                            <span className='absolute right-[5px] top-0 text-white'>
-                              {document.id}
-                            </span>
                           </div>
                         )}
 
@@ -518,9 +503,6 @@ export default function Note() {
                                 style={{ width: '40px', color: 'white' }}
                               />
                             </div>
-                            <span className='absolute right-[5px] top-0 text-white'>
-                              {document.id}
-                            </span>
                           </div>
                         )}
 
@@ -539,9 +521,6 @@ export default function Note() {
                                 style={{ width: '40px', color: 'white' }}
                               />
                             </div>
-                            <span className='absolute right-[5px] top-0 text-white'>
-                              {document.id}
-                            </span>
                           </div>
                         )}
 
@@ -560,9 +539,6 @@ export default function Note() {
                                 style={{ width: '40px', color: 'white' }}
                               />
                             </div>
-                            <span className='absolute right-[5px] top-0 text-white'>
-                              {document.id}
-                            </span>
                           </div>
                         )}
                       </div>
